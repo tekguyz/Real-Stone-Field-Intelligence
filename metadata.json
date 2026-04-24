@@ -1,0 +1,13 @@
+{
+  "name": "Real Stone Field Intelligence",
+  "description": "Enterprise-grade field operations and documentation platform for stone fabrication crews, featuring offline sync, geo-stamped proof of work, and StoneApp ingestion.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "offlineSync",
+    "photoCapture",
+    "pwa"
+  ]
+}
