@@ -6,15 +6,13 @@ import { Check } from 'lucide-react';
 
 interface SignaturePadProps {
   onSignatureChange: (dataUrl: string | null) => void;
-  onUnattendedChange: (isUnattended: boolean) => void;
   language: 'en' | 'es';
 }
 
-export function SignaturePad({ onSignatureChange, onUnattendedChange, language }: SignaturePadProps) {
+export function SignaturePad({ onSignatureChange, language }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
-  const [isUnattended, setIsUnattended] = useState(false);
   const [isActive, setIsActive] = useState(false);
 
   // Resize canvas responsively
@@ -24,7 +22,6 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
     const canvas = canvasRef.current;
     if (!canvas) return;
     
-    // To handle high DPI displays, scale the canvas internal resolution
     const resizeCanvas = () => {
       const parent = canvas.parentElement;
       if (!parent) return;
@@ -40,7 +37,10 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.lineWidth = 3;
-        ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--color-foreground') || 'currentColor';
+        
+        // Theme-aware pen color
+        const isDark = document.documentElement.classList.contains('dark');
+        ctx.strokeStyle = isDark ? '#eab308' : '#000000'; // RSG Gold in dark, Black in light
       }
     };
     
@@ -53,6 +53,9 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
+    
+    // clientX/Y are relative to viewport, rect.left/top are also relative to viewport.
+    // This gives coordinate relative to canvas top-left.
     return {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
@@ -60,20 +63,18 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
   };
 
   const startDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (isUnattended) return;
     setIsDrawing(true);
     setHasSignature(true);
     const { x, y } = getCoordinates(e);
     const ctx = canvasRef.current?.getContext('2d');
     if (ctx) {
-      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--color-foreground').trim() || 'currentColor';
       ctx.beginPath();
       ctx.moveTo(x, y);
     }
   };
 
   const draw = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || isUnattended) return;
+    if (!isDrawing) return;
     e.preventDefault();
     const { x, y } = getCoordinates(e);
     const ctx = canvasRef.current?.getContext('2d');
@@ -91,7 +92,8 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
     }
   };
 
-  const clearSignature = () => {
+  const clearSignature = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -102,84 +104,58 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
     onSignatureChange(null);
   };
 
-  const handleUnattendedToggle = () => {
-    const nextState = !isUnattended;
-    setIsUnattended(nextState);
-    onUnattendedChange(nextState);
-    if (nextState) clearSignature();
-  };
-
   return (
-    <div className="flex flex-col gap-3">
-      {!isActive ? (
-        <button
-          type="button"
-          onClick={() => {
-            if (!isUnattended) setIsActive(true);
-          }}
-          className={`w-full h-48 bg-surface border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${isUnattended ? 'border-border opacity-50 pointer-events-none' : 'border-primary/20 hover:border-primary/50'}`}
-        >
-          <span className="text-foreground/50 font-black uppercase tracking-[0.2em] text-xs">
-            {language === 'en' ? 'Tap To Sign' : 'Toque para Firmar'}
-          </span>
-          <span className="text-foreground/30 font-mono uppercase tracking-widest text-[10px] mt-2">
-            {language === 'en' ? 'Client Signature (Optional)' : 'Firma del Cliente (Opcional)'}
-          </span>
-        </button>
-      ) : (
-        <div className="relative w-full h-48 flex justify-center bg-transparent">
-          {/* 
-            Safe Scroll Margin: We restrict the canvas width using padding or margin.
-            px-6 provides roughly 24px safe margin on each side for mobile scrolling.
-          */}
-          <div className="w-full h-full px-6">
-            <div className={`relative w-full h-full bg-surface border-2 overflow-hidden shadow-inner ${isUnattended ? 'border-border opacity-50 pointer-events-none' : 'border-primary'}`}>
-              <canvas
-                ref={canvasRef}
-                onPointerDown={startDrawing}
-                onPointerMove={draw}
-                onPointerUp={stopDrawing}
-                onPointerOut={stopDrawing}
-                className="w-full h-full touch-none cursor-crosshair"
-              />
-              {!hasSignature && !isUnattended && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                  <span className="text-foreground/30 font-bold uppercase tracking-widest text-[10px] px-2 mb-1">
-                    {language === 'en' ? 'Sign Here' : 'Firme Aquí'}
-                  </span>
-                  <span className="text-foreground/20 font-mono text-[8px] uppercase tracking-widest">
-                    Scroll edges to skip
-                  </span>
-                </div>
-              )}
+    <div className="flex flex-col gap-2">
+      <div 
+        onClick={() => !isActive && setIsActive(true)}
+        className={`relative w-full transition-all duration-300 overflow-hidden cursor-pointer rounded-sm border ${
+          isActive ? 'h-48' : 'h-16'
+        } ${isActive ? 'bg-white dark:bg-[#0a0a0a] border-primary/30' : 'bg-surface border-border/50 hover:border-primary/30'} flex flex-col items-center justify-center`}
+      >
+        {!isActive ? (
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+              {language === 'en' ? 'Tap To Sign (Optional)' : 'Toque para Firmar (Opcional)'}
+            </span>
+          </div>
+        ) : (
+          <div className="w-full h-full relative">
+            <canvas
+              ref={canvasRef}
+              onPointerDown={startDrawing}
+              onPointerMove={draw}
+              onPointerUp={stopDrawing}
+              onPointerOut={stopDrawing}
+              className="w-full h-full touch-none"
+            />
+            
+            <div className="absolute top-2 right-2 flex gap-2">
+              <button
+                onClick={clearSignature}
+                className="px-2 py-1 bg-foreground/5 hover:bg-foreground/10 text-[8px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground/60 transition-colors"
+              >
+                {language === 'en' ? 'Clear' : 'Borrar'}
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsActive(false);
+                }}
+                className="px-2 py-1 bg-primary text-primary-foreground text-[8px] font-black uppercase tracking-widest"
+              >
+                {language === 'en' ? 'Done' : 'Listo'}
+              </button>
             </div>
-          </div>
-        </div>
-      )}
 
-      <div className="flex justify-between items-center px-1">
-        <button
-          onClick={clearSignature}
-          disabled={!hasSignature || isUnattended || !isActive}
-          className="text-xs font-bold uppercase tracking-widest text-foreground/50 hover:text-foreground disabled:opacity-30"
-        >
-          {language === 'en' ? 'Clear' : 'Borrar'}
-        </button>
-
-        <label className="flex items-center gap-2 cursor-pointer group">
-          <div className={`w-5 h-5 border flex items-center justify-center transition-colors ${isUnattended ? 'bg-primary border-primary' : 'border-foreground/30 group-hover:border-primary'}`}>
-            {isUnattended && <Check className="w-3.5 h-3.5 text-background" strokeWidth={3} />}
+            {!hasSignature && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 transition-opacity">
+                <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-black">
+                   {language === 'en' ? 'Sign on the Slab' : 'Firme en el Slab'}
+                </span>
+              </div>
+            )}
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/70 group-hover:text-foreground transition-colors">
-            {language === 'en' ? 'Site Unattended' : 'Sitio Desatendido'}
-          </span>
-          <input 
-            type="checkbox" 
-            className="hidden" 
-            checked={isUnattended}
-            onChange={handleUnattendedToggle}
-          />
-        </label>
+        )}
       </div>
     </div>
   );

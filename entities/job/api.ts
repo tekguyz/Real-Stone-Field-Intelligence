@@ -11,7 +11,23 @@ export const jobService = {
   getJobs: async (isDevMode: boolean, authUid?: string): Promise<Job[]> => {
     if (isDevMode) {
       await new Promise(resolve => setTimeout(resolve, 800));
-      return mockJobs as any;
+      
+      // Merge local overrides from sessionStorage if in DevMode
+      const overrides = typeof window !== 'undefined' ? sessionStorage.getItem('rsg-dev-overrides') : null;
+      const parsedOverrides = overrides ? JSON.parse(overrides) : {};
+      
+      return mockJobs.map(job => {
+        const override = parsedOverrides[job.id];
+        if (override) {
+          return {
+            ...job,
+            status: override.status || job.status,
+            photos: [...(job.photos || []), ...(override.photos || [])],
+            signature_url: override.signature_url || job.signature_url
+          };
+        }
+        return job;
+      }) as any;
     }
 
     if (!supabase) {
@@ -49,6 +65,12 @@ export const jobService = {
   updateJobStatus: async (jobId: string, newStatus: Job['status'], isDevMode: boolean, payload?: any): Promise<void> => {
     if (isDevMode) {
       await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const overrides = JSON.parse(sessionStorage.getItem('rsg-dev-overrides') || '{}');
+      if (!overrides[jobId]) overrides[jobId] = {};
+      overrides[jobId].status = newStatus;
+      sessionStorage.setItem('rsg-dev-overrides', JSON.stringify(overrides));
+      
       console.log(`[DevMode] Job ${jobId} status updated to ${newStatus}`);
       return;
     }
@@ -118,7 +140,21 @@ export const jobService = {
   uploadPhoto: async (file: File | Blob, jobId: string, isDevMode: boolean): Promise<string> => {
     if (isDevMode) {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      return URL.createObjectURL(file);
+      const url = URL.createObjectURL(file);
+      
+      // Persist base64 to session storage for DevMode persistence
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result as string;
+        const overrides = JSON.parse(sessionStorage.getItem('rsg-dev-overrides') || '{}');
+        if (!overrides[jobId]) overrides[jobId] = {};
+        if (!overrides[jobId].photos) overrides[jobId].photos = [];
+        overrides[jobId].photos.push(base64data);
+        sessionStorage.setItem('rsg-dev-overrides', JSON.stringify(overrides));
+      };
+      reader.readAsDataURL(file);
+      
+      return url;
     }
 
     const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
@@ -141,7 +177,7 @@ export const jobService = {
 
     const fileName = `${jobId}/${Date.now()}-${(file as File).name || 'photo.jpg'}`;
     const { data, error: uploadError } = await supabase.storage
-      .from('job-photos')
+      .from('photos')
       .upload(fileName, file);
 
     if (uploadError) {
@@ -157,7 +193,7 @@ export const jobService = {
     }
 
     const { data: { publicUrl } } = supabase.storage
-      .from('job-photos')
+      .from('photos')
       .getPublicUrl(fileName);
 
     const { error: dbError } = await supabase
@@ -173,6 +209,17 @@ export const jobService = {
   },
 
   uploadSignature: async (dataUrl: string, jobId: string, isDevMode: boolean): Promise<string> => {
+    if (isDevMode) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const overrides = JSON.parse(sessionStorage.getItem('rsg-dev-overrides') || '{}');
+      if (!overrides[jobId]) overrides[jobId] = {};
+      overrides[jobId].signature_url = dataUrl;
+      sessionStorage.setItem('rsg-dev-overrides', JSON.stringify(overrides));
+      
+      return dataUrl;
+    }
+
     const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
     if (isOffline) {
@@ -185,11 +232,6 @@ export const jobService = {
       });
       console.log(`[Offline] Signature queued for upload later.`);
       return 'pending-sync-url';
-    }
-
-    if (isDevMode) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return 'signature-mock-url';
     }
     
     // For non-dev mode wait a sec (fake upload) 

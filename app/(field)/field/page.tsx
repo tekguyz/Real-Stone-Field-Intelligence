@@ -10,10 +10,18 @@ import { JobCard } from '../../../features/field-jobs/ui/JobCard';
 import { SyncIndicator } from '../../../shared/ui/SyncIndicator';
 
 export default function FieldPage() {
-  const { activeRole, language } = useUserStore();
+  const { activeRole, language, _hasHydrated } = useUserStore();
   const t = dict[language].field;
   
   const { data: jobs, isLoading, error, refetch } = useJobs();
+
+  if (!_hasHydrated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+         <Loader2 className="w-8 h-8 animate-spin text-primary opacity-20" />
+      </div>
+    );
+  }
 
   // Filter jobs for this specific installer
   const myJobs = jobs?.filter(j => j.installer_id === activeRole) || [];
@@ -22,7 +30,7 @@ export default function FieldPage() {
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">
       {/* Neo-Brutalist Strict Header - Exactly h-14 */}
-      <div className="sticky top-0 z-50 h-14 px-4 bg-background/80 backdrop-blur-md border-b border-border flex justify-between items-center shrink-0">
+      <div className="sticky top-0 z-50 h-14 px-4 bg-background border-b border-border flex justify-between items-center shrink-0">
         <div className="flex items-center gap-2 max-w-[40%]">
           <div className="w-8 h-8 bg-primary/10 flex items-center justify-center shrink-0">
             <Mountain className="w-5 h-5 text-primary" />

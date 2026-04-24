@@ -12,7 +12,8 @@ import {
   InstallationScopeList, 
   JobLogisticsCard, 
   DocumentationCapture, 
-  JobActionFooter 
+  JobActionFooter,
+  CapturedProofGrid
 } from '../../../../../features/field-jobs/ui/JobDetailComponents';
 
 export default function FieldJobDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -32,8 +33,6 @@ export default function FieldJobDetail({ params }: { params: Promise<{ id: strin
     isProcessing,
     signatureData,
     setSignatureData,
-    isUnattended,
-    setIsUnattended,
     showPrimer,
     setShowPrimer,
     permissionStatus,
@@ -63,7 +62,7 @@ export default function FieldJobDetail({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="flex flex-col min-h-full bg-background pb-12">
-      <div className="h-14 px-4 bg-surface border-b border-border sticky top-0 z-20 flex justify-between items-center shrink-0">
+      <div className="h-14 px-4 bg-background border-b border-border sticky top-0 z-20 flex justify-between items-center shrink-0">
         <div className="flex items-center gap-3">
           <Link href="/field" className="text-foreground/50 hover:text-primary transition-colors">
             <ArrowLeft className="w-5 h-5" />
@@ -89,6 +88,11 @@ export default function FieldJobDetail({ params }: { params: Promise<{ id: strin
           <JobLogisticsCard address={job.address} title={t.navigateToSite} />
         </section>
 
+        {/* Display captured proof if it exists (e.g. from sessionStorage via job.photos) */}
+        {job.photos && job.photos.length > 0 && (
+          <CapturedProofGrid photos={job.photos} language={language} />
+        )}
+
         <DocumentationCapture 
           permissionStatus={permissionStatus}
           checkPermissions={checkPermissions}
@@ -97,7 +101,6 @@ export default function FieldJobDetail({ params }: { params: Promise<{ id: strin
           processedPhotos={processedPhotos}
           removePhoto={removePhoto}
           setSignatureData={setSignatureData}
-          setIsUnattended={setIsUnattended}
           language={language}
         />
 
@@ -107,8 +110,6 @@ export default function FieldJobDetail({ params }: { params: Promise<{ id: strin
           isSubmitting={isSubmitting}
           handleSubmitReview={handleSubmitReview}
           processedPhotosLength={processedPhotos.length}
-          signatureData={signatureData}
-          isUnattended={isUnattended}
           language={language}
         />
       </div>

@@ -112,7 +112,6 @@ export function DocumentationCapture({
   processedPhotos,
   removePhoto,
   setSignatureData,
-  setIsUnattended,
   language
 }: any) {
   return (
@@ -122,7 +121,7 @@ export function DocumentationCapture({
           {language === 'en' ? 'Job Documentation' : 'Documentación'}
         </h2>
         <p className="text-xs text-foreground/40 leading-relaxed max-w-sm">
-          Capture installation photos and client signature to unblock submitting the worksheet.
+          Capture installation photos and an optional client signature to secure your work.
         </p>
       </div>
 
@@ -267,14 +266,39 @@ export function DocumentationCapture({
       </div>
 
       <div className="bg-card border border-border p-4 flex flex-col gap-4">
-        <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">Authorization</h3>
+        <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">Authorization (Optional)</h3>
         <SignaturePad 
           onSignatureChange={setSignatureData}
-          onUnattendedChange={setIsUnattended}
           language={language}
         />
       </div>
     </section>
+  );
+}
+
+export function CapturedProofGrid({ photos, language }: { photos: string[], language: 'en' | 'es' }) {
+  if (!photos || photos.length === 0) return null;
+  
+  return (
+    <div className="bg-card border border-border p-4 flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+         <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Captured Proof</span>
+      </div>
+      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+        {photos.map((src, i) => (
+          <div key={i} className="aspect-square relative overflow-hidden bg-foreground/5 border border-border/50">
+            <Image 
+              src={src} 
+              alt={`Proof ${i}`} 
+              fill 
+              className="object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -284,18 +308,18 @@ export function JobActionFooter({
   isSubmitting,
   handleSubmitReview,
   processedPhotosLength,
-  signatureData,
-  isUnattended,
   language
 }: any) {
+  const isSubmitted = jobStatus === 'submitted_for_review' || jobStatus === 'completed';
+  
   return (
     <section className="pt-4 border-t border-border">
-      {jobStatus === 'submitted_for_review' ? (
-        <div className="bg-amber-500/5 border-l-4 border-amber-500 border-y border-r border-amber-500/20 p-6 flex flex-col items-center text-center gap-3">
-           <CheckCircle2 className="w-10 h-10 text-amber-500 opacity-80" />
-           <div className="font-black text-amber-600 uppercase tracking-widest text-sm">Office Verification</div>
-           <p className="text-xs text-amber-700/70 font-medium max-w-[250px]">
-              Documentation secured. Await HQ review before closing site.
+      {isSubmitted ? (
+        <div className="bg-primary/5 border-l-4 border-primary border-y border-r border-primary/20 p-6 flex flex-col items-center text-center gap-3">
+           <CheckCircle2 className="w-10 h-10 text-primary opacity-80" />
+           <div className="font-black text-primary uppercase tracking-widest text-sm">Office Verification</div>
+           <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest max-w-[250px] leading-relaxed">
+              Job documentation secured.<br />Site verification in progress.
            </p>
         </div>
       ) : (
@@ -322,11 +346,6 @@ export function JobActionFooter({
               {processedPhotosLength === 0 && (
                 <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
                   • Capture at least 1 photo
-                </span>
-              )}
-              {!signatureData && !isUnattended && (
-                <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
-                  • Client signature required
                 </span>
               )}
             </div>

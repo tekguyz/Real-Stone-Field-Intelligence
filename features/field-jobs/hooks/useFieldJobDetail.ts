@@ -15,7 +15,6 @@ export function useFieldJobDetail(jobId: string) {
   const [processedPhotos, setProcessedPhotos] = useState<ProcessedImage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [signatureData, setSignatureData] = useState<string | null>(null);
-  const [isUnattended, setIsUnattended] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [showPrimer, setShowPrimer] = useState(false);
@@ -24,7 +23,7 @@ export function useFieldJobDetail(jobId: string) {
 
   const job = jobs?.find(j => j.id === jobId || j.legacy_id === jobId);
 
-  const isFormValid = processedPhotos.length > 0 && (isUnattended || signatureData !== null);
+  const isFormValid = processedPhotos.length > 0;
 
   const handleSubmitReview = async () => {
     if (!isFormValid || !job) return;
@@ -159,8 +158,6 @@ export function useFieldJobDetail(jobId: string) {
     isProcessing,
     signatureData,
     setSignatureData,
-    isUnattended,
-    setIsUnattended,
     showPrimer,
     setShowPrimer,
     permissionStatus,
