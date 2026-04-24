@@ -104,7 +104,7 @@ export default function SettingsPage() {
                       <div className="flex items-center justify-between py-4 border-b border-border">
                         <div className="pr-4">
                           <h3 className="font-medium text-foreground">{t.verifiedProofEmail}</h3>
-                          <p className="text-sm text-foreground/50 mt-1">Send an automated email to clients with photo proof when a job moves to "Verified".</p>
+                          <p className="text-sm text-foreground/50 mt-1">Send an automated email to clients with photo proof when a job moves to &quot;Verified&quot;.</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer shrink-0">
                           <input type="checkbox" className="sr-only peer" defaultChecked />

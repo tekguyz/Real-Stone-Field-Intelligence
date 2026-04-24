@@ -15,9 +15,12 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
   const [isUnattended, setIsUnattended] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   // Resize canvas responsively
   useEffect(() => {
+    if (!isActive) return;
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
     
@@ -37,8 +40,6 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.lineWidth = 3;
-        // Text color logic handled via parsing the CSS variable during draw or setting a hex.
-        // We'll use currentColor fallback by grabbing it dynamically or applying a fixed color.
         ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--color-foreground') || 'currentColor';
       }
     };
@@ -46,7 +47,7 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     return () => window.removeEventListener('resize', resizeCanvas);
-  }, []);
+  }, [isActive]);
 
   const getCoordinates = (e: React.PointerEvent<HTMLCanvasElement> | PointerEvent) => {
     const canvas = canvasRef.current;
@@ -65,7 +66,7 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
     const { x, y } = getCoordinates(e);
     const ctx = canvasRef.current?.getContext('2d');
     if (ctx) {
-      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--color-foreground').trim() || 'black';
+      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--color-foreground').trim() || 'currentColor';
       ctx.beginPath();
       ctx.moveTo(x, y);
     }
@@ -110,30 +111,56 @@ export function SignaturePad({ onSignatureChange, onUnattendedChange, language }
 
   return (
     <div className="flex flex-col gap-3">
-      <div 
-        className={`relative w-full h-48 bg-surface border-2 overflow-hidden transition-all duration-300 ${isUnattended ? 'border-border opacity-50 pointer-events-none' : 'border-primary/20'}`}
-      >
-        <canvas
-          ref={canvasRef}
-          onPointerDown={startDrawing}
-          onPointerMove={draw}
-          onPointerUp={stopDrawing}
-          onPointerOut={stopDrawing}
-          className="w-full h-full touch-none cursor-crosshair"
-        />
-        {!hasSignature && !isUnattended && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-foreground/30 font-bold uppercase tracking-widest text-xs">
-              {language === 'en' ? 'Client Signature' : 'Firma del Cliente'}
-            </span>
+      {!isActive ? (
+        <button
+          type="button"
+          onClick={() => {
+            if (!isUnattended) setIsActive(true);
+          }}
+          className={`w-full h-48 bg-surface border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${isUnattended ? 'border-border opacity-50 pointer-events-none' : 'border-primary/20 hover:border-primary/50'}`}
+        >
+          <span className="text-foreground/50 font-black uppercase tracking-[0.2em] text-xs">
+            {language === 'en' ? 'Tap To Sign' : 'Toque para Firmar'}
+          </span>
+          <span className="text-foreground/30 font-mono uppercase tracking-widest text-[10px] mt-2">
+            {language === 'en' ? 'Client Signature (Optional)' : 'Firma del Cliente (Opcional)'}
+          </span>
+        </button>
+      ) : (
+        <div className="relative w-full h-48 flex justify-center bg-transparent">
+          {/* 
+            Safe Scroll Margin: We restrict the canvas width using padding or margin.
+            px-6 provides roughly 24px safe margin on each side for mobile scrolling.
+          */}
+          <div className="w-full h-full px-6">
+            <div className={`relative w-full h-full bg-surface border-2 overflow-hidden shadow-inner ${isUnattended ? 'border-border opacity-50 pointer-events-none' : 'border-primary'}`}>
+              <canvas
+                ref={canvasRef}
+                onPointerDown={startDrawing}
+                onPointerMove={draw}
+                onPointerUp={stopDrawing}
+                onPointerOut={stopDrawing}
+                className="w-full h-full touch-none cursor-crosshair"
+              />
+              {!hasSignature && !isUnattended && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                  <span className="text-foreground/30 font-bold uppercase tracking-widest text-[10px] px-2 mb-1">
+                    {language === 'en' ? 'Sign Here' : 'Firme Aquí'}
+                  </span>
+                  <span className="text-foreground/20 font-mono text-[8px] uppercase tracking-widest">
+                    Scroll edges to skip
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="flex justify-between items-center px-1">
         <button
           onClick={clearSignature}
-          disabled={!hasSignature || isUnattended}
+          disabled={!hasSignature || isUnattended || !isActive}
           className="text-xs font-bold uppercase tracking-widest text-foreground/50 hover:text-foreground disabled:opacity-30"
         >
           {language === 'en' ? 'Clear' : 'Borrar'}

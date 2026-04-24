@@ -22,18 +22,28 @@ export default function FieldPage() {
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">
       {/* Neo-Brutalist Strict Header - Exactly h-14 */}
-      <div className="h-14 px-4 bg-surface border-b border-border flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-2 max-w-[30%]">
+      <div className="sticky top-0 z-50 h-14 px-4 bg-background/80 backdrop-blur-md border-b border-border flex justify-between items-center shrink-0">
+        <div className="flex items-center gap-2 max-w-[40%]">
           <div className="w-8 h-8 bg-primary/10 flex items-center justify-center shrink-0">
             <Mountain className="w-5 h-5 text-primary" />
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-primary truncate hidden sm:inline-block">
-            {activeRole.split('_')[1]?.toUpperCase()}
-          </span>
+          <div className="flex flex-col truncate">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-primary truncate hidden sm:inline-block">
+              {activeRole.split('_')[1]?.toUpperCase()}
+            </span>
+            <span className="font-mono text-[10px] uppercase font-bold text-foreground/50 hidden sm:inline-block">
+              {activeCount} ACTIVE
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 max-w-[65%] justify-end overflow-hidden">
+        <div className="flex items-center gap-3 max-w-[60%] justify-end overflow-hidden">
           <SyncIndicator />
-          <h1 className="text-sm font-black tracking-widest text-foreground uppercase truncate hidden sm:block">{t.todaysWork}</h1>
+          <div className="flex flex-col text-right truncate">
+             <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase truncate">{t.todaysWork}</h1>
+             <span className="text-[9px] font-mono uppercase text-foreground/50 tracking-widest sm:hidden">
+               {activeCount} ACTIVE
+             </span>
+          </div>
         </div>
       </div>
 

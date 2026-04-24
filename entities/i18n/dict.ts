@@ -43,6 +43,7 @@ export const dict = {
       city: 'City',
       installer: 'Installer',
       scope: 'Scope',
+      installationScope: 'Installation Scope',
       createJob: 'Create Job',
       
       // Team Page
@@ -153,6 +154,7 @@ export const dict = {
       city: 'Ciudad',
       installer: 'Instalador',
       scope: 'Alcance',
+      installationScope: 'Alcance de Instalación',
       createJob: 'Crear Trabajo',
       
       // Team Page

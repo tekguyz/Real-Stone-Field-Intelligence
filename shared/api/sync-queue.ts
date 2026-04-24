@@ -6,6 +6,7 @@ export interface SyncQueueItem {
   payload: any;
   timestamp: number;
   attempts: number;
+  status?: 'pending' | 'failed_permanently';
 }
 
 export class SyncDatabase extends Dexie {
@@ -14,7 +15,7 @@ export class SyncDatabase extends Dexie {
   constructor() {
     super('RealStoneSyncDB');
     this.version(1).stores({
-      sync_queue: '++id, action, timestamp, attempts'
+      sync_queue: '++id, action, timestamp, attempts, status'
     });
   }
 }

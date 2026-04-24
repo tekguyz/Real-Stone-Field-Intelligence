@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useSyncManager } from '../lib/useSyncManager';
 
 export function SyncIndicator() {
-  const { status, pendingCount } = useSyncManager();
+  const { status, pendingCount, clearErrors } = useSyncManager();
 
   return (
     <AnimatePresence mode="popLayout">
@@ -40,18 +40,20 @@ export function SyncIndicator() {
       )}
 
       {status === 'OFFLINE' && (
-        <motion.div 
+        <motion.button 
           key="offline"
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0 }}
-          className="flex items-center gap-2 px-2 py-1 bg-red-950 border border-red-600 rounded-none shadow-[0_0_10px_rgba(220,38,38,0.3)]"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => pendingCount > 0 && clearErrors()}
+          className="flex items-center gap-2 px-2 py-1 bg-red-950 border border-red-600 rounded-none shadow-[0_0_10px_rgba(220,38,38,0.3)] cursor-pointer"
         >
           <div className="w-1.5 h-1.5 bg-red-500 rounded-none animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-red-500">
+          <span className="text-[10px] font-black uppercase tracking-widest text-red-500 whitespace-nowrap">
             {pendingCount > 0 ? `${pendingCount} PENDING` : 'OFFLINE'}
           </span>
-        </motion.div>
+        </motion.button>
       )}
     </AnimatePresence>
   );

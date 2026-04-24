@@ -9,55 +9,50 @@ import { useUserStore } from '../user/store';
  */
 export const jobService = {
   getJobs: async (isDevMode: boolean, authUid?: string): Promise<Job[]> => {
-    // 1. Mock Data Interceptor
     if (isDevMode) {
-      // Simulate network request delay
       await new Promise(resolve => setTimeout(resolve, 800));
-      return mockJobs;
+      return mockJobs as any;
     }
 
-    // 2. Live Supabase Fetching
     if (!supabase) {
       console.warn("Supabase client is not configured, falling back to mock jobs temporarily.");
-      return mockJobs;
+      return mockJobs as any;
     }
 
     const { data, error } = await supabase
       .from('jobs')
       .select('*')
-      .order('install_date', { ascending: true });
+      .order('scheduled_date', { ascending: true });
 
     if (error) {
       console.error("Supabase error fetching jobs:", error);
       throw error;
     }
 
-    // Map the database layer to the application's entity representation
     return (data || []).map(row => ({
       id: row.id,
       legacy_id: row.legacy_id,
+      project_id: row.project_id,
       client_name: row.client_name,
-      location: {
-        address: row.address,
-        city: row.city,
-        state: 'FL', // Hardcoding for FL operational region based on mock data patterns
-        zip: '', // Database schema doesn't capture zip initially (could add later)
-        community: row.community || undefined
-      },
-      slab_info: {
-        material: row.scope ? row.scope.split(' - ')[0] : 'Unknown', // Basic parsing; actual prod would split columns
-        finish: 'Polished', // Default assumption
-        thickness: '3cm', // Default assumption
-        slabs: 1
-      },
+      address: row.address,
+      stoneapp_parts: row.stoneapp_parts as Job['stoneapp_parts'],
       status: row.status as Job['status'],
+      job_type: row.job_type as Job['job_type'],
+      scheduled_date: row.scheduled_date,
       installer_id: row.installer_id,
-      install_date: row.install_date,
-      logistics_notes: row.logistics_notes
+      logistics_notes: row.logistics_notes,
+      created_at: row.created_at,
+      updated_at: row.updated_at
     }));
   },
 
   updateJobStatus: async (jobId: string, newStatus: Job['status'], isDevMode: boolean, payload?: any): Promise<void> => {
+    if (isDevMode) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log(`[DevMode] Job ${jobId} status updated to ${newStatus}`);
+      return;
+    }
+
     const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
     if (isOffline) {
@@ -67,15 +62,10 @@ export const jobService = {
         action: 'UPDATE_STATUS',
         payload: { jobId, newStatus, ...payload },
         timestamp: Date.now(),
-        attempts: 0
+        attempts: 0,
+        status: 'pending'
       });
       console.log(`[Offline] Saved locally. Will sync ${jobId} when online.`);
-      return;
-    }
-
-    if (isDevMode) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      console.log(`[DevMode] Job ${jobId} status updated to ${newStatus}`);
       return;
     }
 
@@ -100,7 +90,37 @@ export const jobService = {
     }
   },
 
+  updateJobInstaller: async (jobId: string, installerId: string | null, isDevMode: boolean): Promise<void> => {
+    if (isDevMode) {
+      const job = mockJobs.find(j => j.id === jobId);
+      if (job) {
+        job.installer_id = installerId;
+        job.updated_at = new Date().toISOString();
+      }
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log(`[DevMode] Job ${jobId} installer updated to ${installerId}`);
+      return;
+    }
+
+    if (!supabase) throw new Error('Supabase client not initialized');
+
+    const { error } = await supabase
+      .from('jobs')
+      .update({ installer_id: installerId, updated_at: new Date().toISOString() })
+      .eq('id', jobId);
+
+    if (error) {
+      console.error(`[Sync Error] Failed to update installer for ${jobId}`, error);
+      throw error;
+    }
+  },
+
   uploadPhoto: async (file: File | Blob, jobId: string, isDevMode: boolean): Promise<string> => {
+    if (isDevMode) {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return URL.createObjectURL(file);
+    }
+
     const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
     
     if (isOffline) {
@@ -110,15 +130,11 @@ export const jobService = {
         action: 'UPLOAD_PHOTO',
         payload: { jobId, blob: file },
         timestamp: Date.now(),
-        attempts: 0
+        attempts: 0,
+        status: 'pending'
       });
       console.log(`[Offline] Photo queued for upload later.`);
-      return 'pending-sync-url';
-    }
-
-    if (isDevMode) {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      return URL.createObjectURL(file);
+      return URL.createObjectURL(file); // Return local URL for instant preview
     }
 
     if (!supabase) throw new Error("Supabase not configured");
@@ -207,6 +223,19 @@ export function useUpdateJobStatus() {
       jobService.updateJobStatus(jobId, status, isDevMode),
     onSuccess: () => {
       // Try invalidating
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    }
+  });
+}
+
+export function useUpdateJobInstaller() {
+  const { isDevMode } = useUserStore();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ jobId, installerId }: { jobId: string, installerId: string | null }) => 
+      jobService.updateJobInstaller(jobId, installerId, isDevMode),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
     }
   });

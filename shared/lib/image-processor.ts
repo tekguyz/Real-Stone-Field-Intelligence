@@ -5,6 +5,7 @@ export interface ProcessedImage {
     lat: number | null;
     lng: number | null;
     timestamp: number;
+    isGpsLocked: boolean;
   };
 }
 
@@ -13,11 +14,16 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
     // 1. Capture metadata timestamp
     const timestamp = Date.now();
 
-    // 2. Extract Geolocation (timeout after 3 seconds)
+    // 2. Extract Geolocation (timeout after 5 seconds)
     let lat: number | null = null;
     let lng: number | null = null;
+    let isGpsLocked = false;
     
+    let isFinalized = false;
     const finalizeProcessing = () => {
+      if (isFinalized) return;
+      isFinalized = true;
+
       // 3. Load image to Canvas for downscaling
       const img = new Image();
       const objectUrl = URL.createObjectURL(file);
@@ -47,7 +53,7 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
             resolve({
               blob,
               previewUrl: URL.createObjectURL(blob),
-              metadata: { lat, lng, timestamp }
+              metadata: { lat, lng, timestamp, isGpsLocked }
             });
           },
           'image/jpeg',
@@ -64,13 +70,27 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
         (pos) => {
           lat = pos.coords.latitude;
           lng = pos.coords.longitude;
+          isGpsLocked = true;
           finalizeProcessing();
         },
         (_err) => {
+          isGpsLocked = false;
           finalizeProcessing(); // Proceed without geolocation
         },
-        { timeout: 3000, maximumAge: 10000 }
+        { 
+          timeout: 5000, 
+          maximumAge: 10000,
+          enableHighAccuracy: true 
+        }
       );
+      
+      // Safety timeout: If GPS takes > 5s, we proceed with whatever we have (likely null)
+      // but ensure we don't hang the camera
+      setTimeout(() => {
+        if (!isFinalized) {
+          finalizeProcessing();
+        }
+      }, 5500);
     } else {
       finalizeProcessing();
     }

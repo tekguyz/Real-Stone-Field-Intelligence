@@ -4,324 +4,180 @@ export const mockJobs: Job[] = [
   {
     id: 'j-1001',
     legacy_id: 'WO-8402',
+    project_id: 'p-1',
     client_name: 'Palm Beach Residency - Unit 402',
-    location: {
-      address: '142 Ocean Blvd',
-      city: 'Palm Beach',
-      state: 'FL',
-      zip: '33480',
-      community: 'The Breakers'
-    },
-    slab_info: {
-      material: 'Taj Mahal Quartzite 3cm',
-      finish: 'Polished',
-      thickness: '3cm',
-      slabs: 4
-    },
-    status: 'in_progress',
+    address: '142 Ocean Blvd, Boca Raton, FL 33432',
+    stoneapp_parts: [
+      { partType: 'Kitchen Island', material: 'Taj Mahal Quartzite 3cm', slabId: 'S-202X', thickness: '3cm', seams: 1, edgeProfile: 'Miter' },
+      { partType: 'Perimeter', material: 'Taj Mahal Quartzite 3cm', slabId: 'S-203X', thickness: '3cm', seams: 2, edgeProfile: 'Eased' }
+    ],
+    status: 'submitted_for_review',
+    job_type: 'install',
     installer_id: 'installer_juan',
-    install_date: '2026-04-24T08:00:00Z',
-    logistics_notes: 'Gate Code: 1234. Use Service Elevator only. Protect marble floors.'
+    logistics_notes: 'Gate Code: 1234. Use Service Elevator.',
+    photos: [
+      'https://picsum.photos/seed/job1/800/600',
+      'https://picsum.photos/seed/job1-2/800/600',
+      'https://picsum.photos/seed/job1-3/800/600'
+    ],
+    signature_url: 'https://picsum.photos/seed/sig/400/200',
+    scheduled_date: '2026-04-24T08:00:00Z',
+    created_at: '2026-04-01T00:00:00Z',
+    updated_at: '2026-04-24T00:00:00Z'
   },
   {
     id: 'j-1002',
     legacy_id: 'WO-8415',
+    project_id: 'p-2',
     client_name: 'Jupiter Island Estate',
-    location: {
-      address: '881 S Beach Rd',
-      city: 'Jupiter',
-      state: 'FL',
-      zip: '33469',
-      community: 'The Bear\'s Club'
-    },
-    slab_info: {
-      material: 'Calacatta Laza 3cm',
-      finish: 'Honed',
-      thickness: '3cm',
-      slabs: 6
-    },
-    status: 'pending',
-    install_date: '2026-04-26T09:00:00Z',
-    logistics_notes: 'Must sign in at guard gate. Rear entrance for staging.'
+    address: '881 S Beach Rd, Jupiter, FL 33469',
+    stoneapp_parts: [
+      { partType: 'Master Bath', material: 'Calacatta Laza 3cm', slabId: 'S-991A', thickness: '3cm', seams: 0, edgeProfile: 'Ogee' }
+    ],
+    status: 'assigned',
+    job_type: 'install',
+    installer_id: 'installer_juan',
+    logistics_notes: 'Watch for newly planted sod. Park on driveway only.',
+    scheduled_date: '2026-04-24T13:00:00Z',
+    created_at: '2026-04-01T00:00:00Z',
+    updated_at: '2026-04-01T00:00:00Z'
   },
   {
     id: 'j-1003',
-    legacy_id: 'WO-8418',
-    client_name: 'Pompano Beach Penthouse',
-    location: {
-      address: '2200 N Ocean Blvd',
-      city: 'Pompano Beach',
-      state: 'FL',
-      zip: '33062',
-      community: 'Sabbia Beach'
-    },
-    slab_info: {
-      material: 'Blue Roma 3cm',
-      finish: 'Leathered',
-      thickness: '3cm',
-      slabs: 2
-    },
+    legacy_id: 'WO-8501',
+    project_id: 'p-3',
+    client_name: 'Seaside Villas Condos',
+    address: '1000 N A1A, Jupiter, FL 33477',
+    stoneapp_parts: [
+      { partType: 'Outdoor Kitchen', material: 'Absolute Black Granite Leathered', slabId: 'G-102', thickness: '3cm', seams: 1, edgeProfile: 'Eased' }
+    ],
     status: 'assigned',
-    installer_id: 'installer_carlos',
-    install_date: '2026-04-25T08:30:00Z',
-    logistics_notes: 'Wait for concierge. Crane required for island slab.'
+    job_type: 'install',
+    installer_id: 'installer_juan',
+    logistics_notes: 'Must check in at security desk. 3rd floor balcony.',
+    scheduled_date: '2026-04-25T09:00:00Z',
+    created_at: '2026-04-05T00:00:00Z',
+    updated_at: '2026-04-05T00:00:00Z'
   },
   {
     id: 'j-1004',
-    legacy_id: 'WO-8422',
-    client_name: 'Coral Gables Historic Villa',
-    location: {
-      address: '401 Biltmore Way',
-      city: 'Coral Gables',
-      state: 'FL',
-      zip: '33134',
-      community: 'Biltmore Estates'
-    },
-    slab_info: {
-      material: 'Nero Marquina 2cm',
-      finish: 'Polished',
-      thickness: '2cm',
-      slabs: 3
-    },
-    status: 'submitted_for_review',
-    installer_id: 'installer_juan',
-    install_date: '2026-04-22T07:00:00Z',
-    logistics_notes: 'Tight corners in stairwell. Double check seam at sink.'
+    legacy_id: 'WO-8550',
+    project_id: 'p-4',
+    client_name: 'Medalist Golf Club Home',
+    address: '9900 SE Medalist Dr, Hobe Sound, FL 33455',
+    stoneapp_parts: [
+      { partType: 'Kitchen Perimeter', material: 'Super White Quartzite', slabId: 'Q-445', thickness: '3cm', seams: 2, edgeProfile: 'Ogee' },
+      { partType: 'Pantry', material: 'Super White Quartzite', slabId: 'Q-445', thickness: '2cm', seams: 0, edgeProfile: 'Eased' }
+    ],
+    status: 'pending',
+    job_type: 'template',
+    installer_id: 'installer_carlos',
+    logistics_notes: 'Gate guard has name block. Call homeowner 30 mins prior.',
+    scheduled_date: '2026-04-24T08:30:00Z',
+    created_at: '2026-04-10T00:00:00Z',
+    updated_at: '2026-04-10T00:00:00Z'
   },
   {
     id: 'j-1005',
-    legacy_id: 'WO-8425',
-    client_name: 'Boca Raton Custom Build',
-    location: {
-      address: '501 E Camino Real',
-      city: 'Boca Raton',
-      state: 'FL',
-      zip: '33432',
-      community: 'Royal Palm Yacht & Country Club'
-    },
-    slab_info: {
-      material: 'Cristallo Quartzite 3cm',
-      finish: 'Polished',
-      thickness: '3cm',
-      slabs: 8
-    },
-    status: 'verified',
-    install_date: '2026-04-20T10:00:00Z',
-    logistics_notes: 'High value material. Backlight check required.'
+    legacy_id: 'WO-8562',
+    project_id: 'p-5',
+    client_name: 'Tradition Townhome',
+    address: '10500 SW Village Pkwy, Port St. Lucie, FL 34987',
+    stoneapp_parts: [
+      { partType: 'Master Bath Vanity', material: 'Carrara Marble', slabId: 'M-112', thickness: '2cm', seams: 0, edgeProfile: 'Eased' }
+    ],
+    status: 'assigned',
+    job_type: 'install',
+    installer_id: 'installer_carlos',
+    logistics_notes: 'Townhome complex. Tight parking, use visitor spots.',
+    scheduled_date: '2026-04-24T14:00:00Z',
+    created_at: '2026-04-11T00:00:00Z',
+    updated_at: '2026-04-11T00:00:00Z'
   },
   {
     id: 'j-1006',
-    legacy_id: 'WO-8430',
-    client_name: 'Fort Lauderdale Beach House',
-    location: {
-      address: '100 E Las Olas Blvd',
-      city: 'Fort Lauderdale',
-      state: 'FL',
-      zip: '33301',
-      community: 'Las Olas Isles'
-    },
-    slab_info: {
-      material: 'Silver Travertine 2cm',
-      finish: 'Honed',
-      thickness: '2cm',
-      slabs: 5
-    },
+    legacy_id: 'WO-8588',
+    project_id: 'p-6',
+    client_name: 'Vero Beach Oceanfront',
+    address: '4100 Ocean Dr, Vero Beach, FL 32963',
+    stoneapp_parts: [
+      { partType: 'Kitchen Island', material: 'Cristallo Quartzite', slabId: 'Q-889', thickness: '3cm', seams: 1, edgeProfile: 'Miter' },
+      { partType: 'Fireplace Surround', material: 'Cristallo Quartzite', slabId: 'Q-889', thickness: '2cm', seams: 0, edgeProfile: 'Eased' }
+    ],
     status: 'pending',
-    install_date: '2026-04-28T08:00:00Z',
-    logistics_notes: 'Check for matching grain on vanity backsplash.'
+    job_type: 'template',
+    installer_id: 'installer_carlos',
+    logistics_notes: 'Use south entrance for service vehicles.',
+    scheduled_date: '2026-04-25T10:00:00Z',
+    created_at: '2026-04-15T00:00:00Z',
+    updated_at: '2026-04-15T00:00:00Z'
   },
   {
     id: 'j-1007',
-    legacy_id: 'WO-8435',
-    client_name: 'Wellington Equestrian Compound',
-    location: {
-      address: '12345 Pierson Rd',
-      city: 'Wellington',
-      state: 'FL',
-      zip: '33414',
-      community: 'Grand Hunter'
-    },
-    slab_info: {
-      material: 'Bianco Carrara 3cm',
-      finish: 'Polished',
-      thickness: '3cm',
-      slabs: 3
-    },
-    status: 'assigned',
-    installer_id: 'installer_juan',
-    install_date: '2026-04-27T07:30:00Z',
-    logistics_notes: 'Barn conversion. Rough ceiling height, verify template.'
+    legacy_id: 'WO-8601',
+    project_id: 'p-7',
+    client_name: 'Boynton Beach Renovation',
+    address: '1200 S Federal Hwy, Boynton Beach, FL 33435',
+    stoneapp_parts: [
+      { partType: 'Bar Top', material: 'Blue Dunes Granite', slabId: 'G-305', thickness: '3cm', seams: 0, edgeProfile: 'Bullnose' }
+    ],
+    status: 'pending',
+    job_type: 'install',
+    installer_id: null,
+    logistics_notes: 'Contractor lockbox code: 0424',
+    scheduled_date: '2026-04-26T08:00:00Z',
+    created_at: '2026-04-18T00:00:00Z',
+    updated_at: '2026-04-18T00:00:00Z'
   },
   {
     id: 'j-1008',
-    legacy_id: 'WO-8440',
-    client_name: 'Delray Beach Waterfront',
-    location: {
-      address: '150 E Atlantic Ave',
-      city: 'Delray Beach',
-      state: 'FL',
-      zip: '33444',
-      community: 'Mizner Country Club'
-    },
-    slab_info: {
-      material: 'Statuario Marble 2cm',
-      finish: 'Polished',
-      thickness: '2cm',
-      slabs: 4
-    },
-    status: 'in_progress',
-    installer_id: 'installer_carlos',
-    install_date: '2026-04-23T08:00:00Z',
-    logistics_notes: 'Avoid using heavy equipment on driveway pavers.'
+    legacy_id: 'WO-8610',
+    project_id: 'p-8',
+    client_name: 'PGA Village Estate',
+    address: '8800 PGA Blvd, Port St. Lucie, FL 34986',
+    stoneapp_parts: [
+      { partType: 'Kitchen Perimeter', material: 'Silestone Calacatta Gold', slabId: 'QTZ-01', thickness: '3cm', seams: 2, edgeProfile: 'Eased' }
+    ],
+    status: 'pending',
+    job_type: 'install',
+    installer_id: null,
+    logistics_notes: 'Show vendor pass at main gate.',
+    scheduled_date: null,
+    created_at: '2026-04-20T00:00:00Z',
+    updated_at: '2026-04-20T00:00:00Z'
   },
   {
     id: 'j-1009',
-    legacy_id: 'WO-8445',
-    client_name: 'Miami Beach Luxury Sky',
-    location: {
-      address: '4525 Collins Ave',
-      city: 'Miami Beach',
-      state: 'FL',
-      zip: '33140',
-      community: 'Eden Roc'
-    },
-    slab_info: {
-      material: 'Absolute Black Granite 3cm',
-      finish: 'Leathered',
-      thickness: '3cm',
-      slabs: 7
-    },
-    status: 'submitted_for_review',
-    installer_id: 'installer_carlos',
-    install_date: '2026-04-21T09:00:00Z',
-    logistics_notes: 'Full height backsplash. Needs mirror cutouts.'
+    legacy_id: 'WO-8622',
+    project_id: 'p-9',
+    client_name: 'Boca Raton Office Park',
+    address: '2200 Glades Rd, Boca Raton, FL 33431',
+    stoneapp_parts: [
+      { partType: 'Reception Desk', material: 'Nero Marquina Marble', slabId: 'M-500', thickness: '2cm', seams: 1, edgeProfile: 'Miter' }
+    ],
+    status: 'pending',
+    job_type: 'install',
+    installer_id: null,
+    logistics_notes: 'Loading dock in the rear. Freight elevator reserved for 9AM.',
+    scheduled_date: '2026-04-27T09:00:00Z',
+    created_at: '2026-04-21T00:00:00Z',
+    updated_at: '2026-04-21T00:00:00Z'
   },
   {
     id: 'j-1010',
-    legacy_id: 'WO-8450',
-    client_name: 'Sunny Isles Developer Unit',
-    location: {
-      address: '17425 Collins Ave',
-      city: 'Sunny Isles Beach',
-      state: 'FL',
-      zip: '33160',
-      community: 'Jade Signature'
-    },
-    slab_info: {
-      material: 'White Macaubas 3cm',
-      finish: 'Polished',
-      thickness: '3cm',
-      slabs: 12
-    },
-    status: 'verified',
-    install_date: '2026-04-18T08:00:00Z',
-    logistics_notes: 'High volume. 5 units total. Verify slab orientation.'
-  },
-  {
-    id: 'j-1011',
-    legacy_id: 'WO-8460',
-    client_name: 'Manalapan Oceanfront',
-    location: {
-      address: '1100 S Ocean Blvd',
-      city: 'Manalapan',
-      state: 'FL',
-      zip: '33462',
-      community: 'Estate Section'
-    },
-    slab_info: {
-      material: 'Michelangelo Marble 3cm',
-      finish: 'Polished',
-      thickness: '3cm',
-      slabs: 10
-    },
+    legacy_id: 'WO-8640',
+    project_id: 'p-10',
+    client_name: 'Sailfish Point Residence',
+    address: '2000 SE Sailfish Point Blvd, Stuart, FL 34996',
+    stoneapp_parts: [
+      { partType: 'Master Bath', material: 'Onyx', slabId: 'O-111', thickness: '2cm', seams: 0, edgeProfile: 'Ogee' }
+    ],
     status: 'pending',
-    install_date: '2026-04-30T07:00:00Z',
-    logistics_notes: 'Extremely fragile. No suction cups on face.'
-  },
-  {
-    id: 'j-1012',
-    legacy_id: 'WO-8465',
-    client_name: 'Palm Beach Gardens Estate',
-    location: {
-      address: '123 Old Marsh Way',
-      city: 'Palm Beach Gardens',
-      state: 'FL',
-      zip: '33418',
-      community: 'Old Marsh'
-    },
-    slab_info: {
-      material: 'Fantasy Brown Quartzite',
-      finish: 'Leathered',
-      thickness: '3cm',
-      slabs: 5
-    },
-    status: 'assigned',
-    installer_id: 'installer_juan',
-    install_date: '2026-04-29T08:30:00Z',
-    logistics_notes: 'Outdoor kitchen. Use UV stable adhesive.'
-  },
-  {
-    id: 'j-1013',
-    legacy_id: 'WO-8470',
-    client_name: 'West Palm Beach Commercial',
-    location: {
-      address: '501 S Flagler Dr',
-      city: 'West Palm Beach',
-      state: 'FL',
-      zip: '33401',
-      community: 'Phillips Point'
-    },
-    slab_info: {
-      material: 'Caesarstone Empira White',
-      finish: 'Polished',
-      thickness: '2cm',
-      slabs: 15
-    },
-    status: 'in_progress',
-    installer_id: 'installer_juan',
-    install_date: '2026-04-23T20:00:00Z',
-    logistics_notes: 'Night install only. Loading dock B.'
-  },
-  {
-    id: 'j-1014',
-    legacy_id: 'WO-8475',
-    client_name: 'Hillsboro Mile Mansion',
-    location: {
-      address: '1000 Hillsboro Mile',
-      city: 'Hillsboro Beach',
-      state: 'FL',
-      zip: '33062',
-      community: 'Millionaire Row'
-    },
-    slab_info: {
-      material: 'Versace Gold Quartzite',
-      finish: 'Polished',
-      thickness: '3cm',
-      slabs: 9
-    },
-    status: 'pending',
-    install_date: '2026-05-01T08:00:00Z',
-    logistics_notes: 'Check stone match across the waterfall edge.'
-  },
-  {
-    id: 'j-1015',
-    legacy_id: 'WO-8480',
-    client_name: 'Singer Island Tower',
-    location: {
-      address: '2700 N Ocean Dr',
-      city: 'Singer Island',
-      state: 'FL',
-      zip: '33404',
-      community: 'Tiara'
-    },
-    slab_info: {
-      material: 'Calacatta Borghese Marble',
-      finish: 'Honed',
-      thickness: '2cm',
-      slabs: 4
-    },
-    status: 'verified',
-    install_date: '2026-04-15T09:00:00Z',
-    logistics_notes: 'High wind zone. Crane staging at the beach access.'
+    job_type: 'template',
+    installer_id: null,
+    logistics_notes: 'Requires 24hr advance notice for gate clearance.',
+    scheduled_date: null,
+    created_at: '2026-04-22T00:00:00Z',
+    updated_at: '2026-04-22T00:00:00Z'
   }
 ];
