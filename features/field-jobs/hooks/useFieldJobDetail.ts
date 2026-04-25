@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useJobs, useUpdateJobStatus } from '../../../entities/job/api';
 import { processImage, ProcessedImage } from '../../../shared/lib/image-processor';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '../../../entities/user/store';
+import { usePermissions } from '../../../shared/lib/usePermissions';
 
 export function useFieldJobDetail(jobId: string) {
   const router = useRouter();
@@ -18,15 +19,32 @@ export function useFieldJobDetail(jobId: string) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [showPrimer, setShowPrimer] = useState(false);
-  const [permissionStatus, setPermissionStatus] = useState<'pending' | 'granted' | 'denied'>('pending');
   const [pendingCaptureType, setPendingCaptureType] = useState<'camera' | 'gallery' | null>(null);
+  
+  const { cameraStatus, locationStatus, requestPermissions, checkStatus } = usePermissions();
 
   const job = jobs?.find(j => j.id === jobId || j.legacy_id === jobId);
+  const isSealed = job?.status === 'verified';
 
   const isFormValid = processedPhotos.length > 0;
 
+  // Data Loss Prevention (Native beforeunload)
+  useEffect(() => {
+    const hasUnsavedChanges = processedPhotos.length > 0 || signatureData !== null;
+    
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && !isSubmitting && !isSealed) {
+        e.preventDefault();
+        e.returnValue = 'Unsaved changes will be lost';
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [processedPhotos.length, signatureData, isSubmitting, isSealed]);
+
   const handleSubmitReview = async () => {
-    if (!isFormValid || !job) return;
+    if (!isFormValid || !job || isSealed) return;
     setIsSubmitting(true);
     
     try {
@@ -54,6 +72,12 @@ export function useFieldJobDetail(jobId: string) {
       });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       
+      if (isDevMode && job) {
+        sessionStorage.removeItem(`field_captures_${job.id}`);
+        // Dispatch event to clear for Drawer
+        window.dispatchEvent(new Event('field_capture_update'));
+      }
+      
       router.push('/field');
     } catch (e) {
       console.error(e);
@@ -63,6 +87,7 @@ export function useFieldJobDetail(jobId: string) {
   };
 
   const handleCaptureImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isSealed) return;
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -79,6 +104,41 @@ export function useFieldJobDetail(jobId: string) {
       }
 
       setProcessedPhotos(prev => [...newPhotos, ...prev]);
+
+      // DevMode Persistence: Save to sessionStorage
+      if (isDevMode && job) {
+        const fieldCaptures = JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "proofs": [], "signature": null}');
+        
+        const photoPromises = newPhotos.map(p => {
+          return new Promise<{ base64: string, metadata: any }>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve({
+              base64: reader.result as string,
+              metadata: p.metadata
+            });
+            reader.readAsDataURL(p.blob);
+          });
+        });
+
+        const base64Photos = await Promise.all(photoPromises);
+        fieldCaptures.photos = [...base64Photos.map(p => p.base64), ...(fieldCaptures.photos || [])];
+        
+        const newProofs = base64Photos.map(p => ({
+          url: p.base64,
+          timestamp: p.metadata.timestamp,
+          lat: p.metadata.lat,
+          lng: p.metadata.lng,
+          accuracy: p.metadata.accuracy,
+          location_status: p.metadata.location_status
+        }));
+        
+        fieldCaptures.proofs = [...newProofs, ...(fieldCaptures.proofs || [])];
+        
+        sessionStorage.setItem(`field_captures_${job.id}`, JSON.stringify(fieldCaptures));
+        
+        // Trigger a custom event to notify other components (like AdminJobDrawer in the same tab)
+        window.dispatchEvent(new Event('field_capture_update'));
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -88,62 +148,60 @@ export function useFieldJobDetail(jobId: string) {
   };
 
   const removePhoto = (index: number) => {
+    if (isSealed) return;
     setProcessedPhotos(prev => {
+      const photoToRemove = prev[index];
       const updated = [...prev];
       URL.revokeObjectURL(updated[index].previewUrl);
       updated.splice(index, 1);
+      
+      // Update sessionStorage in DevMode
+      if (isDevMode && job) {
+        const fieldCaptures = JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "signature": null}');
+        fieldCaptures.photos.splice(index, 1);
+        sessionStorage.setItem(`field_captures_${job.id}`, JSON.stringify(fieldCaptures));
+        window.dispatchEvent(new Event('field_capture_update'));
+      }
+      
       return updated;
     });
   };
 
+  // Signature persistence
+  useEffect(() => {
+    if (isDevMode && job && signatureData) {
+      const fieldCaptures = JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "signature": null}');
+      fieldCaptures.signature = signatureData;
+      sessionStorage.setItem(`field_captures_${job.id}`, JSON.stringify(fieldCaptures));
+      window.dispatchEvent(new Event('field_capture_update'));
+    }
+  }, [signatureData, isDevMode, job]);
+
   const checkPermissions = async (type: 'camera' | 'gallery') => {
-    if (permissionStatus === 'granted') return true;
+    if (isSealed) return false;
+    
+    await checkStatus();
+    
+    // If both are already granted, update state and bypass primer
+    if (cameraStatus === 'granted' && locationStatus === 'granted') {
+      return true;
+    }
+
+    // If not granted, show primer
     setPendingCaptureType(type);
     setShowPrimer(true);
     return false;
   };
 
   const handleContinueCapture = async () => {
+    const success = await requestPermissions();
+    // Assuming we want to proceed and try capture anyway (fallback to unavailable, or standard fail flow)
+    // The requirement says "If GPS fails to lock, store the image with location_status: 'timeout_unavailable'".
+    // And if "Access Blocked" they can't continue, which is handled in Primer.
+    // If we reach here and it was success or partially success, close primer and open picker
     setShowPrimer(false);
-    try {
-      // 1. Check Camera (Attempt to trigger browser permission prompt)
-      // If the device has no camera, we proceed anyway as they might use Gallery
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop());
-      } catch (camErr: any) {
-        console.warn("Camera check failed:", camErr.message || camErr.name);
-      }
-      
-      // 2. Check Geolocation (Attempt to trigger browser permission prompt)
-      // We make this non-fatal because getting a GPS fix can be slow or fail.
-      // The image-processor.ts also has its own async geolocation fetch.
-      try {
-        await new Promise((resolve) => {
-          navigator.geolocation.getCurrentPosition(resolve, resolve, { 
-            timeout: 5000, 
-            maximumAge: 30000 
-          });
-        });
-      } catch (geoErr: any) {
-        console.warn("Geolocation check failed or timed out during primer:", geoErr.message || geoErr.code);
-      }
-      
-      setPermissionStatus('granted');
-      const inputId = pendingCaptureType === 'camera' ? 'camera-input' : 'gallery-input';
-      document.getElementById(inputId)?.click();
-    } catch (err: any) {
-      console.error("Critical Permission Error in handleContinueCapture:", {
-        message: err.message,
-        code: err.code,
-        name: err.name,
-        stack: err.stack,
-        raw: err
-      });
-      // We only set 'denied' if something truly unexpected happens 
-      // since the individual sensor failures above are caught.
-      setPermissionStatus('denied');
-    }
+    const inputId = pendingCaptureType === 'camera' ? 'camera-input' : 'gallery-input';
+    document.getElementById(inputId)?.click();
   };
 
   return {
@@ -160,7 +218,8 @@ export function useFieldJobDetail(jobId: string) {
     setSignatureData,
     showPrimer,
     setShowPrimer,
-    permissionStatus,
+    cameraStatus,
+    locationStatus,
     checkPermissions,
     handleContinueCapture
   };

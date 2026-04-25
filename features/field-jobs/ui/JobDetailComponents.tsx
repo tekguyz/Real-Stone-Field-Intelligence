@@ -2,6 +2,8 @@ import { Job } from '../../../entities/job/types';
 import { dict } from '../../../entities/i18n/dict';
 import { ProcessedImage } from '../../../shared/lib/image-processor';
 import { SignaturePad } from '../../../shared/ui/SignaturePad';
+import { summarizeJobScope } from '../../../shared/lib/utils';
+import { useState } from 'react';
 import { 
   MapPin, 
   Trash2, 
@@ -15,85 +17,120 @@ import {
   LifeBuoy,
   AlertOctagon,
   Upload,
-  CheckCircle2
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 
-export function InstallationScopeList({ job, language }: { job: Job, language: 'en' | 'es' }) {
-  const t = dict[language].admin;
+export function JobBlockScope({ job, language }: { job: Job, language: 'en' | 'es' }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const scopeText = summarizeJobScope(job.stoneapp_parts);
+  const parts = job.stoneapp_parts || [];
+  const displayParts = isExpanded ? parts : parts.slice(0, 3);
+  const hasMore = parts.length > 3;
+  
   return (
-    <div className="bg-card border border-border overflow-hidden">
-      <div className="bg-foreground/5 px-5 py-3 border-b border-border">
-        <h3 className="text-[10px] font-mono text-foreground/60 uppercase tracking-[0.2em]">
-          {t.installationScope}
-        </h3>
+    <div className="flex flex-col gap-2">
+      <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
+        {language === 'en' ? 'Installation Scope' : 'Alcance de la Instalación'}
+      </h3>
+      <div className="bg-surface/50 border-l-2 border-primary pl-3 py-1">
+        <p className="text-sm font-bold italic leading-tight text-foreground/90">
+          {scopeText}
+        </p>
       </div>
-      
-      <div className="divide-y divide-border">
-        {job.stoneapp_parts && job.stoneapp_parts.length > 0 ? (
-          job.stoneapp_parts.map((part, i) => (
-            <div key={i} className="p-4 flex flex-col gap-2">
-              <div className="flex justify-between items-start">
-                <span className="text-[11px] font-black uppercase tracking-widest text-foreground">
-                  {part.partType}
-                </span>
-                <span className="text-[10px] font-mono text-primary font-bold">
-                  {part.slabId}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[8px] uppercase tracking-widest text-foreground/40 font-mono">Material</span>
-                  <span className="text-[10px] font-bold text-foreground/80 truncate">{part.material}</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[8px] uppercase tracking-widest text-foreground/40 font-mono">Profile</span>
-                  <span className="text-[10px] font-bold text-foreground/80">{part.edgeProfile}</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[8px] uppercase tracking-widest text-foreground/40 font-mono">Thickness</span>
-                  <span className="text-[10px] font-bold text-foreground/80">{part.thickness}</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[8px] uppercase tracking-widest text-foreground/40 font-mono">Seams</span>
-                  <span className="text-[10px] font-bold text-foreground/80">{part.seams}</span>
-                </div>
-              </div>
+
+      {parts.length > 0 && (
+        <div className="flex flex-col gap-1 mt-1">
+          {displayParts.map((part, i) => (
+            <div key={i} className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-foreground/80 py-1 border-b border-border/20 last:border-0 uppercase tracking-tight">
+              <span className="font-extrabold text-foreground">{part.partType}:</span>
+              <span>{part.material}</span>
+              <span className="text-foreground/30">•</span>
+              <span className="font-mono text-[10px] text-primary">{part.edgeProfile}</span>
+              <span className="text-foreground/30">•</span>
+              <span className="font-mono text-[10px]">{part.thickness}</span>
             </div>
-          ))
-        ) : (
-          <div className="p-6 text-center">
-            <span className="text-[10px] font-mono uppercase text-foreground/30">No Parts Loaded</span>
-          </div>
-        )}
+          ))}
+          
+          {hasMore && (
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mt-1 flex items-center justify-center gap-2 py-2 w-full bg-surface/50 border border-border/50 text-[10px] font-black uppercase tracking-widest hover:bg-surface transition-colors"
+            >
+              {isExpanded ? (
+                <>Collapse Scope <ChevronUp className="w-3 h-3" /></>
+              ) : (
+                <>View Full Scope ({parts.length}) <ChevronDown className="w-3 h-3" /></>
+              )}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function JobBlockSite({ job, language }: { job: Job, language: 'en' | 'es' }) {
+  const community = job.community_name ? job.community_name.toUpperCase() : '';
+
+  return (
+    <div className="flex flex-col gap-2">
+      <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
+        {language === 'en' ? 'Project Site' : 'Sitio del Proyecto'}
+      </h3>
+      <div className="flex items-start gap-3 border border-border p-3 sm:p-4 bg-surface/30">
+        <button 
+          onClick={() => {
+            const query = encodeURIComponent(job.address);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+          }}
+          className="w-9 h-9 flex items-center justify-center shrink-0 bg-foreground text-background active:scale-[0.95] transition-transform"
+        >
+          <MapPin className="w-3.5 h-3.5 fill-primary stroke-foreground" />
+        </button>
+        <div className="flex flex-col gap-1 w-full">
+          <p className="font-bold text-sm text-foreground leading-tight underline decoration-foreground/20 underline-offset-2">{job.address}</p>
+          {community && (
+            <span className="text-[10px] uppercase font-mono tracking-widest text-rsg-gold font-bold">
+              {community}
+            </span>
+          )}
+          {job.logistics_notes && (
+            <div className="mt-2 pt-2 border-t border-border/50 text-[11px] text-rsg-gold font-medium leading-tight">
+              <span className="font-bold uppercase tracking-widest text-[9px] mr-1 opacity-60">Logistics:</span> 
+              {job.logistics_notes}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-export function JobLogisticsCard({ address, title }: { address: string, title?: string }) {
+export function JobBlockArrival({ scheduledDate, language }: { scheduledDate: string | null, language: 'en' | 'es' }) {
+  let timeStr = 'WAITING TO BE ROUTED';
+  if (scheduledDate) {
+    try {
+      const d = new Date(scheduledDate);
+      timeStr = new Intl.DateTimeFormat('en-US', { 
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' 
+      }).format(d).toUpperCase();
+    } catch {}
+  }
+
   return (
-    <div className="bg-surface border border-border p-5">
-      <div className="flex items-start gap-4">
-        <button 
-          onClick={() => {
-            const query = encodeURIComponent(address);
-            window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
-          }}
-          className="w-10 h-10 flex items-center justify-center shrink-0 border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors"
-          title={title}
-        >
-          <MapPin className="w-4 h-4 text-primary" />
-        </button>
-        <div className="flex flex-col">
-          <span className="text-[10px] uppercase font-mono tracking-[0.2em] text-foreground/40 mb-1">Project Site</span>
-          <p className="font-bold text-sm text-foreground leading-tight">{address}</p>
-          <div className="flex items-center gap-1.5 mt-1">
-             <div className="w-1 h-1 bg-foreground/20 rounded-full" />
-             <span className="text-[10px] uppercase font-mono tracking-widest text-foreground/40 font-bold">Verified Destination</span>
-          </div>
+    <div className="flex flex-col gap-2">
+      <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
+        {language === 'en' ? 'Scheduled Arrival' : 'Llegada Programada'}
+      </h3>
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 flex items-center justify-center shrink-0 bg-foreground/5 text-foreground/50 border border-border">
+          <Clock className="w-4 h-4" />
         </div>
+        <p className="font-bold text-sm text-foreground leading-tight">{timeStr}</p>
       </div>
     </div>
   );
@@ -233,15 +270,25 @@ export function DocumentationCapture({
                     <Clock className="w-2.5 h-2.5 text-primary" />
                     <span className="text-[8px] font-mono text-white/90">{formatTime(photo.metadata.timestamp)}</span>
                   </div>
-                  {photo.metadata.isGpsLocked ? (
+                  {photo.metadata.lat && photo.metadata.lng ? (
                     <div className="flex items-center gap-1">
-                      <Navigation className="w-2.5 h-2.5 text-blue-400" />
+                      <Navigation className="w-2.5 h-2.5 text-rsg-success" />
                       <span className="text-[8px] font-mono text-white/90">GPS LOCKED</span>
+                    </div>
+                  ) : photo.metadata.location_status === 'timeout_unavailable' ? (
+                    <div className="flex items-center gap-1">
+                      <Navigation className="w-2.5 h-2.5 text-rsg-warning" />
+                      <span className="text-[8px] font-mono text-white/80">GPS: TIMEOUT</span>
+                    </div>
+                  ) : photo.metadata.location_status === 'denied' ? (
+                    <div className="flex items-center gap-1">
+                      <Navigation className="w-2.5 h-2.5 text-rsg-error" />
+                      <span className="text-[8px] font-mono text-white/80">GPS: DENIED</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-1">
-                      <Navigation className="w-2.5 h-2.5 text-amber-400 animate-pulse" />
-                      <span className="text-[8px] font-mono text-white/80">GPS: SEARCHING...</span>
+                      <Navigation className="w-2.5 h-2.5 text-rsg-text opacity-50" />
+                      <span className="text-[8px] font-mono text-white/80">GPS: UNAVAIL</span>
                     </div>
                   )}
                 </div>
@@ -310,7 +357,7 @@ export function JobActionFooter({
   processedPhotosLength,
   language
 }: any) {
-  const isSubmitted = jobStatus === 'submitted_for_review' || jobStatus === 'completed';
+  const isSubmitted = jobStatus === 'submitted_for_review' || jobStatus === 'verified';
   
   return (
     <section className="pt-4 border-t border-border">

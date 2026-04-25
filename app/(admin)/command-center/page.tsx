@@ -6,11 +6,14 @@ import { summarizeJobScope } from '../../../shared/lib/utils';
 import { useCommandCenterController } from '../../../features/admin-jobs/hooks/useCommandCenterController';
 import { CommandCenterTable } from '../../../features/admin-jobs/ui/CommandCenterTable';
 import { AdminJobDrawer } from '../../../features/admin-jobs/ui/AdminJobDrawer';
-import { TrendingUp, AlertTriangle } from 'lucide-react';
+import { TrendingUp, AlertTriangle, Database } from 'lucide-react';
+import { ImportModal } from '../../../features/admin-import/ui/ImportModal';
+import { useState } from 'react';
 
 export default function CommandCenterPage() {
   const { language } = useUserStore();
   const t = dict[language].admin;
+  const [isImportOpen, setIsImportOpen] = useState(false);
   
   const {
     selectedJob,
@@ -31,6 +34,13 @@ export default function CommandCenterPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t.commandCenter}</h1>
           <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">REAL-TIME OPS CONTROL PANEL</p>
         </div>
+        <button 
+          onClick={() => setIsImportOpen(true)}
+          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm"
+        >
+          <Database className="w-4 h-4 text-rsg-gold" />
+          IMPORT DATA
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -126,6 +136,8 @@ export default function CommandCenterPage() {
         onVerifyJob={handleVerify}
         isVerifying={isVerifying}
       />
+      
+      <ImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
     </div>
   );
 }

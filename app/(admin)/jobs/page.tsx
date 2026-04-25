@@ -2,16 +2,18 @@
 
 import { useUserStore } from '../../../entities/user/store';
 import { dict } from '../../../entities/i18n/dict';
-import { Plus, Search } from 'lucide-react';
+import { Database, Plus, Search } from 'lucide-react';
 import { useAdminJobsController } from '../../../features/admin-jobs/hooks/useAdminJobsController';
 import { AdminJobsTable } from '../../../features/admin-jobs/ui/AdminJobsTable';
 import { AdminJobsFilters } from '../../../features/admin-jobs/ui/AdminJobsFilters';
 import { AdminJobDrawer } from '../../../features/admin-jobs/ui/AdminJobDrawer';
-import { CreateJobSidepanel } from '../../../features/admin-jobs/ui/CreateJobSidepanel';
+import { ImportModal } from '../../../features/admin-import/ui/ImportModal';
+import { useState } from 'react';
 
 export default function JobsPage() {
   const { language } = useUserStore();
   const t = dict[language].admin;
+  const [isImportOpen, setIsImportOpen] = useState(false);
   
   const {
     isFormOpen,
@@ -44,11 +46,11 @@ export default function JobsPage() {
           <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">ALL ACTIVE & PENDING INSTALLATIONS</p>
         </div>
         <button 
-          onClick={() => setIsFormOpen(true)}
-          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98]"
+          onClick={() => setIsImportOpen(true)}
+          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm"
         >
-          <Plus className="w-4 h-4" />
-          {t.newProject}
+          <Database className="w-4 h-4 text-rsg-gold" />
+          IMPORT DATA
         </button>
       </div>
 
@@ -94,7 +96,7 @@ export default function JobsPage() {
         </div>
       </div>
 
-      <CreateJobSidepanel isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
+      <ImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
       
       <AdminJobDrawer 
         selectedJob={selectedJob} 

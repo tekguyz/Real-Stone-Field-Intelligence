@@ -16,12 +16,18 @@ export const jobService = {
       const overrides = typeof window !== 'undefined' ? sessionStorage.getItem('rsg-dev-overrides') : null;
       const parsedOverrides = overrides ? JSON.parse(overrides) : {};
       
-      return mockJobs.map(job => {
+      const imports = typeof window !== 'undefined' ? sessionStorage.getItem('rsg-stoneapp-imports') : null;
+      const parsedImports = imports ? JSON.parse(imports) : [];
+      
+      const allJobs = [...mockJobs, ...parsedImports];
+      
+      return allJobs.map(job => {
         const override = parsedOverrides[job.id];
         if (override) {
           return {
             ...job,
             status: override.status || job.status,
+            installer_id: override.installer_id !== undefined ? override.installer_id : job.installer_id,
             photos: [...(job.photos || []), ...(override.photos || [])],
             signature_url: override.signature_url || job.signature_url
           };
@@ -55,6 +61,9 @@ export const jobService = {
       status: row.status as Job['status'],
       job_type: row.job_type as Job['job_type'],
       scheduled_date: row.scheduled_date,
+      scheduled_arrival: row.scheduled_arrival,
+      city_name: row.city_name,
+      community_name: row.community_name,
       installer_id: row.installer_id,
       logistics_notes: row.logistics_notes,
       created_at: row.created_at,
@@ -114,12 +123,13 @@ export const jobService = {
 
   updateJobInstaller: async (jobId: string, installerId: string | null, isDevMode: boolean): Promise<void> => {
     if (isDevMode) {
-      const job = mockJobs.find(j => j.id === jobId);
-      if (job) {
-        job.installer_id = installerId;
-        job.updated_at = new Date().toISOString();
-      }
       await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const overrides = JSON.parse(sessionStorage.getItem('rsg-dev-overrides') || '{}');
+      if (!overrides[jobId]) overrides[jobId] = {};
+      overrides[jobId].installer_id = installerId;
+      sessionStorage.setItem('rsg-dev-overrides', JSON.stringify(overrides));
+      
       console.log(`[DevMode] Job ${jobId} installer updated to ${installerId}`);
       return;
     }
@@ -238,6 +248,55 @@ export const jobService = {
     // In real env, convert dataUrl to blob and upload to bucket
     await new Promise(resolve => setTimeout(resolve, 500));
     return 'signature-mock-url';
+  },
+
+  importJobs: async (jobs: Job[], isDevMode: boolean): Promise<void> => {
+    if (isDevMode) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const existingImports = JSON.parse(sessionStorage.getItem('rsg-stoneapp-imports') || '[]');
+      const merged = [...existingImports];
+      
+      jobs.forEach(newJob => {
+        const index = merged.findIndex(j => j.wo_number === newJob.wo_number);
+        if (index > -1) {
+          merged[index] = { ...merged[index], ...newJob };
+        } else {
+          merged.push(newJob);
+        }
+      });
+
+      sessionStorage.setItem('rsg-stoneapp-imports', JSON.stringify(merged));
+      console.log(`[DevMode] Bulk imported ${jobs.length} jobs.`);
+      return;
+    }
+
+    if (!supabase) throw new Error("Supabase client not initialized");
+
+    // Map internal Job to DB schema if necessary
+    const dbJobs = jobs.map(j => ({
+      legacy_id: j.legacy_id,
+      client_name: j.client_name,
+      address: j.address,
+      stoneapp_parts: j.stoneapp_parts,
+      status: j.status,
+      job_type: j.job_type,
+      scheduled_date: j.scheduled_date,
+      scheduled_arrival: j.scheduled_arrival,
+      city_name: j.city_name,
+      community_name: j.community_name,
+      logistics_notes: j.logistics_notes,
+      updated_at: new Date().toISOString()
+    }));
+
+    const { error } = await supabase
+      .from('jobs')
+      .upsert(dbJobs, { onConflict: 'legacy_id' });
+
+    if (error) {
+      console.error("Supabase import error:", error);
+      throw error;
+    }
   }
 };
 
@@ -292,5 +351,17 @@ export function useUploadPhoto() {
   return useMutation({
     mutationFn: ({ file, jobId }: { file: File, jobId: string }) => 
       jobService.uploadPhoto(file, jobId, isDevMode),
+  });
+}
+
+export function useImportJobs() {
+  const { isDevMode } = useUserStore();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (jobs: Job[]) => jobService.importJobs(jobs, isDevMode),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    }
   });
 }

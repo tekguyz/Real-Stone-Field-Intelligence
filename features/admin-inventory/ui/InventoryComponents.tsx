@@ -48,12 +48,12 @@ export function InventoryTable({ lots, language }: { lots: InventoryLot[], langu
                 <td className="px-6 py-4 font-mono text-xs">{lot.slabs} SLABS</td>
                 <td className="px-6 py-4">
                   {lot.status === 'on-site' ? (
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border border-green-500/20 bg-green-500/10 text-green-500">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border border-rsg-success/20 bg-rsg-success/10 text-rsg-success">
                       <Building2 className="w-3 h-3" />
                       {t.onSiteWarehouse}
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border border-blue-500/20 bg-blue-500/10 text-blue-500">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border border-rsg-gold/20 bg-rsg-gold/10 text-rsg-gold">
                       <Truck className="w-3 h-3" />
                       {t.inTransit}
                     </div>
@@ -99,12 +99,12 @@ export function InventoryMetrics({ stats, language }: { stats: any, language: 'e
         <div className="text-3xl font-bold text-foreground mt-1">{stats.total}</div>
       </div>
 
-      <div className="bg-card border-l-8 border-green-500 p-4 border-y border-r border-border hover:bg-surface/50 transition-colors">
+      <div className="bg-card border-l-8 border-rsg-success p-4 border-y border-r border-border hover:bg-surface/50 transition-colors">
         <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">{t.onSiteWarehouse}</p>
         <div className="text-3xl font-bold text-foreground mt-1">{stats.onSite}</div>
       </div>
 
-      <div className="bg-card border-l-8 border-blue-500 p-4 border-y border-r border-border hover:bg-surface/50 transition-colors">
+      <div className="bg-card border-l-8 border-rsg-gold p-4 border-y border-r border-border hover:bg-surface/50 transition-colors">
         <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">{t.inTransit}</p>
         <div className="text-3xl font-bold text-foreground mt-1">{stats.inTransit}</div>
       </div>

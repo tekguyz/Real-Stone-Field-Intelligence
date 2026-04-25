@@ -1,13 +1,14 @@
 import { dict } from '../../../entities/i18n/dict';
 import { Filter } from 'lucide-react';
 import { useUserStore } from '../../../entities/user/store';
+import { JobStatus } from '../../../entities/job';
 
-const statusColors = {
-  'pending': 'text-foreground/40 bg-foreground/5 border-foreground/10',
-  'assigned': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
-  'in_progress': 'text-rsg-gold bg-rsg-gold/10 border-rsg-gold/20',
-  'submitted_for_review': 'text-amber-950 bg-amber-500 border-amber-600 shadow-[0_0_10px_rgba(245,158,11,0.5)]',
-  'verified': 'text-green-500 bg-green-500/10 border-green-500/20',
+const statusColors: Record<JobStatus, string> = {
+  'verified': 'bg-rsg-success text-rsg-surface border-rsg-border',
+  'in_progress': 'bg-rsg-gold text-rsg-surface border-rsg-border',
+  'submitted_for_review': 'bg-rsg-gold/50 text-rsg-text border-rsg-border',
+  'assigned': 'bg-rsg-surface text-rsg-text border-rsg-border',
+  'pending': 'bg-rsg-warning text-rsg-surface border-rsg-border',
 };
 
 export function AdminJobsFilters({
@@ -49,24 +50,24 @@ export function AdminJobsFilters({
           <div className="grid grid-cols-1 gap-2">
             <button 
               onClick={() => setSelectedStatuses(['in_progress', 'assigned'])}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 text-left flex justify-between items-center group"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-gold bg-rsg-gold/10 text-rsg-text hover:bg-rsg-gold/20 text-left flex justify-between items-center group"
             >
               Active
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse group-hover:scale-125 transition-transform" />
+              <span className="w-2 h-2 rounded-none bg-rsg-gold animate-pulse group-hover:scale-125 transition-transform" />
             </button>
             <button 
               onClick={() => setSelectedStatuses(['submitted_for_review'])}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-amber-500/20 bg-amber-500/5 text-amber-600 hover:bg-amber-500/10 text-left flex justify-between items-center group"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-warning bg-rsg-warning/10 text-rsg-warning hover:bg-rsg-warning/20 text-left flex justify-between items-center group"
             >
-              Urgent
-              <span className="w-2 h-2 rounded-full bg-amber-500 group-hover:scale-125 transition-transform" />
+              Review
+              <span className="w-2 h-2 rounded-none bg-rsg-warning group-hover:scale-125 transition-transform" />
             </button>
             <button 
               onClick={() => setSelectedStatuses(['pending'])}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-foreground/10 bg-foreground/5 text-foreground/60 hover:bg-foreground/10 text-left flex justify-between items-center group"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-border/30 bg-rsg-surface text-rsg-text/60 hover:bg-rsg-surface/80 text-left flex justify-between items-center group"
             >
               Pending
-              <span className="w-2 h-2 rounded-full bg-foreground/20 group-hover:scale-125 transition-transform" />
+              <span className="w-2 h-2 rounded-none bg-rsg-border/20 group-hover:scale-125 transition-transform" />
             </button>
             <button 
               onClick={() => setSelectedStatuses([])}

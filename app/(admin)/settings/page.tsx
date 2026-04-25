@@ -60,6 +60,37 @@ export default function SettingsPage() {
               {activeTab === 'general' && (
                 <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div>
+                    <h2 className="text-xl font-bold tracking-tight mb-6">User Profile</h2>
+                    <div className="flex flex-col gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">Full Name</label>
+                          <input 
+                            type="text" 
+                            defaultValue="Admin User"
+                            className="bg-surface border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">Email Address</label>
+                          <input 
+                            type="email" 
+                            defaultValue="admin@realstone.com"
+                            readOnly
+                            className="bg-surface/50 border border-border px-4 py-3 text-sm text-foreground/50 focus:outline-none"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">System Role</label>
+                          <div className="bg-primary/10 border border-primary/20 px-4 py-3 text-xs font-black uppercase tracking-widest text-primary">
+                            Principal UI Engineer / Architect
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-8 border-t border-border">
                     <h2 className="text-xl font-bold tracking-tight mb-6">{t.general}</h2>
                     <div className="flex flex-col gap-6">
                       

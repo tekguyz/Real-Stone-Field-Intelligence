@@ -106,7 +106,7 @@ export const dict = {
       'pending': 'Pending',
       'assigned': 'Assigned',
       'in_progress': 'In Progress',
-      'submitted_for_review': 'Review Required',
+      'submitted_for_review': 'Review',
       'verified': 'Verified',
     }
   },
@@ -217,7 +217,7 @@ export const dict = {
       'pending': 'Pendiente',
       'assigned': 'Asignado',
       'in_progress': 'En Progreso',
-      'submitted_for_review': 'Revisión Requerida',
+      'submitted_for_review': 'Revisión',
       'verified': 'Verificado',
     }
   }

@@ -1,9 +1,10 @@
-import { Job } from '../../../entities/job/types';
+import { Job, JobStatusBadge } from '../../../entities/job';
 import { dict } from '../../../entities/i18n/dict';
-import { X, MapPin, Loader2, ShieldCheck } from 'lucide-react';
+import { X, MapPin, Loader2, ShieldCheck, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useUserStore } from '../../../entities/user/store';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export function AdminJobDrawer({
   selectedJob,
@@ -18,8 +19,40 @@ export function AdminJobDrawer({
   onVerifyJob?: (jobId: string) => void;
   isVerifying?: boolean;
 }) {
-  const { language } = useUserStore();
+  const { language, isDevMode } = useUserStore();
   const t = dict[language].admin;
+  const [localCaptures, setLocalCaptures] = useState<{photos: string[], proofs?: any[], signature: string | null}>({photos: [], proofs: [], signature: null});
+
+  useEffect(() => {
+    if (!selectedJob) return;
+
+    const loadCaptures = () => {
+      if (isDevMode) {
+        const stored = sessionStorage.getItem(`field_captures_${selectedJob.id}`);
+        if (stored) {
+          setLocalCaptures(JSON.parse(stored));
+        } else {
+          setLocalCaptures({photos: [], proofs: [], signature: null});
+        }
+      }
+    };
+
+    loadCaptures();
+    window.addEventListener('field_capture_update', loadCaptures);
+    return () => window.removeEventListener('field_capture_update', loadCaptures);
+  }, [selectedJob, isDevMode]);
+
+  const allPhotos = Array.from(new Set([...(selectedJob?.photos || []), ...localCaptures.photos]));
+  // Fallback map pin logic using generated proofs or stored captured_proof
+  const getProofMetadata = (url: string) => {
+    const fromJob = selectedJob?.captured_proof?.find(p => p.url === url);
+    if (fromJob) return fromJob;
+    const fromLocal = localCaptures.proofs?.find(p => p.url === url);
+    if (fromLocal) return fromLocal;
+    return null;
+  };
+
+  const activeSignature = selectedJob?.signature_url || localCaptures.signature;
 
   return (
     <AnimatePresence>
@@ -40,9 +73,10 @@ export function AdminJobDrawer({
             className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border z-[110] flex flex-col"
           >
             <div className="p-6 border-b border-border flex justify-between items-start bg-surface/30">
-              <div className="flex flex-col">
-                 <span className="font-mono text-[10px] text-primary mb-1 block uppercase tracking-[0.2em]">{selectedJob.legacy_id}</span>
+              <div className="flex flex-col gap-2">
+                 <span className="font-mono text-[10px] text-primary block uppercase tracking-[0.2em]">{selectedJob.legacy_id}</span>
                  <h2 className="text-xl font-black tracking-tight uppercase">{selectedJob.client_name}</h2>
+                 <JobStatusBadge status={selectedJob.status} className="w-fit" />
               </div>
               <button 
                 onClick={onClose}
@@ -53,6 +87,21 @@ export function AdminJobDrawer({
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+              {/* Scheduled Arrival */}
+              <div className="flex flex-col gap-2">
+                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Scheduled Arrival</span>
+                 <div className="bg-surface/50 p-4 border border-border flex items-center justify-between">
+                    <span className="text-sm font-black text-foreground/90 uppercase tracking-tight">
+                      {selectedJob.scheduled_arrival || selectedJob.scheduled_date ? (
+                        new Intl.DateTimeFormat('en-US', { 
+                          weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true 
+                        }).format(new Date(selectedJob.scheduled_arrival || selectedJob.scheduled_date || '')).toUpperCase()
+                      ) : 'AWAITING ROUTE'}
+                    </span>
+                    <Clock className="w-5 h-5 text-rsg-gold" />
+                 </div>
+              </div>
+
               {/* Site info */}
               <div className="flex flex-col gap-2">
                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Site Information</span>
@@ -118,45 +167,58 @@ export function AdminJobDrawer({
               <div className="flex flex-col gap-2">
                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Assign Installer</span>
                  <select 
-                   className="bg-surface/50 border border-border px-4 py-3 text-sm rounded-none focus:outline-none focus:border-primary font-mono uppercase"
+                   className="bg-card w-full border border-border px-4 py-3 text-sm rounded-none focus:outline-none focus:border-rsg-gold font-mono uppercase text-foreground appearance-none"
                    value={selectedJob.installer_id || 'unassigned'}
                    onChange={(e) => onUpdateInstaller(selectedJob.id, e.target.value)}
+                   style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                  >
-                   <option value="unassigned">UNASSIGNED</option>
-                   <option value="installer_juan">JUAN</option>
-                   <option value="installer_carlos">CARLOS</option>
+                   <option value="unassigned" className="bg-background text-foreground py-2">UNASSIGNED</option>
+                   <option value="installer_juan" className="bg-background text-foreground py-2">JUAN</option>
+                   <option value="installer_carlos" className="bg-background text-foreground py-2">CARLOS</option>
                  </select>
               </div>
 
               {/* Verified Proofs */}
-              {(selectedJob.photos?.length || 0) > 0 && (
+              {allPhotos.length > 0 && (
                 <div className="flex flex-col gap-4">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Field Documentation ({selectedJob.photos?.length})</span>
+                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Field Documentation ({allPhotos.length})</span>
                   <div className="grid grid-cols-2 gap-3">
-                    {selectedJob.photos?.map((url, i) => (
-                      <div key={i} className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden">
-                        <Image 
-                          src={url} 
-                          alt={`Proof ${i+1}`} 
-                          fill
-                          className="w-full h-full object-cover transition-transform group-hover:scale-110" 
-                          referrerPolicy="no-referrer"
-                        />
-                        <div className="absolute inset-x-0 bottom-0 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="text-[10px] font-mono text-white uppercase relative z-10">Proof {i+1}</span>
+                    {allPhotos.map((url, i) => {
+                      const meta = getProofMetadata(url);
+                      return (
+                        <div key={i} className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden">
+                          <Image 
+                            src={url} 
+                            alt={`Proof ${i+1}`} 
+                            fill
+                            className="w-full h-full object-cover transition-transform group-hover:scale-110" 
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-x-0 bottom-0 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-between items-center">
+                            <span className="text-[10px] font-mono text-white uppercase relative z-10">Proof {i+1}</span>
+                            {meta?.lat && meta?.lng && (
+                              <button 
+                                onClick={() => window.open(`https://maps.google.com/?q=${meta.lat},${meta.lng}`, '_blank')}
+                                className="bg-rsg-gold text-background p-1.5 hover:opacity-80 transition-opacity z-10 border border-transparent"
+                                title="Open GPS Coordinate in Maps"
+                              >
+                                <MapPin className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
-                  {selectedJob.signature_url && (
+                   {activeSignature && (
                     <div className="flex flex-col gap-2 mt-4">
                        <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Client Signature</span>
-                       <div className="bg-white p-4 border border-border h-32 flex items-center justify-center relative">
+                       <div className="bg-[var(--color-sig-bg)] p-4 border border-border h-32 flex items-center justify-center relative rounded-sm">
                           <Image 
-                            src={selectedJob.signature_url} 
+                            src={activeSignature} 
                             alt="Signature" 
                             fill 
-                            className="object-contain p-4 invert brightness-0" 
+                            className="object-contain p-4" 
                             referrerPolicy="no-referrer"
                           />
                        </div>
@@ -171,7 +233,7 @@ export function AdminJobDrawer({
                 <button 
                   onClick={() => onVerifyJob(selectedJob.id)}
                   disabled={isVerifying}
-                  className="w-full bg-green-600 text-white py-4 font-black tracking-[0.2em] uppercase hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-rsg-success text-rsg-surface py-4 font-black tracking-[0.2em] uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 border border-rsg-border"
                 >
                   {isVerifying ? (
                     <Loader2 className="w-5 h-5 animate-spin" />

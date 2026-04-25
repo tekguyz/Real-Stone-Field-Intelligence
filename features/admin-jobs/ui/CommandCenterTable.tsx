@@ -1,16 +1,8 @@
-import { Job } from '../../../entities/job/types';
+import { Job, JobStatusBadge } from '../../../entities/job';
 import { dict } from '../../../entities/i18n/dict';
-import { ChevronRight, Loader2, AlertTriangle, TrendingUp, Clock, AlertCircle, PlayCircle, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, Loader2, AlertTriangle, TrendingUp, Clock, AlertCircle, PlayCircle, CheckCircle2, MapPin } from 'lucide-react';
 import { summarizeJobScope } from '../../../shared/lib/utils';
 import { useUserStore } from '../../../entities/user/store';
-
-const statusColors = {
-  'pending': 'text-foreground/40 bg-foreground/5 border-foreground/10',
-  'assigned': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
-  'in_progress': 'text-rsg-gold bg-rsg-gold/10 border-rsg-gold/20',
-  'submitted_for_review': 'text-amber-950 bg-amber-500 border-amber-600 shadow-[0_0_10px_rgba(245,158,11,0.5)]',
-  'verified': 'text-green-500 bg-green-500/10 border-green-500/20',
-};
 
 export function CommandCenterTable({
   jobs,
@@ -62,18 +54,29 @@ export function CommandCenterTable({
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="font-semibold text-foreground/90">{job.client_name}</span>
-                      <span className="text-[10px] text-foreground/40 font-mono italic uppercase">{job.address}</span>
+                      <div className="flex items-center gap-1 text-[10px] text-foreground/40 font-mono italic uppercase mt-0.5">
+                        <MapPin className="w-3 h-3" />
+                        {job.community_name || (job.address.split(',')[0])}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-foreground/80 font-medium">{summarizeJobScope(job.stoneapp_parts)}</td>
                   <td className="px-6 py-4">
-                    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border ${statusColors[job.status] || statusColors['pending']}`}>
-                      <div className={`w-1 h-1 ${statusColors[job.status]?.split(' ')[0].replace('text-', 'bg-')}`} />
-                      {dict[language].status[job.status]}
-                    </div>
+                    <JobStatusBadge status={job.status} />
                   </td>
-                  <td className="px-6 py-4 text-foreground/70 font-mono text-xs">
-                    {job.scheduled_date ? new Date(job.scheduled_date).toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { month: 'short', day: 'numeric' }) : 'TBD'}
+                  <td className="px-6 py-4">
+                    {job.scheduled_arrival || job.scheduled_date ? (
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-foreground/90 text-sm">
+                          {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(job.scheduled_arrival || job.scheduled_date || ''))}
+                        </span>
+                        <span className="text-[10px] text-foreground/60 font-mono uppercase">
+                          {new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date(job.scheduled_arrival || job.scheduled_date || ''))}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-foreground/40 font-mono italic uppercase">TBD</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <ChevronRight className="w-4 h-4 text-foreground/20 group-hover:text-primary transition-colors" />

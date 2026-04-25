@@ -3,26 +3,20 @@
 
 @layer base {
   :root {
-    --rsg-gold: 0.72 0.13 78;
+    /* Real Stone Gold - Bright, vibrant warm gold */
+    --rsg-gold: 0.75 0.17 75; 
     --rsg-background: 0.98 0.005 75;
-    --rsg-surface: 0.91 0.005 75;
-    --rsg-text: 0.12 0.01 75;
-    --rsg-border: 0.85 0.01 75;
-    
-    --background: oklch(var(--rsg-background));
-    --foreground: oklch(var(--rsg-text));
-    --card: oklch(var(--rsg-surface));
-    --card-foreground: oklch(var(--rsg-text));
-    --border: oklch(var(--rsg-border));
-    --primary: oklch(var(--rsg-gold));
-    --primary-foreground: oklch(var(--rsg-text));
-  }
-  .dark {
-    --rsg-gold: 0.68 0.15 78;
-    --rsg-background: 0.12 0.01 75;
-    --rsg-surface: 0.19 0.01 75;
-    --rsg-text: 0.98 0.005 75;
-    --rsg-border: 0.26 0.01 75;
+    --rsg-surface: 1.0 0.00 0;
+    --rsg-text: 0.15 0.01 75; 
+    --rsg-border: 0.80 0.01 75; 
+
+    /* Status Colors (Light Mode) */
+    --rsg-success: 0.65 0.15 145; /* Lighter, punchier green */
+    --rsg-warning: 0.75 0.18 55;  /* Vibrant orange/yellow */
+    --rsg-error: 0.55 0.18 28;    /* Deep Red */
+
+    --sig-bg: 1.0 0.00 0; 
+    --sig-pen: 0.00 0.00 0; 
 
     --background: oklch(var(--rsg-background));
     --foreground: oklch(var(--rsg-text));
@@ -30,7 +24,31 @@
     --card-foreground: oklch(var(--rsg-text));
     --border: oklch(var(--rsg-border));
     --primary: oklch(var(--rsg-gold));
-    --primary-foreground: oklch(var(--rsg-background));
+    --primary-foreground: 0.15 0.01 75; /* Dark text on primary gold */
+  }
+  .dark {
+    /* Real Stone Gold - Slightly richer for dark mode */
+    --rsg-gold: 0.72 0.18 75;
+    --rsg-background: 0.12 0.01 75;
+    --rsg-surface: 0.19 0.01 75;
+    --rsg-text: 0.98 0.005 75;
+    --rsg-border: 0.26 0.01 75;
+
+    /* Status Colors (Dark Mode) - Even more vibrant to glow */
+    --rsg-success: 0.70 0.16 145;
+    --rsg-warning: 0.80 0.18 55;
+    --rsg-error: 0.65 0.20 28;
+
+    --sig-bg: 0.22 0.01 75; 
+    --sig-pen: 0.72 0.18 75; 
+
+    --background: oklch(var(--rsg-background));
+    --foreground: oklch(var(--rsg-text));
+    --card: oklch(var(--rsg-surface));
+    --card-foreground: oklch(var(--rsg-text));
+    --border: oklch(var(--rsg-border));
+    --primary: oklch(var(--rsg-gold));
+    --primary-foreground: 0.12 0.01 75; /* Dark text on primary gold */
   }
 }
 
@@ -40,7 +58,15 @@
   --color-rsg-surface: oklch(var(--rsg-surface));
   --color-rsg-text: oklch(var(--rsg-text));
   --color-rsg-border: oklch(var(--rsg-border));
-  
+
+  /* Status Colors Mappings */
+  --color-rsg-success: oklch(var(--rsg-success));
+  --color-rsg-warning: oklch(var(--rsg-warning));
+  --color-rsg-error: oklch(var(--rsg-error));
+
+  --color-sig-bg: oklch(var(--sig-bg));
+  --color-sig-pen: oklch(var(--sig-pen));
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -48,7 +74,7 @@
   --color-border: var(--border);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  
+
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }

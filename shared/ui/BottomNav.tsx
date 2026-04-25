@@ -48,24 +48,24 @@ export function BottomNav() {
   if (isKeyboardVisible) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t-2 border-border px-6 pb-safe pt-2 z-50">
-      <div className="max-w-md mx-auto flex justify-around items-center h-16">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-6 pb-safe z-50">
+      <div className="max-w-md mx-auto flex justify-around items-center h-14">
         {navItems.map((item) => (
           <Link 
             key={item.href} 
             href={item.href}
-            className={`relative flex flex-col items-center justify-center gap-1 w-20 h-full transition-all active:scale-90 ${
-              item.isActive ? 'text-primary' : 'text-foreground/40 hover:text-foreground/60'
+            className={`relative flex flex-col items-center justify-center gap-1 w-20 h-full transition-all active:scale-90 rounded-none ${
+              item.isActive ? 'text-rsg-text dark:text-rsg-gold' : 'text-rsg-text/40 hover:text-rsg-text/60'
             }`}
           >
-            <item.icon className="w-6 h-6" strokeWidth={item.isActive ? 2.5 : 2} />
-            <span className={`text-[10px] font-mono uppercase tracking-widest ${item.isActive ? 'font-bold' : 'font-medium'}`}>
+            <item.icon className="w-5 h-5" strokeWidth={item.isActive ? 2.5 : 2} />
+            <span className={`text-[9px] font-bold uppercase tracking-widest ${item.isActive ? 'text-rsg-text dark:text-rsg-gold font-black' : 'text-rsg-text/40'}`}>
               {item.label}
             </span>
             {item.isActive && (
               <motion.div 
                 layoutId="nav-glow"
-                className="absolute -top-[8px] w-full h-[4px] bg-primary"
+                className="absolute top-0 w-full h-[2px] bg-rsg-text dark:bg-rsg-gold"
                 transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
               />
             )}

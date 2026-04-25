@@ -5,7 +5,8 @@ export interface ProcessedImage {
     lat: number | null;
     lng: number | null;
     timestamp: number;
-    isGpsLocked: boolean;
+    accuracy: number | null;
+    location_status: 'granted' | 'timeout_unavailable' | 'denied' | 'unavailable';
   };
 }
 
@@ -14,10 +15,11 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
     // 1. Capture metadata timestamp
     const timestamp = Date.now();
 
-    // 2. Extract Geolocation (timeout after 5 seconds)
+    // 2. Extract Geolocation (timeout after 10 seconds)
     let lat: number | null = null;
     let lng: number | null = null;
-    let isGpsLocked = false;
+    let accuracy: number | null = null;
+    let location_status: 'granted' | 'timeout_unavailable' | 'denied' | 'unavailable' = 'unavailable';
     
     let isFinalized = false;
     const finalizeProcessing = () => {
@@ -53,7 +55,7 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
             resolve({
               blob,
               previewUrl: URL.createObjectURL(blob),
-              metadata: { lat, lng, timestamp, isGpsLocked }
+              metadata: { lat, lng, timestamp, accuracy, location_status }
             });
           },
           'image/jpeg',
@@ -70,28 +72,35 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
         (pos) => {
           lat = pos.coords.latitude;
           lng = pos.coords.longitude;
-          isGpsLocked = true;
+          accuracy = pos.coords.accuracy;
+          location_status = 'granted';
           finalizeProcessing();
         },
-        (_err) => {
-          isGpsLocked = false;
+        (err) => {
+          if (err.code === err.PERMISSION_DENIED) {
+            location_status = 'denied';
+          } else {
+            location_status = 'timeout_unavailable';
+          }
           finalizeProcessing(); // Proceed without geolocation
         },
         { 
-          timeout: 5000, 
+          timeout: 10000, 
           maximumAge: 10000,
           enableHighAccuracy: true 
         }
       );
       
-      // Safety timeout: If GPS takes > 5s, we proceed with whatever we have (likely null)
+      // Safety timeout: If GPS takes > 10s, we proceed with whatever we have (likely null)
       // but ensure we don't hang the camera
       setTimeout(() => {
         if (!isFinalized) {
+          location_status = 'timeout_unavailable';
           finalizeProcessing();
         }
-      }, 5500);
+      }, 10500);
     } else {
+      location_status = 'unavailable';
       finalizeProcessing();
     }
   });
