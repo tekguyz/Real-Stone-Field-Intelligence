@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserStore, Role } from '../../entities/user/store';
 import { dict } from '../../entities/i18n/dict';
 import { useRouter } from 'next/navigation';
-import { Mountain, ArrowRight, Delete } from 'lucide-react';
-import { ThemeForcer } from '../../shared/ui/ThemeForcer';
+import { Mountain, Delete, Lock, ShieldCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function LoginPage() {
   const { language, setRole } = useUserStore();
@@ -13,27 +13,39 @@ export default function LoginPage() {
   const router = useRouter();
   
   const [pin, setPin] = useState('');
-  const [showBypass, setShowBypass] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const handleBypass = (role: Role) => {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleAuth = (role: Role) => {
     setRole(role);
-    if (role === 'admin') {
-      router.push('/command-center');
-    } else {
-      router.push('/field');
-    }
+    const target = role === 'admin' ? '/command-center' : '/field';
+    router.push(target);
   };
 
   const handlePinInput = (num: string) => {
     if (pin.length < 4) {
+      setIsError(false);
       const newPin = pin + num;
       setPin(newPin);
       
-      // Auto-submit if 4 digits
-      if (newPin === '1234') {
-        handleBypass('admin');
-      } else if (newPin === '4321') {
-        handleBypass('installer_juan');
+      if (newPin.length === 4) {
+        if (newPin === '1111') {
+          handleAuth('admin');
+        } else if (newPin === '2222') {
+          handleAuth('installer_juan');
+        } else if (newPin === '3333') {
+          handleAuth('installer_carlos');
+        } else {
+          setIsError(true);
+          setTimeout(() => {
+            setPin('');
+            setIsError(false);
+          }, 600);
+        }
       }
     }
   };
@@ -42,117 +54,100 @@ export default function LoginPage() {
     setPin(pin.slice(0, -1));
   };
 
+  if (!mounted) return <div className="min-h-screen bg-rsg-background" />;
+
   return (
-    <div className="flex-1 flex flex-col md:flex-row bg-background">
-      <ThemeForcer theme="dark" />
-      
-      {/* Left branding area */}
-      <div className="hidden md:flex flex-1 flex-col justify-between p-12 bg-surface border-r border-border/10 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-background/50 to-transparent" />
+    <div className="h-screen max-h-screen bg-rsg-background flex items-center justify-center p-4 selection:bg-rsg-gold selection:text-rsg-text overflow-hidden">
+      {/* Main Container: Responsive padding-top (pt-16) to clear 
+          the demo banner on mobile devices. 
+      */}
+      <div className="w-full max-w-[380px] flex flex-col gap-4 sm:gap-8 pt-16 sm:pt-0">
         
-        <div className="relative z-10 flex items-center gap-4 text-primary">
-          <div className="w-12 h-12 bg-primary/10 flex items-center justify-center">
-            <Mountain className="w-6 h-6" />
+        {/* Terminal Header - Compact on Mobile */}
+        <div className="flex flex-col items-center gap-2 sm:gap-4">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-rsg-text flex items-center justify-center border-2 sm:border-4 border-rsg-border shadow-[3px_3px_0px_0px_var(--color-rsg-gold)]">
+            <Mountain className="w-8 h-8 sm:w-10 sm:h-10 text-rsg-gold" />
           </div>
-          <span className="text-2xl font-bold tracking-tight">Real Stone</span>
+          <div className="text-center">
+            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-[0.3em] leading-none text-rsg-text">Real Stone</h1>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-rsg-gold mt-1 font-bold">Field Intel Terminal v3.1</p>
+          </div>
         </div>
-        
-        <div className="relative z-10">
-          <h1 className="text-5xl font-semibold tracking-tighter leading-[1.1] mb-6">
-            Industrial <br/>
-            Luxury <br/>
-            <span className="text-foreground/40">Field OS.</span>
-          </h1>
-          <p className="text-foreground/50 max-w-sm font-mono text-sm leading-relaxed">
-            {t.subtitle}
-          </p>
-        </div>
-      </div>
 
-      {/* Right Form area */}
-      <div className="flex-1 flex flex-col justify-center items-center p-8">
-        <div className="w-full max-w-sm flex flex-col gap-8">
-          <div className="md:hidden flex flex-col items-center gap-4 text-center mb-4">
-            <div className="w-16 h-16 bg-primary/10 flex items-center justify-center text-primary">
-              <Mountain className="w-8 h-8" />
+        {/* Auth Interface - Optimized vertical footprint */}
+        <div className="bg-rsg-surface border-4 border-rsg-border p-4 sm:p-8 shadow-[6px_6px_0px_0px_var(--color-rsg-border)] relative">
+          <div className="absolute top-0 right-0 p-2 opacity-5">
+            <ShieldCheck className="w-10 h-10" />
+          </div>
+
+          <div className="flex flex-col gap-4 sm:gap-6">
+            <div className="flex flex-col gap-1">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-rsg-text/60 flex items-center gap-2">
+                <Lock className="w-3 h-3" /> System Lock
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-rsg-text">Security PIN</h2>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">Real Stone</h1>
-            <p className="text-foreground/50 text-sm">{t.subtitle}</p>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <h2 className="text-3xl font-semibold">{t.title}</h2>
-            <p className="text-foreground/50 text-sm">Enter your PIN to access the system.</p>
-          </div>
-          
-          <div className="flex flex-col gap-6">
-            {/* PIN Display */}
-            <div className="flex justify-center gap-4">
+            {/* PIN Display - Tighter on mobile */}
+            <motion.div 
+              animate={isError ? { x: [-8, 8, -8, 8, 0] } : {}}
+              className={`flex justify-between gap-2 h-14 sm:h-20 p-2 sm:p-4 border-2 border-rsg-border bg-rsg-background ${isError ? 'border-rsg-error' : ''}`}
+            >
               {[0, 1, 2, 3].map((i) => (
                 <div 
                   key={i} 
-                  className={`w-12 h-16 border flex items-center justify-center text-2xl font-black transition-all ${
-                    pin.length > i ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-surface text-foreground/20'
-                  }`}
+                  className={`flex-1 flex items-center justify-center border transition-all duration-75
+                    ${pin.length > i 
+                      ? 'bg-rsg-gold border-rsg-text shadow-[1px_1px_0px_0px_var(--color-rsg-text)]' 
+                      : 'border-rsg-border/20'}`}
                 >
-                  {pin.length > i ? '*' : ''}
+                  <AnimatePresence>
+                    {pin.length > i && (
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="w-2.5 h-2.5 bg-rsg-text rounded-full"
+                      />
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
-            </div>
+            </motion.div>
 
-            {/* Keypad */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* Keypad - Button height responsive (h-14 on mobile) */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
                   key={num}
                   onClick={() => handlePinInput(num.toString())}
-                  className="h-16 bg-card border border-border hover:bg-primary/5 text-xl font-black active:scale-[0.98] transition-all"
+                  className="h-12 sm:h-16 bg-rsg-surface border-2 border-rsg-border text-lg sm:text-xl font-black text-rsg-text hover:bg-rsg-background active:translate-y-1 active:shadow-none transition-all shadow-[3px_3px_0px_0px_var(--color-rsg-border)]"
                 >
                   {num}
                 </button>
               ))}
-              <div />
+              <div className="h-12 sm:h-16" />
               <button
                 onClick={() => handlePinInput('0')}
-                className="h-16 bg-card border border-border hover:bg-primary/5 text-xl font-black active:scale-[0.98] transition-all"
+                className="h-12 sm:h-16 bg-rsg-surface border-2 border-rsg-border text-lg sm:text-xl font-black text-rsg-text hover:bg-rsg-background active:translate-y-1 active:shadow-none transition-all shadow-[3px_3px_0px_0px_var(--color-rsg-border)]"
               >
                 0
               </button>
               <button
                 onClick={handleDelete}
-                className="h-16 bg-card border border-border flex items-center justify-center hover:bg-red-500/10 active:scale-[0.98] transition-all"
+                className="h-12 sm:h-16 bg-rsg-surface border-2 border-rsg-border flex items-center justify-center text-rsg-text hover:bg-rsg-error hover:text-white active:translate-y-1 active:shadow-none transition-all shadow-[3px_3px_0px_0px_var(--color-rsg-border)]"
               >
-                <Delete className="w-6 h-6 text-foreground/40" />
+                <Delete className="w-5 h-5" />
               </button>
             </div>
-
-            {/* Quick Access / Bypass */}
-            <div className="mt-4 flex flex-col gap-4">
-              <div className="flex items-center justify-center gap-2">
-                <div className="h-px flex-1 bg-border" />
-                <button 
-                  onClick={() => setShowBypass(!showBypass)}
-                  className="text-xs font-mono text-foreground/30 uppercase tracking-widest hover:text-primary transition-colors"
-                >
-                  {t.bypass}
-                </button>
-                <div className="h-px flex-1 bg-border" />
-              </div>
-
-              {showBypass && (
-                <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2">
-                  <button onClick={() => handleBypass('admin')} className="flex items-center justify-between w-full p-4 border border-border bg-foreground/[0.03] text-foreground hover:bg-foreground/10 transition-colors group">
-                    <span className="font-medium">Admin Portal (1234)</span>
-                    <ArrowRight className="w-4 h-4 text-foreground/30 group-hover:text-primary transition-colors" />
-                  </button>
-                  <button onClick={() => handleBypass('installer_juan')} className="flex items-center justify-between w-full p-4 border border-border bg-foreground/[0.03] text-foreground hover:bg-foreground/10 transition-colors group">
-                    <span className="font-medium">Installer App (4321)</span>
-                    <ArrowRight className="w-4 h-4 text-foreground/30 group-hover:text-primary transition-colors" />
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
+        </div>
+
+        {/* Industrial Footer - Lower opacity to recede */}
+        <div className="text-center pb-4 sm:pb-0">
+          <p className="font-mono text-[8px] uppercase tracking-widest text-rsg-text/30 leading-relaxed">
+            Secure Session Active • RS-FINTEL-SYS <br/>
+            Authorized Personnel Only
+          </p>
         </div>
       </div>
     </div>

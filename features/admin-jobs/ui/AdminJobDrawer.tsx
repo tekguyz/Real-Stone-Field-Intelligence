@@ -54,6 +54,9 @@ export function AdminJobDrawer({
 
   const activeSignature = selectedJob?.signature_url || localCaptures.signature;
 
+  const displayId = selectedJob?.wo_number || selectedJob?.legacy_id?.substring(0,8) || '';
+  const headerWoId = displayId.startsWith('WO-') ? displayId : 'WO-' + displayId;
+
   return (
     <AnimatePresence>
       {selectedJob && (
@@ -72,34 +75,52 @@ export function AdminJobDrawer({
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border z-[110] flex flex-col"
           >
-            <div className="p-6 border-b border-border flex justify-between items-start bg-surface/30">
-              <div className="flex flex-col gap-2">
-                 <span className="font-mono text-[10px] text-primary block uppercase tracking-[0.2em]">{selectedJob.legacy_id}</span>
-                 <h2 className="text-xl font-black tracking-tight uppercase">{selectedJob.client_name}</h2>
-                 <JobStatusBadge status={selectedJob.status} className="w-fit" />
+            <div className="p-4 md:p-6 border-b border-border flex justify-between items-start bg-surface/30 pb-4">
+              <div className="flex flex-col gap-1">
+                 <span className="font-mono text-[10px] text-foreground/40 block uppercase tracking-[0.2em]">{headerWoId}</span>
+                 <div className="flex items-center gap-3">
+                   <h2 className="text-lg font-black tracking-tight uppercase leading-none">{selectedJob.client_name}</h2>
+                   <JobStatusBadge status={selectedJob.status} className="w-fit scale-90 origin-left" />
+                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="p-2 hover:text-primary text-foreground/40 transition-colors"
+                className="p-2 hover:bg-foreground/5 text-foreground/40 hover:text-foreground transition-colors"
+                title="Close Drawer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
-              {/* Scheduled Arrival */}
-              <div className="flex flex-col gap-2">
-                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Scheduled Arrival</span>
-                 <div className="bg-surface/50 p-4 border border-border flex items-center justify-between">
-                    <span className="text-sm font-black text-foreground/90 uppercase tracking-tight">
-                      {selectedJob.scheduled_arrival || selectedJob.scheduled_date ? (
-                        new Intl.DateTimeFormat('en-US', { 
-                          weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true 
-                        }).format(new Date(selectedJob.scheduled_arrival || selectedJob.scheduled_date || '')).toUpperCase()
-                      ) : 'AWAITING ROUTE'}
-                    </span>
-                    <Clock className="w-5 h-5 text-rsg-gold" />
-                 </div>
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-8">
+              {/* Logistics Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                   <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Arrival Time</span>
+                   <div className="bg-surface/50 px-3 py-2 border border-border flex items-center justify-between h-[42px]">
+                      <span className="text-xs font-black text-foreground/90 uppercase tracking-tight truncate">
+                        {selectedJob.scheduled_arrival || selectedJob.scheduled_date ? (
+                          new Intl.DateTimeFormat('en-US', { 
+                            weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true 
+                          }).format(new Date(selectedJob.scheduled_arrival || selectedJob.scheduled_date || '')).toUpperCase()
+                        ) : 'AWAITING'}
+                      </span>
+                   </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                   <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Installer</span>
+                   <select 
+                     className={`bg-card w-full border border-border px-3 py-2 text-xs font-black rounded-none focus:outline-none focus:border-rsg-gold font-mono uppercase text-foreground appearance-none h-[42px] ${selectedJob.status === 'verified' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                     value={selectedJob.installer_id || 'unassigned'}
+                     onChange={(e) => onUpdateInstaller(selectedJob.id, e.target.value)}
+                     disabled={selectedJob.status === 'verified'}
+                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                   >
+                     <option value="unassigned" className="bg-background text-foreground py-2">UNASSIGNED</option>
+                     <option value="installer_juan" className="bg-background text-foreground py-2">JUAN</option>
+                     <option value="installer_carlos" className="bg-background text-foreground py-2">CARLOS</option>
+                   </select>
+                </div>
               </div>
 
               {/* Site info */}
@@ -147,13 +168,13 @@ export function AdminJobDrawer({
                   ))}
                   {(!selectedJob.stoneapp_parts || selectedJob.stoneapp_parts.length === 0) && (
                     <div className="p-8 text-center border border-dashed border-border bg-foreground/[0.02]">
-                      <span className="text-xs font-mono text-foreground/30 uppercase tracking-widest italic">No installation scope data</span>
+                      <span className="text-[10px] font-mono text-foreground/30 uppercase tracking-widest italic">No installation scope data</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Logistics */}
+              {/* Logistics Notes */}
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-3">{t.logistics}</span>
                 <div className="bg-amber-500/5 border border-amber-500/20 p-4">
@@ -161,21 +182,6 @@ export function AdminJobDrawer({
                     &quot;{selectedJob.logistics_notes || 'No special logistics recorded for this work order.'}&quot;
                   </p>
                 </div>
-              </div>
-
-              {/* Assignment */}
-              <div className="flex flex-col gap-2">
-                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Assign Installer</span>
-                 <select 
-                   className="bg-card w-full border border-border px-4 py-3 text-sm rounded-none focus:outline-none focus:border-rsg-gold font-mono uppercase text-foreground appearance-none"
-                   value={selectedJob.installer_id || 'unassigned'}
-                   onChange={(e) => onUpdateInstaller(selectedJob.id, e.target.value)}
-                   style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
-                 >
-                   <option value="unassigned" className="bg-background text-foreground py-2">UNASSIGNED</option>
-                   <option value="installer_juan" className="bg-background text-foreground py-2">JUAN</option>
-                   <option value="installer_carlos" className="bg-background text-foreground py-2">CARLOS</option>
-                 </select>
               </div>
 
               {/* Verified Proofs */}
@@ -228,12 +234,12 @@ export function AdminJobDrawer({
               )}
             </div>
 
-            <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-3">
+            <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-6">
               {onVerifyJob && selectedJob.status === 'submitted_for_review' && (
                 <button 
                   onClick={() => onVerifyJob(selectedJob.id)}
                   disabled={isVerifying}
-                  className="w-full bg-rsg-success text-rsg-surface py-4 font-black tracking-[0.2em] uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 border border-rsg-border"
+                  className="w-full bg-rsg-success text-white py-4 font-black tracking-[0.2em] uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 border border-rsg-success"
                 >
                   {isVerifying ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -243,18 +249,19 @@ export function AdminJobDrawer({
                   Verify & Close Work Order
                 </button>
               )}
+              
               <div className="grid grid-cols-2 gap-3">
                 <button 
                   onClick={onClose}
-                  className="w-full h-14 border border-foreground/20 text-foreground font-black uppercase tracking-[0.2em] transition-colors hover:bg-foreground/5 rounded-none"
+                  className="w-full h-14 border border-foreground/20 text-foreground font-black uppercase tracking-[0.2em] transition-colors bg-surface hover:bg-foreground/5 rounded-none"
                 >
-                  Close
+                  CLOSE
                 </button>
                 <a 
-                  href={`/admin/jobs/${selectedJob.id}`}
-                  className="flex items-center justify-center w-full h-14 bg-foreground text-background font-black uppercase tracking-[0.2em] transition-opacity hover:opacity-90 rounded-none"
+                  href={`/admin/reports/${selectedJob.id}`}
+                  className="flex items-center justify-center w-full h-14 bg-foreground text-background font-black uppercase tracking-[0.2em] transition-all hover:bg-rsg-gold hover:text-black rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]"
                 >
-                  Full Record
+                  VIEW REPORT
                 </a>
               </div>
             </div>

@@ -4,11 +4,11 @@ import { useUserStore } from '../../../entities/user/store';
 import { JobStatus } from '../../../entities/job';
 
 const statusColors: Record<JobStatus, string> = {
-  'verified': 'bg-rsg-success text-rsg-surface border-rsg-border',
-  'in_progress': 'bg-rsg-gold text-rsg-surface border-rsg-border',
-  'submitted_for_review': 'bg-rsg-gold/50 text-rsg-text border-rsg-border',
-  'assigned': 'bg-rsg-surface text-rsg-text border-rsg-border',
-  'pending': 'bg-rsg-warning text-rsg-surface border-rsg-border',
+  'verified': 'bg-rsg-success text-white',
+  'in_progress': 'bg-rsg-gold text-black',
+  'submitted_for_review': 'bg-rsg-warning text-black',
+  'assigned': 'bg-foreground text-background',
+  'pending': 'bg-zinc-500 text-white',
 };
 
 export function AdminJobsFilters({
@@ -49,31 +49,28 @@ export function AdminJobsFilters({
           <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-3">Smart Presets</h3>
           <div className="grid grid-cols-1 gap-2">
             <button 
-              onClick={() => setSelectedStatuses(['in_progress', 'assigned'])}
+              onClick={() => setSelectedStatuses(['assigned', 'in_progress'])}
               className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-gold bg-rsg-gold/10 text-rsg-text hover:bg-rsg-gold/20 text-left flex justify-between items-center group"
             >
               Active
-              <span className="w-2 h-2 rounded-none bg-rsg-gold animate-pulse group-hover:scale-125 transition-transform" />
             </button>
             <button 
               onClick={() => setSelectedStatuses(['submitted_for_review'])}
               className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-warning bg-rsg-warning/10 text-rsg-warning hover:bg-rsg-warning/20 text-left flex justify-between items-center group"
             >
               Review
-              <span className="w-2 h-2 rounded-none bg-rsg-warning group-hover:scale-125 transition-transform" />
             </button>
             <button 
               onClick={() => setSelectedStatuses(['pending'])}
               className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-border/30 bg-rsg-surface text-rsg-text/60 hover:bg-rsg-surface/80 text-left flex justify-between items-center group"
             >
               Pending
-              <span className="w-2 h-2 rounded-none bg-rsg-border/20 group-hover:scale-125 transition-transform" />
             </button>
             <button 
               onClick={() => setSelectedStatuses([])}
-              className="px-4 py-1.5 text-[10px] font-mono text-foreground/40 hover:text-primary transition-colors text-right"
+              className="px-4 py-1.5 text-[10px] font-mono text-foreground/40 hover:text-primary transition-colors text-right font-black tracking-widest"
             >
-              CLEAR ALL
+              CLEAR ALL FILTERS
             </button>
           </div>
         </div>

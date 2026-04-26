@@ -26,7 +26,7 @@ export const mockJobs: Job[] = [
     scheduled_date: '2026-04-24T08:00:00Z',
     scheduled_arrival: '2026-04-24T08:00:00Z',
     created_at: '2026-04-01T00:00:00Z',
-    updated_at: '2026-04-24T00:00:00Z'
+    updated_at: '2026-04-24T16:00:00Z'
   },
   {
     id: 'j-1002',

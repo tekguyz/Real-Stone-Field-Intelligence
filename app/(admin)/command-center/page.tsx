@@ -77,9 +77,9 @@ export default function CommandCenterPage() {
             ) : (
               <div className="grid grid-cols-1 gap-3">
                 {[
-                  { label: t.pendingCount, value: stats.pending, color: 'border-foreground/10', sub: 'BACKLOG' },
-                  { label: t.activeCount, value: stats.active, color: 'border-primary/30', sub: 'ON FIELD' },
-                  { label: t.reviewCount, value: stats.review, color: 'border-amber-500/30', sub: 'ACTION REQ' }
+                  { label: t.pendingCount, value: stats.pending, color: 'border-zinc-500', sub: 'BACKLOG' },
+                  { label: t.activeCount, value: stats.active, color: 'border-rsg-gold', sub: 'IN FIELD' },
+                  { label: t.reviewCount, value: stats.review, color: 'border-rsg-warning', sub: 'ACTION REQ' }
                 ].map(stat => (
                   <div key={stat.label} className={`bg-card border-l-8 ${stat.color} p-4 border-y border-r border-border transition-colors hover:bg-surface/50`}>
                     <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">{stat.sub}</p>

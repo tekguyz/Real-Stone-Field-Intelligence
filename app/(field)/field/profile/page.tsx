@@ -12,22 +12,35 @@ import {
   EyeOff,
   Phone,
   AlertTriangle,
-  ExternalLink
+  ExternalLink,
+  Sun,
+  Moon,
+  Laptop
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { useUserStore } from '../../../../entities/user/store';
 import { dict } from '../../../../entities/i18n/dict';
+import { useTheme } from 'next-themes';
+import { ReportIssueForm } from '../../../../shared/ui/ReportIssueForm';
 
 export default function FieldProfilePage() {
   const { 
     activeRole, 
     language, 
-    setLanguage 
+    setLanguage,
+    setManualThemeOverride
   } = useUserStore();
+  const { theme, setTheme } = useTheme();
   const t = dict[language].field;
   const router = useRouter();
+
+  const [showReportForm, setShowReportForm] = useState(false);
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    setManualThemeOverride(true);
+  };
 
   const [showPin, setShowPin] = useState(false);
   const fullName = activeRole.split('_')[1]?.charAt(0).toUpperCase() + activeRole.split('_')[1]?.slice(1) || 'Installer';
@@ -113,30 +126,104 @@ export default function FieldProfilePage() {
           </div>
         </section>
 
+        {/* Theme Switcher - Industrial Segment Control */}
+        <section>
+          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">Display Theme</h3>
+          <div className="bg-surface border border-border flex p-1">
+            {[
+              { id: 'light', icon: Sun, label: 'Light' },
+              { id: 'dark', icon: Moon, label: 'Dark' },
+              { id: 'system', icon: Laptop, label: 'Auto' }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleThemeChange(item.id)}
+                className={`flex-1 h-12 flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-[0.2em] transition-all relative ${
+                  theme === item.id 
+                    ? 'text-primary-foreground z-10' 
+                    : 'text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5'
+                }`}
+              >
+                {theme === item.id && (
+                  <motion.div 
+                    layoutId="theme-pill-field"
+                    className="absolute inset-0 bg-primary -z-10"
+                    transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+                  />
+                )}
+                <item.icon className="w-3.5 h-3.5" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Combined System & Apps - Neo-Brutalist Grid */}
+        <section className="grid grid-cols-1 gap-4">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">Application Control</h3>
+            <div className="flex flex-col border border-border divide-y divide-border">
+              <div className="flex items-center justify-between p-4 bg-surface">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Offline Storage</span>
+                  <span className="text-[8px] font-mono text-foreground/40 uppercase">12 pending syncs</span>
+                </div>
+                <button className="text-[8px] font-black uppercase tracking-[0.2em] bg-foreground text-background px-3 py-1.5 active:scale-95 transition-transform">
+                  Sync Now
+                </button>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-surface">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Media Quality</span>
+                  <span className="text-[8px] font-mono text-foreground/40 uppercase">Standard (Balanced)</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-foreground/20" />
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Support & Reporting - High Density */}
         <section className="flex flex-col gap-2">
           <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">{t.help}</h3>
           
-          <a 
-            href="tel:5615551234"
-            className="w-full h-14 bg-surface border border-border flex items-center justify-between px-4 active:scale-[0.98] transition-all group hover:border-primary/40"
-          >
-            <div className="flex items-center gap-3">
-              <Phone className="w-4 h-4 text-primary" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80">{t.callOffice}</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-foreground/20 group-hover:text-primary transition-colors" />
-          </a>
+          <div className="flex flex-col border border-border divide-y divide-border">
+            <a 
+              href="tel:7724899964"
+              className="w-full h-14 bg-surface flex items-center justify-between px-4 active:bg-foreground/5 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-primary" />
+                <span className="text-xs font-bold uppercase tracking-[0.1em] text-foreground/80">(772) 489-9964</span>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">{t.callOffice}</span>
+            </a>
 
-          <button 
-            className="w-full h-14 bg-surface border border-border flex items-center justify-between px-4 active:scale-[0.98] transition-all group hover:border-amber-500/40"
-          >
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="w-4 h-4 text-amber-500" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80">{t.reportIssue}</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-foreground/20 group-hover:text-amber-500 transition-colors" />
-          </button>
+            <button 
+              onClick={() => setShowReportForm(!showReportForm)}
+              className={`w-full h-14 flex items-center justify-between px-4 active:bg-foreground/5 transition-all group ${showReportForm ? 'bg-rsg-gold/5' : 'bg-surface'}`}
+            >
+              <div className="flex items-center gap-3">
+                <AlertTriangle className={`w-4 h-4 ${showReportForm ? 'text-rsg-gold' : 'text-amber-500'}`} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80">{t.reportIssue}</span>
+              </div>
+              <ChevronRight className={`w-4 h-4 transition-transform ${showReportForm ? 'rotate-90 text-rsg-gold' : 'text-foreground/20'}`} />
+            </button>
+          </div>
+
+          {showReportForm && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden border-x border-b border-border"
+            >
+              <ReportIssueForm 
+                userRole={activeRole} 
+                userName={fullName}
+              />
+            </motion.div>
+          )}
         </section>
 
         {/* System Footer */}

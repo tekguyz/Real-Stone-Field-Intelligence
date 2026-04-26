@@ -27,7 +27,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ReactQueryProvider>
             <DemoBanner />
-            <div className="pt-10 h-screen flex flex-col">
+            <div className="pt-10 print:pt-0 h-screen flex flex-col">
               {children}
             </div>
           </ReactQueryProvider>

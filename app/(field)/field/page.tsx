@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useUserStore } from '../../../entities/user/store';
 import { dict } from '../../../entities/i18n/dict';
 import { useJobs } from '../../../entities/job/api';
@@ -12,10 +14,19 @@ import { SyncIndicator } from '../../../shared/ui/SyncIndicator';
 export default function FieldPage() {
   const { activeRole, language, _hasHydrated } = useUserStore();
   const t = dict[language].field;
+  const router = useRouter();
   
-  const { data: jobs, isLoading, error, refetch } = useJobs();
+  // Conditionally disable job fetch if admin (to prevent unneeded installer load)
+  const isInstaller = activeRole?.startsWith('installer_');
+  const { data: jobs, isLoading, error, refetch } = useJobs({ enabled: _hasHydrated && isInstaller });
 
-  if (!_hasHydrated) {
+  useEffect(() => {
+    if (_hasHydrated && activeRole === 'admin') {
+      router.replace('/command-center');
+    }
+  }, [_hasHydrated, activeRole, router]);
+
+  if (!_hasHydrated || activeRole === 'admin') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
          <Loader2 className="w-8 h-8 animate-spin text-primary opacity-20" />

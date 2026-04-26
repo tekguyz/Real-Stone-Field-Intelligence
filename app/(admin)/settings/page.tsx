@@ -3,15 +3,24 @@
 import { useState } from 'react';
 import { useUserStore } from '../../../entities/user/store';
 import { dict } from '../../../entities/i18n/dict';
-import { Settings as SettingsIcon, Globe, Bell, Lock, CheckCircle2 } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Lock, CheckCircle2, Sun, Moon, Laptop, AlertTriangle } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { ReportIssueForm } from '../../../shared/ui/ReportIssueForm';
 
 type Tab = 'general' | 'operations' | 'security';
 
 export default function SettingsPage() {
-  const { language, setLanguage } = useUserStore();
+  const { language, setLanguage, setManualThemeOverride } = useUserStore();
+  const { theme, setTheme } = useTheme();
   const t = dict[language].admin;
   const [activeTab, setActiveTab] = useState<Tab>('general');
   const [saved, setSaved] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    setManualThemeOverride(true);
+  };
 
   const handleSave = () => {
     setSaved(true);
@@ -59,101 +68,128 @@ export default function SettingsPage() {
             <div className="p-8">
               {activeTab === 'general' && (
                 <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight mb-6">User Profile</h2>
+                  {/* Profile Header Block */}
+                  <div className="flex items-center gap-6 pb-8 border-b border-border">
+                    <div className="w-16 h-16 bg-foreground text-background flex items-center justify-center font-black text-2xl">
+                      AU
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <h2 className="text-xl font-bold tracking-tight">Admin User</h2>
+                        <span className="bg-primary/10 border border-primary/20 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-primary">
+                          Principal Architect
+                        </span>
+                      </div>
+                      <p className="text-sm text-foreground/50 font-mono uppercase tracking-tighter">admin@realstone.com</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="flex flex-col gap-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">Full Name</label>
-                          <input 
-                            type="text" 
-                            defaultValue="Admin User"
-                            className="bg-surface border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
-                          />
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">Preferences</h3>
+                      
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">{t.languagePref}</label>
+                        <select 
+                          value={language}
+                          onChange={(e) => setLanguage(e.target.value as 'en' | 'es')}
+                          className="bg-surface border border-border px-4 py-3 text-xs font-bold uppercase tracking-widest focus:outline-none focus:border-primary transition-colors w-full"
+                        >
+                          <option value="en">English (US)</option>
+                          <option value="es">Español (ES)</option>
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">{t.defaultTheme}</label>
+                        <div className="flex bg-surface border border-border p-1 rounded-sm w-full">
+                          {[
+                            { id: 'light', icon: Sun, label: 'Light' },
+                            { id: 'dark', icon: Moon, label: 'Dark' },
+                            { id: 'system', icon: Laptop, label: 'Auto' },
+                          ].map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => handleThemeChange(item.id)}
+                              className={`flex-1 flex items-center justify-center gap-2 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${
+                                theme === item.id 
+                                  ? 'bg-foreground text-background shadow-sm' 
+                                  : 'text-foreground/40 hover:text-foreground/70 hover:bg-foreground/5'
+                              }`}
+                            >
+                              <item.icon className="w-3.5 h-3.5" />
+                              <span>{item.label}</span>
+                            </button>
+                          ))}
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">Email Address</label>
-                          <input 
-                            type="email" 
-                            defaultValue="admin@realstone.com"
-                            readOnly
-                            className="bg-surface/50 border border-border px-4 py-3 text-sm text-foreground/50 focus:outline-none"
-                          />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-6">
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">System Info</h3>
+                      <div className="bg-surface border border-border p-4 flex flex-col gap-4">
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="font-mono text-foreground/40 uppercase">App Version</span>
+                          <span className="font-black">v0.8.2-beta</span>
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest font-black">System Role</label>
-                          <div className="bg-primary/10 border border-primary/20 px-4 py-3 text-xs font-black uppercase tracking-widest text-primary">
-                            Principal UI Engineer / Architect
-                          </div>
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="font-mono text-foreground/40 uppercase">Storage Used</span>
+                          <span className="font-black">12.4 MB / 500 MB</span>
                         </div>
+                        <button className="w-full py-2 bg-foreground/5 border border-border text-[9px] font-black uppercase tracking-widest hover:bg-rsg-error hover:text-white transition-colors">
+                          Purge Offline Cache
+                        </button>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-8 border-t border-border">
-                    <h2 className="text-xl font-bold tracking-tight mb-6">{t.general}</h2>
-                    <div className="flex flex-col gap-6">
-                      
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-border">
-                        <div>
-                          <h3 className="font-medium text-foreground">{t.languagePref}</h3>
-                          <p className="text-sm text-foreground/50 mt-1">Select the primary language for the admin interface.</p>
-                        </div>
-                        <select 
-                          value={language}
-                          onChange={(e) => setLanguage(e.target.value as 'en' | 'es')}
-                          className="bg-surface border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors w-40"
-                        >
-                          <option value="en">English</option>
-                          <option value="es">Español</option>
-                        </select>
+                  {/* Collapsible Report Form */}
+                  <div className="mt-4">
+                    <button 
+                      onClick={() => setShowReportForm(!showReportForm)}
+                      className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-colors group"
+                    >
+                      <AlertTriangle className="w-3 h-3 group-hover:text-rsg-warning" />
+                      <span>{showReportForm ? 'Hide Support Tool' : 'Report System Issue'}</span>
+                    </button>
+                    
+                    {showReportForm && (
+                      <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <ReportIssueForm 
+                          userRole="admin" 
+                          userName="Admin User"
+                        />
                       </div>
-
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-border">
-                        <div>
-                          <h3 className="font-medium text-foreground">{t.defaultTheme}</h3>
-                          <p className="text-sm text-foreground/50 mt-1">Appearance of the portal.</p>
-                        </div>
-                        <select className="bg-surface border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors w-40">
-                          <option>System Auto</option>
-                          <option>Light Mode</option>
-                          <option>Dark Mode</option>
-                        </select>
-                      </div>
-
-                    </div>
+                    )}
                   </div>
                 </div>
               )}
 
               {activeTab === 'operations' && (
                 <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight mb-6">{t.operations} & {t.notifications}</h2>
-                    <div className="flex flex-col gap-6">
-                      
-                      <div className="flex items-center justify-between py-4 border-b border-border">
-                        <div className="pr-4">
-                          <h3 className="font-medium text-foreground">{t.verifiedProofEmail}</h3>
-                          <p className="text-sm text-foreground/50 mt-1">Send an automated email to clients with photo proof when a job moves to &quot;Verified&quot;.</p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                          <input type="checkbox" className="sr-only peer" defaultChecked />
-                          <div className="w-11 h-6 bg-surface border border-border peer-focus:outline-none peer peer-checked:after:translate-x-full peer-checked:after:border-background after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-foreground after:border-border after:border after:h-5 after:w-5 after:transition-all peer-checked:bg-foreground"></div>
-                        </label>
+                  <div className="flex flex-col gap-8">
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">Automation & Ingestion</h3>
+                    
+                    <div className="flex items-center justify-between py-4 border-b border-border">
+                      <div className="pr-12">
+                        <h4 className="font-bold text-foreground uppercase text-xs tracking-tight">{t.verifiedProofEmail}</h4>
+                        <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">Automatic customer delivery upon verification.</p>
                       </div>
+                      <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" className="sr-only peer" defaultChecked />
+                        <div className="w-11 h-6 bg-surface border border-border peer-focus:outline-none peer-checked:bg-foreground after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-foreground after:border-border after:border after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:bg-background"></div>
+                      </label>
+                    </div>
 
-                      <div className="flex items-center justify-between py-4 border-b border-border">
-                        <div className="pr-4">
-                          <h3 className="font-medium text-foreground">{t.jobCompleteSms}</h3>
-                          <p className="text-sm text-foreground/50 mt-1">Send a quick SMS to lead installer assigned to the job upon office verification.</p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                          <input type="checkbox" className="sr-only peer" />
-                          <div className="w-11 h-6 bg-surface border border-border peer-focus:outline-none peer peer-checked:after:translate-x-full peer-checked:after:border-background after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-foreground after:border-border after:border after:h-5 after:w-5 after:transition-all peer-checked:bg-foreground"></div>
-                        </label>
+                    <div className="flex items-center justify-between py-4 border-b border-border">
+                      <div className="pr-12">
+                        <h4 className="font-bold text-foreground uppercase text-xs tracking-tight">StoneApp Integration</h4>
+                        <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">Real-time sync of work order status.</p>
                       </div>
-
+                      <div className="flex items-center gap-3">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-rsg-success bg-rsg-success/10 px-2 py-0.5 border border-rsg-success/20">Active</span>
+                        <button className="text-[9px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">Re-sync</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -161,25 +197,32 @@ export default function SettingsPage() {
 
               {activeTab === 'security' && (
                 <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight mb-6">{t.security}</h2>
-                    <div className="flex flex-col gap-6">
-                      
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-border">
-                        <div className="max-w-md">
-                          <h3 className="font-medium text-foreground">{t.masterPin}</h3>
-                          <p className="text-sm text-foreground/50 mt-1">Global override PIN for office administration bypassing per-user access limits.</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="password" 
-                            maxLength={4}
-                            defaultValue="1234"
-                            className="bg-surface border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors w-24 text-center font-mono tracking-[0.2em]"
-                          />
-                        </div>
+                  <div className="flex flex-col gap-8">
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">Access Control</h3>
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-border">
+                      <div>
+                        <h4 className="font-bold text-foreground uppercase text-xs tracking-tight">{t.masterPin}</h4>
+                        <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">Global administrative override PIN.</p>
                       </div>
+                      <div className="flex items-center gap-2">
+                        {[0, 1, 2, 3].map((i) => (
+                          <div key={i} className="w-10 h-12 bg-surface border border-border flex items-center justify-center font-mono text-lg font-black">{ "1234"[i] }</div>
+                        ))}
+                        <button className="ml-2 text-[9px] font-black uppercase tracking-widest text-primary hover:underline">Change</button>
+                      </div>
+                    </div>
 
+                    <div className="flex items-center justify-between py-4 border-b border-border">
+                      <div>
+                        <h4 className="font-bold text-foreground uppercase text-xs tracking-tight">Audit Log Depth</h4>
+                        <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">How long to persist field operation logs.</p>
+                      </div>
+                      <select defaultValue="90 Days" className="bg-surface border border-border px-3 py-2 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-primary">
+                        <option>30 Days</option>
+                        <option>90 Days</option>
+                        <option>1 Year</option>
+                      </select>
                     </div>
                   </div>
                 </div>

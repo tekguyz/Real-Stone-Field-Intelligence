@@ -303,12 +303,13 @@ export const jobService = {
 /**
  * FSD React Query hook to fetch jobs.
  */
-export function useJobs() {
+export function useJobs(options?: { enabled?: boolean }) {
   const { isDevMode } = useUserStore();
 
   return useQuery({
     queryKey: ['jobs', isDevMode],
     queryFn: () => jobService.getJobs(isDevMode),
+    enabled: options?.enabled ?? true,
   });
 }
 

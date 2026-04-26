@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netlify Forms Proxy</title>
+</head>
+<body>
+    <!-- This file is for Netlify Form detection only -->
+    <form name="report-issue" data-netlify="true" netlify-honeypot="bot-field" hidden encType="multipart/form-data">
+        <input type="hidden" name="form-name" value="report-issue" />
+        <input type="text" name="name" />
+        <input type="email" name="email" />
+        <input type="text" name="role" />
+        <input type="text" name="subject" />
+        <textarea name="message"></textarea>
+        <input type="file" name="attachment" />
+    </form>
+</body>
+</html>
