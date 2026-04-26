@@ -1,6 +1,10 @@
-import { useState, useMemo } from 'react';
-import { useJobs, useUpdateJobStatus, useUpdateJobInstaller } from '../../../entities/job/api';
-import { Job } from '../../../entities/job/types';
+import { useState, useMemo } from "react";
+import {
+  useJobs,
+  useUpdateJobStatus,
+  useUpdateJobInstaller,
+} from "../../../entities/job/api";
+import { Job } from "../../../entities/job/types";
 
 export function useCommandCenterController() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -12,23 +16,29 @@ export function useCommandCenterController() {
   const currentJobs = useMemo(() => jobs || [], [jobs]);
 
   const handleVerify = async (jobId: string) => {
-    await updateStatus.mutateAsync({ jobId, status: 'verified' });
+    await updateStatus.mutateAsync({ jobId, status: "verified" });
     setSelectedJob(null);
   };
 
   const handleUpdateInstaller = (jobId: string, installerId: string) => {
-    const value = installerId === 'unassigned' ? null : installerId;
+    const value = installerId === "unassigned" ? null : installerId;
     updateInstaller.mutate({ jobId, installerId: value });
     if (selectedJob && selectedJob.id === jobId) {
       setSelectedJob({ ...selectedJob, installer_id: value });
     }
   };
 
-  const stats = useMemo(() => ({
-    pending: currentJobs.filter(j => j.status === 'pending').length,
-    active: currentJobs.filter(j => j.status === 'in_progress' || j.status === 'assigned').length,
-    review: currentJobs.filter(j => j.status === 'submitted_for_review').length,
-  }), [currentJobs]);
+  const stats = useMemo(
+    () => ({
+      pending: currentJobs.filter((j) => j.status === "pending").length,
+      active: currentJobs.filter(
+        (j) => j.status === "in_progress" || j.status === "assigned",
+      ).length,
+      review: currentJobs.filter((j) => j.status === "submitted_for_review")
+        .length,
+    }),
+    [currentJobs],
+  );
 
   return {
     selectedJob,
@@ -39,6 +49,6 @@ export function useCommandCenterController() {
     handleVerify,
     handleUpdateInstaller,
     isVerifying: updateStatus.isPending,
-    stats
+    stats,
   };
 }

@@ -1,17 +1,27 @@
-import { Job, JobStatusBadge } from '../../../entities/job';
-import { dict } from '../../../entities/i18n/dict';
-import { ChevronRight, Loader2, AlertTriangle, TrendingUp, Clock, AlertCircle, PlayCircle, CheckCircle2, MapPin } from 'lucide-react';
-import { summarizeJobScope } from '../../../shared/lib/utils';
-import { useUserStore } from '../../../entities/user/store';
+import { Job, JobStatusBadge } from "../../../entities/job";
+import { dict } from "../../../entities/i18n/dict";
+import {
+  ChevronRight,
+  Loader2,
+  AlertTriangle,
+  TrendingUp,
+  Clock,
+  AlertCircle,
+  PlayCircle,
+  CheckCircle2,
+  MapPin,
+} from "lucide-react";
+import { summarizeJobScope } from "../../../shared/lib/utils";
+import { useUserStore } from "../../../entities/user/store";
 
 export function CommandCenterTable({
   jobs,
   isLoading,
   error,
-  onJobSelect
+  onJobSelect,
 }: {
-  jobs: Job[],
-  isLoading: boolean,
+  jobs: Job[];
+  isLoading: boolean;
   error: Error | null;
   onJobSelect: (job: Job) => void;
 }) {
@@ -23,7 +33,9 @@ export function CommandCenterTable({
       {isLoading ? (
         <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-foreground/50 gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-rsg-gold" />
-          <span className="text-sm font-mono tracking-widest uppercase">Syncing Pipeline...</span>
+          <span className="text-sm font-mono tracking-widest uppercase">
+            Syncing Pipeline...
+          </span>
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-red-500 gap-4">
@@ -35,7 +47,9 @@ export function CommandCenterTable({
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-rsg-surface/50 text-foreground/60 font-medium border-b border-border">
               <tr>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">{t.legacyId}</th>
+                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
+                  {t.legacyId}
+                </th>
                 <th className="px-6 py-4">{t.client}</th>
                 <th className="px-6 py-4">{t.installationScope}</th>
                 <th className="px-6 py-4">{t.status}</th>
@@ -44,23 +58,29 @@ export function CommandCenterTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {jobs.map(job => (
-                <tr 
-                  key={job.id} 
+              {jobs.map((job) => (
+                <tr
+                  key={job.id}
                   className="hover:bg-rsg-surface/30 transition-colors cursor-pointer group"
                   onClick={() => onJobSelect(job)}
                 >
-                  <td className="px-6 py-4 font-mono text-xs text-foreground/50">{job.legacy_id}</td>
+                  <td className="px-6 py-4 font-mono text-xs text-foreground/50">
+                    {job.legacy_id}
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-foreground/90">{job.client_name}</span>
+                      <span className="font-semibold text-foreground/90">
+                        {job.client_name}
+                      </span>
                       <div className="flex items-center gap-1 text-[10px] text-foreground/40 font-mono italic uppercase mt-0.5">
                         <MapPin className="w-3 h-3" />
-                        {job.community_name || (job.address.split(',')[0])}
+                        {job.community_name || job.address.split(",")[0]}
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-foreground/80 font-medium">{summarizeJobScope(job.stoneapp_parts)}</td>
+                  <td className="px-6 py-4 text-foreground/80 font-medium">
+                    {summarizeJobScope(job.stoneapp_parts)}
+                  </td>
                   <td className="px-6 py-4">
                     <JobStatusBadge status={job.status} />
                   </td>
@@ -68,14 +88,31 @@ export function CommandCenterTable({
                     {job.scheduled_arrival || job.scheduled_date ? (
                       <div className="flex flex-col">
                         <span className="font-semibold text-foreground/90 text-sm">
-                          {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(job.scheduled_arrival || job.scheduled_date || ''))}
+                          {new Intl.DateTimeFormat("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          }).format(
+                            new Date(
+                              job.scheduled_arrival || job.scheduled_date || "",
+                            ),
+                          )}
                         </span>
                         <span className="text-[10px] text-foreground/60 font-mono uppercase">
-                          {new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date(job.scheduled_arrival || job.scheduled_date || ''))}
+                          {new Intl.DateTimeFormat("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          }).format(
+                            new Date(
+                              job.scheduled_arrival || job.scheduled_date || "",
+                            ),
+                          )}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-[10px] text-foreground/40 font-mono italic uppercase">TBD</span>
+                      <span className="text-[10px] text-foreground/40 font-mono italic uppercase">
+                        TBD
+                      </span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">

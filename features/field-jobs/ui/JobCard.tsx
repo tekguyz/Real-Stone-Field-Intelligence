@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { motion } from 'motion/react';
-import { dict } from '../../../entities/i18n/dict';
-import { Job, JobStatusBadge } from '../../../entities/job';
-import { summarizeJobScope } from '../../../shared/lib/utils';
-import { Clock, MapPin } from 'lucide-react';
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { motion } from "motion/react";
+import { dict } from "../../../entities/i18n/dict";
+import { Job, JobStatusBadge } from "../../../entities/job";
+import { summarizeJobScope } from "../../../shared/lib/utils";
+import { Clock, MapPin } from "lucide-react";
 
 interface JobCardProps {
   job: Job;
-  language: 'en' | 'es';
+  language: "en" | "es";
   index: number;
 }
 
@@ -19,7 +19,7 @@ export function JobCard({ job, language, index }: JobCardProps) {
     if (job.city_name && job.community_name) {
       return `${job.city_name.toUpperCase()} • ${job.community_name.toUpperCase()}`;
     }
-    const parts = job.address.split(',');
+    const parts = job.address.split(",");
     if (parts.length >= 2) {
       const city = parts[1].trim().toUpperCase();
       const streetOrCommunity = parts[0].trim().toUpperCase();
@@ -29,12 +29,17 @@ export function JobCard({ job, language, index }: JobCardProps) {
   };
 
   const formatScheduledTime = (isoDate: string | null | undefined) => {
-    if (!isoDate) return 'WAITING TO BE ROUTED';
+    if (!isoDate) return "WAITING TO BE ROUTED";
     try {
       const d = new Date(isoDate);
-      return new Intl.DateTimeFormat('en-US', { 
-        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
-      }).format(d).toUpperCase();
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })
+        .format(d)
+        .toUpperCase();
     } catch {
       return isoDate;
     }
@@ -53,13 +58,16 @@ export function JobCard({ job, language, index }: JobCardProps) {
           <h3 className="text-lg font-bold text-foreground uppercase tracking-tight leading-tight">
             {job.client_name}
           </h3>
-          <JobStatusBadge status={job.status} className="shrink-0 scale-75 origin-top-right" />
+          <JobStatusBadge
+            status={job.status}
+            className="shrink-0 scale-75 origin-top-right"
+          />
         </div>
 
         {/* WO-ID */}
         <div className="mb-1">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-rsg-gold">
-            {job.legacy_id || `WO-${job.id.slice(0,6)}`}
+            {job.legacy_id || `WO-${job.id.slice(0, 6)}`}
           </span>
         </div>
 
@@ -78,7 +86,9 @@ export function JobCard({ job, language, index }: JobCardProps) {
           </div>
           <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider">
             <Clock className="w-3 h-3 shrink-0" />
-            <span>{formatScheduledTime(job.scheduled_arrival || job.scheduled_date)}</span>
+            <span>
+              {formatScheduledTime(job.scheduled_arrival || job.scheduled_date)}
+            </span>
           </div>
         </div>
       </Link>

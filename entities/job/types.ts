@@ -1,5 +1,10 @@
-export type JobStatus = 'pending' | 'assigned' | 'in_progress' | 'submitted_for_review' | 'verified';
-export type JobType = 'template' | 'install' | 'service';
+export type JobStatus =
+  | "pending"
+  | "assigned"
+  | "in_progress"
+  | "submitted_for_review"
+  | "verified";
+export type JobType = "template" | "install" | "service";
 
 export interface JobScopePart {
   partType: string;

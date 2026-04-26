@@ -1,8 +1,8 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export type Role = 'admin' | 'installer_juan' | 'installer_carlos';
-export type Language = 'en' | 'es';
+export type Role = "admin" | "installer_juan" | "installer_carlos";
+export type Language = "en" | "es";
 
 interface UserState {
   activeRole: Role;
@@ -22,8 +22,8 @@ interface UserState {
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
-      activeRole: 'admin',
-      language: 'en',
+      activeRole: "admin",
+      language: "en",
       isDevMode: true,
       manualThemeOverride: false,
       isSidebarOpen: true,
@@ -31,15 +31,17 @@ export const useUserStore = create<UserState>()(
       setRole: (role) => set({ activeRole: role, manualThemeOverride: false }), // Reset override on role change
       setLanguage: (lang) => set({ language: lang }),
       setDevMode: (devMode) => set({ isDevMode: devMode }),
-      setManualThemeOverride: (override) => set({ manualThemeOverride: override }),
-      toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+      setManualThemeOverride: (override) =>
+        set({ manualThemeOverride: override }),
+      toggleSidebar: () =>
+        set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
       setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
-      name: 'rsg-user-storage',
+      name: "rsg-user-storage",
       onRehydrateStorage: (state) => {
         return () => state.setHasHydrated(true);
-      }
-    }
-  )
+      },
+    },
+  ),
 );

@@ -1,7 +1,11 @@
-import { ThemeForcer } from '../../shared/ui/ThemeForcer';
-import { AdminSidebar } from '../../features/admin-nav/AdminSidebar';
+import { ThemeForcer } from "../../shared/ui/ThemeForcer";
+import { AdminSidebar } from "../../features/admin-nav/AdminSidebar";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex flex-1 overflow-hidden print:overflow-visible bg-background print:bg-white min-h-screen">
       <AdminSidebar />

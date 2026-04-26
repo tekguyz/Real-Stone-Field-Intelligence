@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useUserStore } from '../../../entities/user/store';
-import { dict } from '../../../entities/i18n/dict';
-import { Database, Plus, Search } from 'lucide-react';
-import { useAdminJobsController } from '../../../features/admin-jobs/hooks/useAdminJobsController';
-import { AdminJobsTable } from '../../../features/admin-jobs/ui/AdminJobsTable';
-import { AdminJobsFilters } from '../../../features/admin-jobs/ui/AdminJobsFilters';
-import { AdminJobDrawer } from '../../../features/admin-jobs/ui/AdminJobDrawer';
-import { ImportModal } from '../../../features/admin-import/ui/ImportModal';
-import { useState } from 'react';
+import { useUserStore } from "../../../entities/user/store";
+import { dict } from "../../../entities/i18n/dict";
+import { Database, Plus, Search } from "lucide-react";
+import { useAdminJobsController } from "../../../features/admin-jobs/hooks/useAdminJobsController";
+import { AdminJobsTable } from "../../../features/admin-jobs/ui/AdminJobsTable";
+import { AdminJobsFilters } from "../../../features/admin-jobs/ui/AdminJobsFilters";
+import { AdminJobDrawer } from "../../../features/admin-jobs/ui/AdminJobDrawer";
+import { ImportModal } from "../../../features/admin-import/ui/ImportModal";
+import { useState } from "react";
 
 export default function JobsPage() {
   const { language } = useUserStore();
   const t = dict[language].admin;
   const [isImportOpen, setIsImportOpen] = useState(false);
-  
+
   const {
     isFormOpen,
     setIsFormOpen,
@@ -34,7 +34,7 @@ export default function JobsPage() {
     cities,
     installers,
     handleUpdateInstaller,
-    toggleFilter
+    toggleFilter,
   } = useAdminJobsController();
 
   return (
@@ -42,10 +42,14 @@ export default function JobsPage() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t.workOrderManagement}</h1>
-          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">ALL ACTIVE & PENDING INSTALLATIONS</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+            {t.workOrderManagement}
+          </h1>
+          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">
+            ALL ACTIVE & PENDING INSTALLATIONS
+          </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsImportOpen(true)}
           className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm"
         >
@@ -59,9 +63,9 @@ export default function JobsPage() {
         <div className="lg:col-span-3 flex flex-col gap-4">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground/50" />
-            <input 
-              type="text" 
-              placeholder="Search by WO# or Client..." 
+            <input
+              type="text"
+              placeholder="Search by WO# or Client..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-primary transition-colors"
@@ -69,10 +73,10 @@ export default function JobsPage() {
           </div>
 
           <div className="bg-card border border-border min-h-[500px]">
-            <AdminJobsTable 
-              jobs={filteredJobs} 
-              isLoading={isLoading} 
-              error={error} 
+            <AdminJobsTable
+              jobs={filteredJobs}
+              isLoading={isLoading}
+              error={error}
               onJobSelect={setSelectedJob}
               onUpdateInstaller={handleUpdateInstaller}
             />
@@ -81,7 +85,7 @@ export default function JobsPage() {
 
         {/* Right Column - Filters (25%) */}
         <div className="lg:col-span-1">
-          <AdminJobsFilters 
+          <AdminJobsFilters
             isLoading={isLoading}
             selectedStatuses={selectedStatuses}
             setSelectedStatuses={setSelectedStatuses}
@@ -96,14 +100,16 @@ export default function JobsPage() {
         </div>
       </div>
 
-      <ImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
-      
-      <AdminJobDrawer 
-        selectedJob={selectedJob} 
-        onClose={() => setSelectedJob(null)} 
-        onUpdateInstaller={handleUpdateInstaller} 
+      <ImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+      />
+
+      <AdminJobDrawer
+        selectedJob={selectedJob}
+        onClose={() => setSelectedJob(null)}
+        onUpdateInstaller={handleUpdateInstaller}
       />
     </div>
   );
 }
-

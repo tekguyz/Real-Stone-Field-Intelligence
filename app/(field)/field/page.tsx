@@ -1,42 +1,55 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUserStore } from '../../../entities/user/store';
-import { dict } from '../../../entities/i18n/dict';
-import { useJobs } from '../../../entities/job/api';
-import { ClipboardList, MapPin, ChevronRight, HardHat, Loader2, Navigation, Mountain } from 'lucide-react';
-import Link from 'next/link';
-import { motion } from 'motion/react';
-import { JobCard } from '../../../features/field-jobs/ui/JobCard';
-import { SyncIndicator } from '../../../shared/ui/SyncIndicator';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "../../../entities/user/store";
+import { dict } from "../../../entities/i18n/dict";
+import { useJobs } from "../../../entities/job/api";
+import {
+  ClipboardList,
+  MapPin,
+  ChevronRight,
+  HardHat,
+  Loader2,
+  Navigation,
+  Mountain,
+} from "lucide-react";
+import Link from "next/link";
+import { motion } from "motion/react";
+import { JobCard } from "../../../features/field-jobs/ui/JobCard";
+import { SyncIndicator } from "../../../shared/ui/SyncIndicator";
 
 export default function FieldPage() {
   const { activeRole, language, _hasHydrated } = useUserStore();
   const t = dict[language].field;
   const router = useRouter();
-  
+
   // Conditionally disable job fetch if admin (to prevent unneeded installer load)
-  const isInstaller = activeRole?.startsWith('installer_');
-  const { data: jobs, isLoading, error, refetch } = useJobs({ enabled: _hasHydrated && isInstaller });
+  const isInstaller = activeRole?.startsWith("installer_");
+  const {
+    data: jobs,
+    isLoading,
+    error,
+    refetch,
+  } = useJobs({ enabled: _hasHydrated && isInstaller });
 
   useEffect(() => {
-    if (_hasHydrated && activeRole === 'admin') {
-      router.replace('/command-center');
+    if (_hasHydrated && activeRole === "admin") {
+      router.replace("/command-center");
     }
   }, [_hasHydrated, activeRole, router]);
 
-  if (!_hasHydrated || activeRole === 'admin') {
+  if (!_hasHydrated || activeRole === "admin") {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-         <Loader2 className="w-8 h-8 animate-spin text-primary opacity-20" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary opacity-20" />
       </div>
     );
   }
 
   // Filter jobs for this specific installer
-  const myJobs = jobs?.filter(j => j.installer_id === activeRole) || [];
-  const activeCount = myJobs.filter(j => j.status === 'in_progress').length;
+  const myJobs = jobs?.filter((j) => j.installer_id === activeRole) || [];
+  const activeCount = myJobs.filter((j) => j.status === "in_progress").length;
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">
@@ -48,7 +61,7 @@ export default function FieldPage() {
           </div>
           <div className="flex flex-col truncate">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-primary truncate hidden sm:inline-block">
-              {activeRole.split('_')[1]?.toUpperCase()}
+              {activeRole.split("_")[1]?.toUpperCase()}
             </span>
             <span className="font-mono text-[10px] uppercase font-bold text-foreground/50 hidden sm:inline-block">
               {activeCount} ACTIVE
@@ -58,10 +71,12 @@ export default function FieldPage() {
         <div className="flex items-center gap-3 max-w-[60%] justify-end overflow-hidden">
           <SyncIndicator />
           <div className="flex flex-col text-right truncate">
-             <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase truncate">{t.todaysWork}</h1>
-             <span className="text-[9px] font-mono uppercase text-foreground/50 tracking-widest sm:hidden">
-               {activeCount} ACTIVE
-             </span>
+            <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase truncate">
+              {t.todaysWork}
+            </h1>
+            <span className="text-[9px] font-mono uppercase text-foreground/50 tracking-widest sm:hidden">
+              {activeCount} ACTIVE
+            </span>
           </div>
         </div>
       </div>
@@ -70,8 +85,10 @@ export default function FieldPage() {
       <div className="p-4 flex flex-col gap-4">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center p-20 gap-4">
-             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-foreground/40 font-bold">Syncing HQ Pipeline</span>
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-foreground/40 font-bold">
+              Syncing HQ Pipeline
+            </span>
           </div>
         ) : error ? (
           <div className="p-5 border-l-4 border-l-red-500 border-y border-r border-border bg-red-500/10 text-red-500 text-[10px] uppercase font-bold tracking-wider text-center">
@@ -80,12 +97,19 @@ export default function FieldPage() {
         ) : myJobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-border bg-foreground/[0.02]">
             <ClipboardList className="w-8 h-8 text-foreground/20 mb-3" />
-            <span className="text-foreground/40 font-bold uppercase tracking-[0.2em] text-[10px]">{t.myAssignments} (0)</span>
+            <span className="text-foreground/40 font-bold uppercase tracking-[0.2em] text-[10px]">
+              {t.myAssignments} (0)
+            </span>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
             {myJobs.map((job, index) => (
-              <JobCard key={job.id} job={job} language={language} index={index} />
+              <JobCard
+                key={job.id}
+                job={job}
+                language={language}
+                index={index}
+              />
             ))}
           </div>
         )}

@@ -1,8 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { Send, AlertTriangle, CheckCircle2, Loader2, Paperclip, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef } from "react";
+import {
+  Send,
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+  Paperclip,
+  X,
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface ReportIssueFormProps {
   userRole: string;
@@ -10,43 +17,49 @@ interface ReportIssueFormProps {
   userName?: string;
 }
 
-export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFormProps) {
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+export function ReportIssueForm({
+  userRole,
+  userEmail,
+  userName,
+}: ReportIssueFormProps) {
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus('submitting');
-    
+    setStatus("submitting");
+
     const formData = new FormData(e.currentTarget);
-    formData.append('form-name', 'report-issue');
-    formData.append('role', userRole);
-    if (userEmail) formData.append('email', userEmail);
-    if (userName) formData.append('name', userName);
-    if (selectedFile) formData.append('attachment', selectedFile);
+    formData.append("form-name", "report-issue");
+    formData.append("role", userRole);
+    if (userEmail) formData.append("email", userEmail);
+    if (userName) formData.append("name", userName);
+    if (selectedFile) formData.append("attachment", selectedFile);
 
     try {
-      const response = await fetch('/forms.html', {
-        method: 'POST',
+      const response = await fetch("/forms.html", {
+        method: "POST",
         headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+          "X-Requested-With": "XMLHttpRequest",
         },
-        body: formData
+        body: formData,
       });
 
       if (response.ok) {
-        setStatus('success');
+        setStatus("success");
         e.currentTarget.reset();
         setSelectedFile(null);
       } else {
-        throw new Error('Form submission failed');
+        throw new Error("Form submission failed");
       }
     } catch (err) {
       console.error(err);
-      setStatus('error');
-      setErrorMessage('Failed to send report. Please try again.');
+      setStatus("error");
+      setErrorMessage("Failed to send report. Please try again.");
     }
   };
 
@@ -56,9 +69,9 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
     }
   };
 
-  if (status === 'success') {
+  if (status === "success") {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-rsg-success/20 border-2 border-rsg-success p-8 flex flex-col items-center justify-center text-center gap-4 shadow-[4px_4px_0_px_var(--color-rsg-success)]"
@@ -67,13 +80,16 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
           <CheckCircle2 className="w-8 h-8 text-white" />
         </div>
         <div>
-          <h3 className="font-black uppercase tracking-[0.2em] text-xl text-foreground">Report Transmitted</h3>
+          <h3 className="font-black uppercase tracking-[0.2em] text-xl text-foreground">
+            Report Transmitted
+          </h3>
           <p className="text-xs text-foreground/70 mt-2 uppercase font-mono tracking-tighter max-w-[250px]">
-            Logistics has received your report. Ticket #{(Math.random() * 100000).toFixed(0)}
+            Logistics has received your report. Ticket #
+            {(Math.random() * 100000).toFixed(0)}
           </p>
         </div>
-        <button 
-          onClick={() => setStatus('idle')}
+        <button
+          onClick={() => setStatus("idle")}
           className="bg-foreground text-background px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-rsg-gold hover:text-black transition-all mt-4"
         >
           New Report
@@ -83,18 +99,22 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
   }
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 bg-surface border border-border p-6"
     >
       <div className="flex items-center gap-3 mb-2">
         <AlertTriangle className="w-5 h-5 text-rsg-warning" />
-        <h3 className="font-black uppercase tracking-tight text-lg">Report Tool Issue</h3>
+        <h3 className="font-black uppercase tracking-tight text-lg">
+          Report Tool Issue
+        </h3>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Subject</label>
-        <input 
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+          Subject
+        </label>
+        <input
           required
           name="subject"
           type="text"
@@ -104,8 +124,10 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Details</label>
-        <textarea 
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+          Details
+        </label>
+        <textarea
           required
           name="message"
           rows={4}
@@ -115,7 +137,9 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Attachment (Optional)</label>
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+          Attachment (Optional)
+        </label>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -123,17 +147,19 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
             className="flex items-center gap-2 px-4 py-3 bg-background border border-border hover:border-rsg-gold transition-all text-sm font-bold uppercase tracking-widest"
           >
             <Paperclip className="w-4 h-4" />
-            {selectedFile ? 'Change File' : 'Attach Screenshot'}
+            {selectedFile ? "Change File" : "Attach Screenshot"}
           </button>
           {selectedFile && (
             <div className="flex items-center gap-2 bg-foreground text-background px-3 py-1 text-[10px] font-black">
-              <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+              <span className="truncate max-w-[150px]">
+                {selectedFile.name}
+              </span>
               <button type="button" onClick={() => setSelectedFile(null)}>
                 <X className="w-3 h-3 hover:text-rsg-gold" />
               </button>
             </div>
           )}
-          <input 
+          <input
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
@@ -143,11 +169,11 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
         </div>
       </div>
 
-      <button 
-        disabled={status === 'submitting'}
+      <button
+        disabled={status === "submitting"}
         className="mt-2 w-full h-14 bg-foreground text-background font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all hover:bg-rsg-gold hover:text-black disabled:opacity-50"
       >
-        {status === 'submitting' ? (
+        {status === "submitting" ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>Transmitting...</span>
@@ -160,7 +186,7 @@ export function ReportIssueForm({ userRole, userEmail, userName }: ReportIssueFo
         )}
       </button>
 
-      {status === 'error' && (
+      {status === "error" && (
         <p className="text-[10px] font-bold text-rsg-error uppercase tracking-widest text-center mt-2">
           {errorMessage}
         </p>

@@ -4,19 +4,19 @@
 @layer base {
   :root {
     /* Real Stone Gold - Bright, vibrant warm gold */
-    --rsg-gold: 0.75 0.17 75; 
+    --rsg-gold: 0.75 0.17 75;
     --rsg-background: 0.98 0.005 75;
-    --rsg-surface: 1.0 0.00 0;
-    --rsg-text: 0.15 0.01 75; 
-    --rsg-border: 0.80 0.01 75; 
+    --rsg-surface: 1 0 0;
+    --rsg-text: 0.15 0.01 75;
+    --rsg-border: 0.8 0.01 75;
 
     /* Status Colors (Light Mode) */
     --rsg-success: 0.65 0.15 145; /* Lighter, punchier green */
-    --rsg-warning: 0.75 0.18 55;  /* Vibrant orange/yellow */
-    --rsg-error: 0.55 0.18 28;    /* Deep Red */
+    --rsg-warning: 0.75 0.18 55; /* Vibrant orange/yellow */
+    --rsg-error: 0.55 0.18 28; /* Deep Red */
 
-    --sig-bg: 1.0 0.00 0; 
-    --sig-pen: 0.00 0.00 0; 
+    --sig-bg: 1 0 0;
+    --sig-pen: 0 0 0;
 
     --background: oklch(var(--rsg-background));
     --foreground: oklch(var(--rsg-text));
@@ -35,12 +35,12 @@
     --rsg-border: 0.26 0.01 75;
 
     /* Status Colors (Dark Mode) - Even more vibrant to glow */
-    --rsg-success: 0.70 0.16 145;
-    --rsg-warning: 0.80 0.18 55;
-    --rsg-error: 0.65 0.20 28;
+    --rsg-success: 0.7 0.16 145;
+    --rsg-warning: 0.8 0.18 55;
+    --rsg-error: 0.65 0.2 28;
 
-    --sig-bg: 0.22 0.01 75; 
-    --sig-pen: 0.72 0.18 75; 
+    --sig-bg: 0.22 0.01 75;
+    --sig-pen: 0.72 0.18 75;
 
     --background: oklch(var(--rsg-background));
     --foreground: oklch(var(--rsg-text));

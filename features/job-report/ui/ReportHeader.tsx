@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import { Job } from '../../../entities/job/types';
-import { CheckCircle2 } from 'lucide-react';
+import { Job } from "../../../entities/job/types";
+import { CheckCircle2 } from "lucide-react";
 
 const formatHumanDateTime = (dateStr: string | number) => {
-  if (!dateStr) return 'N/A';
+  if (!dateStr) return "N/A";
   const d = new Date(dateStr);
-  const datePart = new Intl.DateTimeFormat('en-US', {
-    weekday: 'long', month: 'short', day: 'numeric'
+  const datePart = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
   }).format(d);
-  const timePart = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric', minute: '2-digit', hour12: true
+  const timePart = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
   }).format(d);
   return `${datePart} • ${timePart}`;
 };
@@ -31,14 +35,16 @@ export function ReportHeader({ job, headerWoId }: ReportHeaderProps) {
           {headerWoId}
         </div>
       </div>
-      
+
       <div className="z-10 flex flex-col items-end text-right">
         <div className="flex items-center gap-2 bg-rsg-success text-white print:bg-black print:text-white px-4 py-2 border-2 border-rsg-success print:border-black">
           <CheckCircle2 className="w-5 h-5 text-white print:text-white" />
-          <span className="font-black uppercase tracking-[0.2em] text-sm">Verified</span>
+          <span className="font-black uppercase tracking-[0.2em] text-sm">
+            Verified
+          </span>
         </div>
         <span className="text-[10px] font-mono mt-2 text-foreground/60 print:text-black/60 uppercase">
-          {job.updated_at ? formatHumanDateTime(job.updated_at) : 'N/A'}
+          {job.updated_at ? formatHumanDateTime(job.updated_at) : "N/A"}
         </span>
       </div>
 
