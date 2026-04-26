@@ -27,7 +27,6 @@ export function ReportSignatureSection({
               fill
               className="object-contain p-2"
               referrerPolicy="no-referrer"
-              unoptimized
             />
           </div>
         ) : (

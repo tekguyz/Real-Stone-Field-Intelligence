@@ -1,11 +1,11 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useJobs } from "../../../../entities/job/api";
 import { Job } from "../../../../entities/job/types";
 import { Printer, ChevronLeft } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, use } from "react";
 import { ReportHeader } from "../../../../features/job-report/ui/ReportHeader";
 import { ReportStatsGrid } from "../../../../features/job-report/ui/ReportStatsGrid";
 import { ReportEvidenceGallery } from "../../../../features/job-report/ui/ReportEvidenceGallery";
@@ -19,8 +19,12 @@ const formatTime = (dateStr: string | number) => {
   }).format(new Date(dateStr));
 };
 
-export default function MasterJobReport() {
-  const { id } = useParams() as { id: string };
+export default function MasterJobReport({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
   const router = useRouter();
   const { data: jobs, isLoading } = useJobs();
 
@@ -98,6 +102,7 @@ export default function MasterJobReport() {
     : "WO-" + displayId;
 
   const handlePrint = () => {
+    if (!job || isLoading) return;
     window.print();
   };
 

@@ -17,6 +17,24 @@ export function useCommandCenterController() {
 
   const handleVerify = async (jobId: string) => {
     await updateStatus.mutateAsync({ jobId, status: "verified" });
+
+    // Find the job to pass its details
+    const job = currentJobs.find((j) => j.id === jobId);
+    if (job) {
+      try {
+        await fetch("/api/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            job: { ...job, status: "verified" },
+            userEmail: "4tekguyz@gmail.com",
+          }),
+        }).catch(err => console.error("Non-blocking email notify error:", err));
+      } catch (err) {
+        console.error("Failed to trigger email notification", err);
+      }
+    }
+
     setSelectedJob(null);
   };
 

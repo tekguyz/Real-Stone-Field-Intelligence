@@ -43,13 +43,16 @@ export function CommandCenterTable({
           <span className="text-sm">Database Sync Error</span>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-rsg-surface/50 text-foreground/60 font-medium border-b border-border">
-              <tr>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
-                  {t.legacyId}
-                </th>
+        <div className="relative">
+          {/* Mobile Horizontal Scroll Hint */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden z-10" />
+          <div className="overflow-auto max-h-[600px]">
+            <table className="w-full text-left text-sm whitespace-nowrap relative">
+              <thead className="bg-rsg-surface/90 backdrop-blur-sm text-foreground/60 font-medium border-b border-border sticky top-0 z-20 shadow-sm">
+                <tr>
+                  <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
+                    {t.legacyId}
+                  </th>
                 <th className="px-6 py-4">{t.client}</th>
                 <th className="px-6 py-4">{t.installationScope}</th>
                 <th className="px-6 py-4">{t.status}</th>
@@ -127,6 +130,7 @@ export function CommandCenterTable({
               No active work orders.
             </div>
           )}
+          </div>
         </div>
       )}
     </div>

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /admin/reports/
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /

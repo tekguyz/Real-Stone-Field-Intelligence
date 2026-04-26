@@ -17,6 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rs-field-ops.netlify.app/"),
   title: "Real Stone | Field Ops",
   description: "Industrial Field Intelligence & Project Tracking.",
   manifest: "/manifest.json",
@@ -25,9 +26,7 @@ export const metadata: Metadata = {
       { url: "/favicon-light.svg", media: "(prefers-color-scheme: light)" },
       { url: "/favicon-dark.svg", media: "(prefers-color-scheme: dark)" },
     ],
-    apple: [
-      { url: "/favicon-dark.svg" },
-    ],
+    apple: [{ url: "/favicon-dark.svg" }],
   },
   openGraph: {
     title: "Real Stone | Field Ops",
@@ -56,8 +55,7 @@ export const viewport = {
   ],
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  userScalable: true,
 };
 
 export default function RootLayout({

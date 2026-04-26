@@ -11,8 +11,10 @@
     --rsg-border: 0.8 0.01 75;
 
     /* Status Colors (Light Mode) */
-    --rsg-success: 0.65 0.15 145; /* Lighter, punchier green */
-    --rsg-warning: 0.75 0.18 55; /* Vibrant orange/yellow */
+    --status-pending: 0.6 0.18 50; /* Deep, high-contrast burnt orange */
+    --status-verified: 0.65 0.15 145; /* Success Green */
+    --status-active: 0.65 0.15 250; /* Industrial Blue/Cyan */
+
     --rsg-error: 0.55 0.18 28; /* Deep Red */
 
     --sig-bg: 1 0 0;
@@ -35,8 +37,9 @@
     --rsg-border: 0.26 0.01 75;
 
     /* Status Colors (Dark Mode) - Even more vibrant to glow */
-    --rsg-success: 0.7 0.16 145;
-    --rsg-warning: 0.8 0.18 55;
+    --status-pending: 0.75 0.22 55; /* High chroma, glowing amber */
+    --status-verified: 0.7 0.16 145;
+    --status-active: 0.7 0.16 250; /* High-energy Blue/Cyan */
     --rsg-error: 0.65 0.2 28;
 
     --sig-bg: 0.22 0.01 75;
@@ -60,8 +63,10 @@
   --color-rsg-border: oklch(var(--rsg-border));
 
   /* Status Colors Mappings */
-  --color-rsg-success: oklch(var(--rsg-success));
-  --color-rsg-warning: oklch(var(--rsg-warning));
+  --color-status-pending: oklch(var(--status-pending));
+  --color-status-verified: oklch(var(--status-verified));
+  --color-status-active: oklch(var(--status-active));
+
   --color-rsg-error: oklch(var(--rsg-error));
 
   --color-sig-bg: oklch(var(--sig-bg));
@@ -83,5 +88,11 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+  
+  /* Accessible Focus Rings */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-rsg-gold), 0 0 0 4px var(--color-background);
   }
 }

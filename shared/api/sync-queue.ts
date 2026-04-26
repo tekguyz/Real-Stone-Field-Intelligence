@@ -21,3 +21,25 @@ export class SyncDatabase extends Dexie {
 }
 
 export const db = new SyncDatabase();
+
+// Routine to purge photo blobs from local storage once a sync to Supabase is successful.
+export const purgePhotoBlobs = (jobId?: string) => {
+  if (typeof window === "undefined") return;
+
+  if (jobId) {
+    sessionStorage.removeItem(`field_captures_${jobId}`);
+    localStorage.removeItem(`field_captures_${jobId}`);
+  } else {
+    // Purge all field captures if no specific jobId is provided
+    Object.keys(sessionStorage).forEach((key) => {
+      if (key.startsWith("field_captures_")) {
+        sessionStorage.removeItem(key);
+      }
+    });
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("field_captures_")) {
+        localStorage.removeItem(key);
+      }
+    });
+  }
+};

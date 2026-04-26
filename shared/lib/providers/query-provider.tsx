@@ -13,7 +13,7 @@ export function ReactQueryProvider({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            staleTime: 5 * 60 * 1000, // 5 minutes (Smart Caching)
             refetchOnWindowFocus: false,
           },
         },

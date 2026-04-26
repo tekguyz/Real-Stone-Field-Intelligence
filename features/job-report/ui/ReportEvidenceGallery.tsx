@@ -38,6 +38,7 @@ export function ReportEvidenceGallery({
                     src={url}
                     alt={`Evidence ${i + 1}`}
                     fill
+                    priority={i < 2}
                     className="object-cover"
                     referrerPolicy="no-referrer"
                   />

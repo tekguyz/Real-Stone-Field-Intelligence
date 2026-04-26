@@ -84,7 +84,7 @@ export function AdminJobDrawer({
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            transition={{ type: "spring", damping: 30, stiffness: 400, mass: 1.5 }}
             className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border z-[110] flex flex-col"
           >
             <div className="p-4 md:p-6 border-b border-border flex justify-between items-start bg-surface/30 pb-4">
@@ -104,7 +104,7 @@ export function AdminJobDrawer({
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-foreground/5 text-foreground/40 hover:text-foreground transition-colors"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-foreground/5 text-foreground/40 hover:text-foreground transition-colors"
                 title="Close Drawer"
               >
                 <X className="w-5 h-5" />

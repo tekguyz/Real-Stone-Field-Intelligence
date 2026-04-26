@@ -6,6 +6,7 @@ import { dict } from "../../entities/i18n/dict";
 import { useRouter } from "next/navigation";
 import { Mountain, Delete, Lock, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { haptics } from "../../shared/lib/haptics";
 
 export default function LoginPage() {
   const { language, setRole } = useUserStore();
@@ -27,6 +28,7 @@ export default function LoginPage() {
   };
 
   const handlePinInput = (num: string) => {
+    haptics.click();
     if (pin.length < 4) {
       setIsError(false);
       const newPin = pin + num;

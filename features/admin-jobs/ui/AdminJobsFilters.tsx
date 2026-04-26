@@ -90,7 +90,7 @@ export function AdminJobsFilters({
             {Object.keys(statusColors).map((statusKey) => (
               <label
                 key={statusKey}
-                className="flex items-center gap-3 cursor-pointer group"
+                className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
               >
                 <input
                   type="checkbox"
@@ -126,7 +126,7 @@ export function AdminJobsFilters({
               {cities.slice(0, 5).map((city) => (
                 <label
                   key={city}
-                  className="flex items-center gap-3 cursor-pointer group"
+                  className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
                 >
                   <input
                     type="checkbox"
@@ -161,7 +161,7 @@ export function AdminJobsFilters({
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-3 cursor-pointer group">
+              <label className="flex items-center gap-3 cursor-pointer group min-h-[44px]">
                 <input
                   type="checkbox"
                   className="rounded-none border-border text-primary focus:ring-primary/20 bg-transparent"
@@ -177,7 +177,7 @@ export function AdminJobsFilters({
               {installers.map((inst) => (
                 <label
                   key={inst}
-                  className="flex items-center gap-3 cursor-pointer group"
+                  className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
                 >
                   <input
                     type="checkbox"

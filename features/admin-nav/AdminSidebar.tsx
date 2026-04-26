@@ -32,7 +32,7 @@ export function AdminSidebar() {
     <motion.div
       initial={false}
       animate={{ width: isSidebarOpen ? 256 : 80 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      transition={{ type: "spring", damping: 30, stiffness: 400, mass: 1.5 }}
       className="border-r border-border bg-card flex flex-col hidden md:flex shrink-0 h-full relative print:hidden"
     >
       <div className="h-16 flex items-center px-6 border-b border-border overflow-hidden whitespace-nowrap">

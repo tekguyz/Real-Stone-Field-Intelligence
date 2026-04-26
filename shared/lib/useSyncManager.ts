@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { db } from "../api/sync-queue";
+import { db, purgePhotoBlobs } from "../api/sync-queue";
 import { jobService } from "../../entities/job/api";
 import { useUserStore } from "../../entities/user/store";
 
@@ -64,6 +64,9 @@ export function useSyncManager() {
             item.payload.newStatus,
             isDevMode,
           );
+          if (item.payload.newStatus === "submitted_for_review" || item.payload.newStatus === "verified") {
+            purgePhotoBlobs(item.payload.jobId);
+          }
         }
         await db.sync_queue.delete(item.id!);
       } catch (err) {

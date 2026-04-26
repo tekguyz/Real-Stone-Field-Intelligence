@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../../entities/user/store";
 import { usePermissions } from "../../../shared/lib/usePermissions";
 
+import { haptics } from "../../../shared/lib/haptics";
+
 export function useFieldJobDetail(jobId: string) {
   const router = useRouter();
   const { isDevMode } = useUserStore();
@@ -74,6 +76,22 @@ export function useFieldJobDetail(jobId: string) {
         "submitted_for_review",
         isDevMode,
       );
+      
+      haptics.success();
+
+      // Trigger "Job Verified" / "Job Completed" email summary
+      try {
+        await fetch("/api/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            job: { ...job, status: "submitted_for_review" },
+            userEmail: "4tekguyz@gmail.com"
+          }),
+        }).catch(err => console.error("Non-blocking email notify error:", err));
+      } catch (err) {
+        console.error("Failed to trigger email notification", err);
+      }
 
       queryClient.setQueryData(["jobs", isDevMode], (old: any) => {
         if (!old) return old;
@@ -106,6 +124,7 @@ export function useFieldJobDetail(jobId: string) {
     try {
       const newPhotos: ProcessedImage[] = [];
       for (let i = 0; i < files.length; i++) {
+        haptics.shutter();
         const processed = await processImage(files[i]);
         newPhotos.push(processed);
       }
