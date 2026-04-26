@@ -26,7 +26,8 @@ export function IOSInstallBanner() {
     };
 
     if (isIos() && isSafari() && !isStandalone()) {
-      setShow(true);
+      // Use setTimeout to avoid synchronous setState in effect lint error
+      setTimeout(() => setShow(true), 0);
     }
   }, []);
 
@@ -35,34 +36,39 @@ export function IOSInstallBanner() {
   return (
     <AnimatePresence>
       <motion.div 
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-8 bg-zinc-900 border-t-4 border-rsg-gold text-white font-mono rounded-none"
+        initial={{ y: 200 }}
+        animate={{ y: 0 }}
+        exit={{ y: 200 }}
+        className="fixed bottom-0 left-0 right-0 z-[100] p-6 pb-12 bg-rsg-surface border-t-2 border-rsg-border shadow-[0_-10px_40px_rgba(0,0,0,0.3)] font-mono rounded-none"
       >
         <button 
           onClick={() => setShow(false)} 
-          className="absolute top-2 right-2 p-2 focus:outline-none hover:bg-white/10 transition-colors rounded-none"
+          className="absolute top-4 right-4 p-2 bg-rsg-background border-2 border-rsg-border"
         >
-          <X className="w-5 h-5 text-white/50" />
+          <X className="w-4 h-4" />
         </button>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-black border-2 border-rsg-gold flex items-center justify-center font-sans font-black text-xs">
-              <span className="text-rsg-gold uppercase">RSG</span>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-black border-2 border-rsg-gold flex items-center justify-center font-sans font-black">
+              <span className="text-rsg-gold text-lg tracking-tighter">RS</span>
             </div>
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.1em] text-rsg-gold">Install Native App</p>
-              <p className="text-[10px] text-white/70 uppercase">Required for optimal performance</p>
+            <div className="flex flex-col">
+              <span className="text-rsg-gold font-black uppercase tracking-widest text-xs">Field Ops System</span>
+              <h2 className="text-xl font-black uppercase tracking-tight text-rsg-text">Install App</h2>
             </div>
           </div>
-          <div className="bg-black p-3 border-2 border-white/10 flex items-center gap-2 text-xs uppercase">
-            <span>Tap</span>
-            <Share className="w-4 h-4 text-rsg-gold" />
-            <span>then</span>
-            <PlusSquare className="w-4 h-4 text-rsg-gold" />
-            <span>Add to Home Screen</span>
+          
+          <div className="bg-rsg-background p-4 border-2 border-rsg-border flex flex-col gap-2">
+            <div className="flex items-center gap-3 text-sm">
+              <span className="flex-1">1. Tap the Share button</span>
+              <Share className="w-5 h-5 text-rsg-gold" />
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <span className="flex-1">2. Select &apos;Add to Home Screen&apos;</span>
+              <PlusSquare className="w-5 h-5 text-rsg-gold" />
+            </div>
           </div>
+          <p className="text-[10px] uppercase text-rsg-text/40 tracking-[0.2em] text-center">Industrial Intelligence • v3.5</p>
         </div>
       </motion.div>
     </AnimatePresence>

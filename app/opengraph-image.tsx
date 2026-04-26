@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'RSG OPS';
+export const alt = 'Real Stone | Field Ops';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -16,26 +16,27 @@ export default function Image() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#1b1a18',
+          backgroundColor: '#0a0a0a',
+          padding: '80px',
         }}
       >
-        <svg 
-          version="1.0" 
-          xmlns="http://www.w3.org/2000/svg"
-          width="400"
-          height="400"
-          viewBox="0 0 200 200"
-          preserveAspectRatio="xMidYMid meet"
+        <div 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '300px',
+            height: '300px',
+            backgroundColor: '#000000',
+            border: '10px solid #cda03a',
+            marginBottom: '40px',
+          }}
         >
-          <g transform="translate(0,200) scale(0.1,-0.1)" stroke="none">
-            <path d="M0 1000 l0 -1000 1000 0 1000 0 0 1000 0 1000 -1000 0 -1000 0 0 -1000z m847 317 c50 -26 73 -63 73 -118 0 -61 -33 -102 -101 -126 -27 -10 -49 -22 -49 -26 0 -18 71 -143 109 -192 21 -27 44 -48 52 -46 36 9 91 2 108 -13 10 -9 21 -31 25 -48 6 -29 8 -30 43 -23 21 4 43 10 48 13 6 4 0 -3 -14 -15 -13 -12 -39 -24 -57 -27 -17 -4 -46 -14 -63 -22 -49 -25 -121 3 -121 46 0 9 -27 50 -59 91 -60 75 -141 213 -141 242 0 10 15 17 46 22 26 3 53 9 61 12 23 9 43 59 43 111 0 40 -5 54 -26 75 -26 27 -121 54 -150 43 -11 -4 -14 -39 -14 -194 0 -176 1 -191 21 -216 l20 -26 -88 0 c-82 1 -86 2 -62 15 31 17 39 60 39 230 1 76 5 118 15 135 25 44 20 50 -41 50 -102 0 -154 -45 -154 -135 0 -52 10 -77 48 -117 35 -38 13 -35 -26 3 -77 75 -62 197 31 246 68 35 323 42 384 10z m768 3 c-3 -5 -22 -10 -41 -10 -77 0 -87 -21 -105 -228 -13 -156 -8 -173 42 -126 23 21 28 23 19 8 -15 -25 -61 -54 -84 -54 -10 0 -19 11 -22 30 l-6 29 -34 -25 c-19 -15 -43 -24 -56 -22 -22 3 -23 7 -23 76 0 41 3 76 8 79 4 2 7 19 7 38 0 27 -5 34 -25 39 -64 16 -117 -53 -119 -153 -1 -50 1 -56 20 -59 21 -3 41 16 87 78 11 15 9 8 -5 -19 -51 -97 -128 -119 -154 -43 0 1 -25 -11 -55 -28 -66 -36 -93 -37 -124 -5 -33 32 -32 76 1 143 54 109 174 151 174 62 0 -41 -43 -86 -103 -108 -45 -17 -52 -23 -49 -43 5 -38 37 -59 72 -49 50 14 90 43 90 65 1 33 35 98 71 132 34 32 91 53 142 53 26 0 28 -3 23 -27 -3 -16 -11 -65 -17 -111 -13 -97 -6 -115 36 -88 34 22 41 43 49 151 7 105 34 168 86 203 33 22 107 32 95 12z m-1143 -514 c19 -4 26 -11 22 -21 -5 -11 -11 -12 -25 -4 -24 12 -70 8 -70 -6 0 -5 19 -15 42 -20 68 -17 80 -64 22 -86 -37 -14 -105 4 -96 27 4 11 9 12 19 4 16 -14 76 -9 81 7 3 7 -13 14 -42 18 -52 8 -73 32 -55 64 9 18 41 30 65 25 6 -1 22 -5 37 -8z m1178 0 c0 -11 -15 -16 -52 -18 -39 -2 -53 -7 -53 -18 0 -10 12 -16 38 -18 46 -4 49 -22 4 -22 -38 0 -48 -6 -40 -26 3 -9 21 -14 54 -14 33 0 49 -4 49 -12 0 -10 -19 -12 -70 -10 l-70 4 0 68 0 69 68 4 c37 2 68 4 70 5 1 1 2 -5 2 -12z m-880 -6 c0 -5 -11 -10 -25 -10 -24 0 -25 -3 -25 -60 0 -53 -2 -60 -20 -60 -18 0 -20 7 -20 60 0 57 -1 60 -25 60 -14 0 -25 5 -25 10 0 6 30 10 70 10 40 0 70 -4 70 -10z m514 -37 l46 -48 0 48 c0 35 4 47 15 47 12 0 15 -14 15 -70 0 -48 -4 -70 -12 -70 -7 0 -34 21 -60 47 l-48 47 0 -47 c0 -35 -4 -47 -15 -47 -12 0 -15 14 -15 70 0 86 11 89 74 23z" fill="#b87c1f"/>
-            <path d="M950 782 c0 -5 18 -18 40 -31 38 -21 40 -21 40 -4 0 11 -5 24 -12 31 -13 13 -68 17 -68 4z" fill="#ffffff" />
-            <path d="M945 700 c3 -5 16 -10 28 -9 21 0 21 1 2 9 -28 12 -37 12 -30 0z" fill="#b87c1f" />
-            <path d="M1010 1130 c-27 -29 -50 -94 -37 -106 10 -10 57 9 82 34 20 20 25 34 23 61 -4 48 -30 52 -68 11z" fill="#ffffff" />
-          </g>
-        </svg>
-        <div style={{ marginTop: 40, fontSize: 64, fontWeight: 'bold', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
-          RSG OPS
+          <span style={{ color: '#cda03a', fontSize: '180px', fontWeight: 900, fontFamily: 'monospace' }}>RS</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <h1 style={{ color: '#ffffff', fontSize: '72px', margin: 0, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Real Stone</h1>
+          <p style={{ color: '#cda03a', fontSize: '32px', margin: '10px 0 0 0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4em' }}>Field Intelligence</p>
         </div>
       </div>
     ),

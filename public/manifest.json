@@ -2,20 +2,22 @@
   "name": "Real Stone | Field Ops",
   "short_name": "Field Ops",
   "description": "Industrial Field Intelligence & Project Tracking.",
-  "theme_color": "oklch(0.98 0.005 75)",
-  "background_color": "oklch(0.98 0.005 75)",
+  "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#cda03a",
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml"
+      "src": "/favicon-light.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "/apple-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
+      "src": "/favicon-dark.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ]
 }

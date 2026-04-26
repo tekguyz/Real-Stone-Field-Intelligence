@@ -19,24 +19,45 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Real Stone | Field Ops",
   description: "Industrial Field Intelligence & Project Tracking.",
-  manifest: '/manifest.json',
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon-light.svg", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon-dark.svg", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: [
+      { url: "/favicon-dark.svg" },
+    ],
+  },
   openGraph: {
-    title: 'Real Stone | Field Ops',
-    description: 'Industrial Field Intelligence & Project Tracking.',
-    type: 'website',
+    title: "Real Stone | Field Ops",
+    description: "Industrial Field Intelligence & Project Tracking.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Field Ops System",
+      },
+    ],
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
-    title: 'Field Ops',
+    statusBarStyle: "default",
+    title: "Field Ops",
   },
 };
 
 export const viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'oklch(0.98 0.005 75)' },
-    { media: '(prefers-color-scheme: dark)', color: 'oklch(0.12 0.01 75)' },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
