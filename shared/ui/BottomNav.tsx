@@ -3,8 +3,8 @@
 import { HardHat, User, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUserStore } from "../../entities/user/store";
-import { dict } from "../../entities/i18n/dict";
+import { useUserStore } from "@/entities/user/store";
+import { dict } from "@/entities/i18n/dict";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 

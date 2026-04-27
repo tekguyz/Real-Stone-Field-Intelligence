@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useSyncManager } from "../lib/useSyncManager";
+import { useSyncManager } from "@/shared/lib/useSyncManager";
 
 export function SyncIndicator() {
   const { status, pendingCount, clearErrors } = useSyncManager();

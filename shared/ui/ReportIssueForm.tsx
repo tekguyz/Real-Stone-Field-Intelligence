@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useUserStore } from "../entities/user/store";
-import { dict } from "../entities/i18n/dict";
+import { useUserStore } from "@/entities/user/store";
+import { dict } from "@/entities/i18n/dict";
 import {
   Send,
   AlertTriangle,

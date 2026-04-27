@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { db, purgePhotoBlobs } from "../api/sync-queue";
-import { jobService } from "../../entities/job/api";
-import { useUserStore } from "../../entities/user/store";
+import { db, purgePhotoBlobs } from "@/shared/api/sync-queue";
+import { jobService } from "@/entities/job/api";
+import { useUserStore } from "@/entities/user/store";
 
 export type SyncStatus = "ONLINE" | "OFFLINE" | "SYNCING";
 

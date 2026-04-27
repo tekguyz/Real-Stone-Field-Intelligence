@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { Job } from "../../entities/job/types";
+import { Job } from "@/entities/job/types";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)

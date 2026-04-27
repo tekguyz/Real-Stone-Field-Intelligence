@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
-import { useUserStore } from "../../entities/user/store";
+import { useUserStore } from "@/entities/user/store";
 
 export function ThemeForcer({ theme }: { theme: "light" | "dark" }) {
   const { setTheme } = useTheme();
