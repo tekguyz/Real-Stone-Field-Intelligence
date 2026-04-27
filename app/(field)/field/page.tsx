@@ -64,7 +64,7 @@ export default function FieldPage() {
               {activeRole.split("_")[1]?.toUpperCase()}
             </span>
             <span className="font-mono text-[10px] uppercase font-bold text-foreground/50 hidden sm:inline-block">
-              {activeCount} ACTIVE
+              {activeCount} {language === "es" ? "ACTIVOS" : "ACTIVE"}
             </span>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function FieldPage() {
               {t.todaysWork}
             </h1>
             <span className="text-[9px] font-mono uppercase text-foreground/50 tracking-widest sm:hidden">
-              {activeCount} ACTIVE
+              {activeCount} {language === "es" ? "ACTIVOS" : "ACTIVE"}
             </span>
           </div>
         </div>
@@ -87,12 +87,12 @@ export default function FieldPage() {
           <div className="flex flex-col items-center justify-center p-20 gap-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-foreground/40 font-bold">
-              Syncing HQ Pipeline
+              {language === "es" ? "SINCRONIZANDO PIPELINE HQ" : "Syncing HQ Pipeline"}
             </span>
           </div>
         ) : error ? (
           <div className="p-5 border-l-4 border-l-red-500 border-y border-r border-border bg-red-500/10 text-red-500 text-[10px] uppercase font-bold tracking-wider text-center">
-            Failed to sync work orders. Please check connection.
+            {language === "es" ? "Error al sincronizar órdenes. Por favor revise su conexión." : "Failed to sync work orders. Please check connection."}
           </div>
         ) : myJobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-border bg-foreground/[0.02]">

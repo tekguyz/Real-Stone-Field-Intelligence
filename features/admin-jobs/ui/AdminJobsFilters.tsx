@@ -47,58 +47,67 @@ export function AdminJobsFilters({
         {t.filters}
       </div>
 
-      <div className="bg-card border border-border p-5 flex flex-col gap-6">
+      <div className="bg-card border border-border p-4 flex flex-col gap-4">
         <div>
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-3">
-            Smart Presets
+          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
+            {t.smartPresets}
           </h3>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-1.5">
             <button
               onClick={() => setSelectedStatuses(["assigned", "in_progress"])}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-gold bg-rsg-gold/10 text-rsg-text hover:bg-rsg-gold/20 text-left flex justify-between items-center group"
+              className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-rsg-gold bg-rsg-gold/5 text-rsg-text/80 hover:bg-rsg-gold/15 text-left transition-colors"
             >
-              Active
+              {dict[language].status.in_progress}
             </button>
             <button
               onClick={() => setSelectedStatuses(["submitted_for_review"])}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-warning bg-rsg-warning/10 text-rsg-warning hover:bg-rsg-warning/20 text-left flex justify-between items-center group"
+              className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-rsg-warning bg-rsg-warning/5 text-rsg-warning hover:bg-rsg-warning/15 text-left transition-colors"
             >
-              Review
+              {dict[language].status.submitted_for_review}
             </button>
             <button
               onClick={() => setSelectedStatuses(["pending"])}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-rsg-border/30 bg-rsg-surface text-rsg-text/60 hover:bg-rsg-surface/80 text-left flex justify-between items-center group"
+              className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-border/30 bg-rsg-surface text-rsg-text/40 hover:bg-rsg-surface/80 text-left transition-colors"
             >
-              Pending
+              {dict[language].status.pending}
             </button>
             <button
               onClick={() => setSelectedStatuses([])}
-              className="px-4 py-1.5 text-[10px] font-mono text-foreground/40 hover:text-primary transition-colors text-right font-black tracking-widest"
+              className="px-4 py-1 text-[9px] font-mono text-foreground/30 hover:text-primary transition-colors text-right font-black tracking-widest uppercase mt-1"
             >
-              CLEAR ALL FILTERS
+              {t.clearAll}
             </button>
           </div>
         </div>
 
-        <div className="h-px bg-border" />
+        <div className="h-px bg-border/50" />
 
         <div>
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-3">
+          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
             {t.status}
           </h3>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-0.5">
             {Object.keys(statusColors).map((statusKey) => (
               <label
                 key={statusKey}
-                className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
+                className="flex items-center gap-3 cursor-pointer group py-1.5"
               >
-                <input
-                  type="checkbox"
-                  className="rounded-none border-border text-primary focus:ring-primary/20 bg-transparent"
-                  checked={selectedStatuses.includes(statusKey)}
-                  onChange={() => toggleFilter(setSelectedStatuses, statusKey)}
-                />
-                <span className="text-sm text-foreground/70 group-hover:text-foreground transition-colors">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent peer transition-all"
+                    checked={selectedStatuses.includes(statusKey)}
+                    onChange={() => toggleFilter(setSelectedStatuses, statusKey)}
+                  />
+                  <div className={`absolute inset-0 scale-75 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none ${
+                    statusKey === 'pending' ? 'bg-[oklch(var(--status-pending))]' :
+                    statusKey === 'submitted_for_review' ? 'bg-[oklch(var(--status-review))]' :
+                    statusKey === 'in_progress' ? 'bg-[oklch(var(--status-active))]' :
+                    statusKey === 'verified' ? 'bg-[oklch(var(--status-verified))]' :
+                    'bg-[oklch(var(--status-assigned))]'
+                  }`} />
+                </div>
+                <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono">
                   {
                     dict[language].status[
                       statusKey as keyof typeof dict.en.status
@@ -110,91 +119,91 @@ export function AdminJobsFilters({
           </div>
         </div>
 
-        <div className="h-px bg-border" />
+        <div className="h-px bg-border/50" />
 
         <div>
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-3">
+          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
             {t.city}
           </h3>
           {isLoading ? (
             <div className="flex gap-2 flex-col">
-              <div className="h-4 bg-rsg-gold/10 animate-pulse w-1/2" />
-              <div className="h-4 bg-rsg-gold/10 animate-pulse w-2/3" />
+              <div className="h-3 bg-rsg-gold/5 animate-pulse w-1/2" />
+              <div className="h-3 bg-rsg-gold/5 animate-pulse w-2/3" />
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-0.5">
               {cities.slice(0, 5).map((city) => (
                 <label
                   key={city}
-                  className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
+                  className="flex items-center gap-3 cursor-pointer group py-1.5"
                 >
                   <input
                     type="checkbox"
-                    className="rounded-none border-border text-primary focus:ring-primary/20 bg-transparent"
+                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all"
                     checked={selectedCityFilters.includes(city!)}
                     onChange={() => toggleFilter(setSelectedCityFilters, city!)}
                   />
-                  <span className="text-sm text-foreground/70 group-hover:text-foreground transition-colors">
+                  <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono">
                     {city}
                   </span>
                 </label>
               ))}
               {cities.length === 0 && (
-                <span className="text-xs text-foreground/40 italic">
-                  No cities available
+                <span className="text-[10px] text-foreground/30 italic font-mono uppercase">
+                  {t.noCities}
                 </span>
               )}
             </div>
           )}
         </div>
 
-        <div className="h-px bg-border" />
+        <div className="h-px bg-border/50" />
 
         <div>
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-3">
+          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
             {t.installer}
           </h3>
           {isLoading ? (
             <div className="flex gap-2 flex-col">
-              <div className="h-4 bg-rsg-gold/10 animate-pulse w-3/4" />
-              <div className="h-4 bg-rsg-gold/10 animate-pulse w-1/2" />
+              <div className="h-3 bg-rsg-gold/5 animate-pulse w-3/4" />
+              <div className="h-3 bg-rsg-gold/5 animate-pulse w-1/2" />
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-3 cursor-pointer group min-h-[44px]">
+            <div className="flex flex-col gap-0.5">
+              <label className="flex items-center gap-3 cursor-pointer group py-1.5">
                 <input
                   type="checkbox"
-                  className="rounded-none border-border text-primary focus:ring-primary/20 bg-transparent"
+                  className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all"
                   checked={selectedInstallerFilters.includes("unassigned")}
                   onChange={() =>
                     toggleFilter(setSelectedInstallerFilters, "unassigned")
                   }
                 />
-                <span className="text-sm text-foreground/70 group-hover:text-foreground transition-colors uppercase italic">
-                  UNASSIGNED
+                <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono italic">
+                  {t.unassigned}
                 </span>
               </label>
               {installers.map((inst) => (
                 <label
                   key={inst}
-                  className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
+                  className="flex items-center gap-3 cursor-pointer group py-1.5"
                 >
                   <input
                     type="checkbox"
-                    className="rounded-none border-border text-primary focus:ring-primary/20 bg-transparent"
+                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all"
                     checked={selectedInstallerFilters.includes(inst!)}
                     onChange={() =>
                       toggleFilter(setSelectedInstallerFilters, inst!)
                     }
                   />
-                  <span className="text-sm text-foreground/70 group-hover:text-foreground transition-colors uppercase">
+                  <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono">
                     {inst!.replace("installer_", "")}
                   </span>
                 </label>
               ))}
               {installers.length === 0 && (
-                <span className="text-xs text-foreground/40 italic">
-                  No installers assigned
+                <span className="text-[10px] text-foreground/30 italic font-mono uppercase">
+                  {t.noInstallers}
                 </span>
               )}
             </div>

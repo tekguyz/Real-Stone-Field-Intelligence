@@ -1,5 +1,7 @@
 import { Upload, Loader2 } from "lucide-react";
 import { RefObject } from "react";
+import { useUserStore } from "../../../../entities/user/store";
+import { dict } from "../../../../entities/i18n/dict";
 
 interface FileDropzoneProps {
   isDragging: boolean;
@@ -20,6 +22,9 @@ export function FileDropzone({
   onDrop,
   onFileSelect,
 }: FileDropzoneProps) {
+  const { language } = useUserStore();
+  const t = dict[language].admin;
+
   return (
     <div
       onDragOver={onDragOver}
@@ -41,17 +46,17 @@ export function FileDropzone({
       </div>
       <div className="text-center">
         <p className="font-black uppercase tracking-widest text-sm text-rsg-text opacity-100">
-          Drag StoneApp CSV Here
+          {t.dragStoneAppCsv}
         </p>
         <p className="text-[10px] uppercase font-mono text-rsg-text mt-1 tracking-widest opacity-100">
-          or click to browse local files
+          {t.clickToBrowse}
         </p>
       </div>
       {isParsing && (
         <div className="flex items-center gap-2 text-rsg-gold font-bold animate-pulse">
           <Loader2 className="w-4 h-4 animate-spin text-rsg-gold" />
           <span className="text-[10px] uppercase tracking-widest text-rsg-gold">
-            Parsing Engine Active...
+            {t.parsingEngineActive}
           </span>
         </div>
       )}

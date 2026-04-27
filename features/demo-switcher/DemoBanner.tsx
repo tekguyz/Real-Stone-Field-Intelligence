@@ -34,6 +34,7 @@ export function DemoBanner() {
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newRole = e.target.value as Role;
     setRole(newRole);
+    e.target.blur(); // Drops focus ring immediately after selection
     if (newRole === "admin") {
       router.push("/command-center");
     } else {

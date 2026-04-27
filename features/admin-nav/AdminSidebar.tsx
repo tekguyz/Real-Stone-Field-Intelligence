@@ -117,7 +117,7 @@ export function AdminSidebar() {
               className="flex flex-col overflow-hidden"
             >
               <span className="text-sm font-medium leading-none truncate">
-                Admin
+                {dict[language].demo.admin}
               </span>
               <span className="text-[10px] text-foreground/60 mt-1 font-mono truncate">
                 RSG-OS

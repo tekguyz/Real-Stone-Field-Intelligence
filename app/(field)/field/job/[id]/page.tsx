@@ -67,7 +67,9 @@ export default function FieldJobDetail({
           <ArrowLeft className="w-5 h-5" />
           {t.back}
         </Link>
-        <h1 className="text-2xl font-bold text-foreground">Job not found</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          {language === "es" ? "Trabajo no encontrado" : "Job not found"}
+        </h1>
       </div>
     );
   }
@@ -78,7 +80,7 @@ export default function FieldJobDetail({
       processedPhotos.length > 0 || signatureData !== null;
     const isSealed = job.status === "verified";
     if (!isSealed && !isSubmitting && hasUnsavedChanges) {
-      if (!window.confirm("Unsaved changes will be lost. Exit anyway?")) {
+      if (!window.confirm(language === "es" ? "Los cambios no guardados se perderán. ¿Salir de todos modos?" : "Unsaved changes will be lost. Exit anyway?")) {
         return;
       }
     }
@@ -137,17 +139,19 @@ export default function FieldJobDetail({
         {job.status === "verified" ? (
           <div className="bg-rsg-success text-rsg-surface px-6 py-5 flex flex-col items-center justify-center text-center gap-3 mt-4 border-2 border-rsg-border relative overflow-hidden">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-rsg-border text-rsg-surface px-3 py-0.5 text-[8px] font-black uppercase tracking-[0.4em]">
-              Security Lock
+              {language === "es" ? "Bloqueo de Seguridad" : "Security Lock"}
             </div>
             <CheckCircle2 className="w-10 h-10 text-rsg-surface mt-2" />
             <div className="font-black uppercase tracking-[0.3em] text-lg leading-none">
-              JOB SEALED & VERIFIED
+              {language === "es" ? "TRABAJO SELLADO Y VERIFICADO" : "JOB SEALED & VERIFIED"}
             </div>
             <div className="w-16 h-0.5 bg-rsg-surface/30 my-1" />
             <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-rsg-surface/80 leading-relaxed">
-              DOCUMENTATION FINALIZED via HQ.
-              <br />
-              Site record is immutable.
+              {language === "es" ? (
+                <>Documentación finalizada vía HQ.<br />El registro del sitio es inmutable.</>
+              ) : (
+                <>DOCUMENTATION FINALIZED via HQ.<br />Site record is immutable.</>
+              )}
             </p>
           </div>
         ) : (

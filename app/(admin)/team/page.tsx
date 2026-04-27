@@ -69,8 +69,8 @@ export default function TeamPage() {
           <h1 className="text-3xl font-semibold tracking-tight">
             {t.installationTeam}
           </h1>
-          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">
-            PERSONNEL & ACCESS CONTROL
+          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none uppercase">
+            {language === "es" ? "PERSONAL Y CONTROL DE ACCESO" : "PERSONNEL & ACCESS CONTROL"}
           </p>
         </div>
         <button
@@ -114,7 +114,7 @@ export default function TeamPage() {
                   ? t.onSite
                   : member.status === "active"
                     ? t.active
-                    : "Offline"}
+                    : (language === "es" ? "Desconectado" : "Offline")}
               </div>
             </div>
 
@@ -133,7 +133,7 @@ export default function TeamPage() {
             {member.job_id && (
               <div className="mt-4 p-3 bg-surface/50 border border-border">
                 <p className="text-[10px] font-mono text-foreground/40 uppercase mb-1">
-                  Current Assignment
+                  {language === "es" ? "Asignación Actual" : "Current Assignment"}
                 </p>
                 <div className="text-sm font-semibold">
                   {t.legacyId} {member.job_id}
@@ -196,18 +196,18 @@ export default function TeamPage() {
               <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
                 <div>
                   <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
-                    Full Name
+                    {t.fullName}
                   </label>
                   <input
                     type="text"
                     className="w-full bg-surface/50 border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
-                    placeholder="e.g. John Doe"
+                    placeholder={language === "es" ? "e.g. Juan Pérez" : "e.g. John Doe"}
                   />
                 </div>
 
                 <div>
                   <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
-                    Email Address
+                    {t.emailAddress}
                   </label>
                   <input
                     type="email"
@@ -218,23 +218,24 @@ export default function TeamPage() {
 
                 <div>
                   <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
-                    {t.role}
+                    {t.userRole}
                   </label>
                   <select className="w-full bg-surface/50 border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary appearance-none transition-colors">
-                    <option>Installer</option>
-                    <option>Lead Installer</option>
-                    <option>Office Admin</option>
-                    <option>Operations Manager</option>
+                    <option>{language === "es" ? "Instalador" : "Installer"}</option>
+                    <option>{language === "es" ? "Instalador Principal" : "Lead Installer"}</option>
+                    <option>{language === "es" ? "Admin de Oficina" : "Office Admin"}</option>
+                    <option>{language === "es" ? "Gerente de Operaciones" : "Operations Manager"}</option>
                   </select>
                 </div>
 
                 <div className="p-4 bg-surface/50 border border-border mt-2">
                   <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">
-                    Access PIN
+                    {t.pin}
                   </h3>
-                  <p className="text-xs text-foreground/60 leading-relaxed font-bold">
-                    A secure 4-digit PIN will be automatically generated and
-                    sent to their email for field app access.
+                  <p className="text-xs text-foreground/60 leading-relaxed font-bold uppercase">
+                    {language === "es" 
+                      ? "Se generará automáticamente un PIN seguro de 4 dígitos y se enviará a su correo electrónico."
+                      : "A secure 4-digit PIN will be automatically generated and sent to their email."}
                   </p>
                 </div>
               </div>
@@ -244,12 +245,19 @@ export default function TeamPage() {
                   onClick={() => setIsInviteOpen(false)}
                   className="flex-1 py-4 border border-border bg-foreground/[0.03] text-foreground hover:bg-foreground/10 font-black tracking-[0.2em] uppercase transition-colors"
                 >
-                  Cancel
+                  {t.cancel}
                 </button>
-                <button className="flex-1 bg-foreground text-background py-4 font-black uppercase tracking-[0.2em] transition-opacity hover:opacity-90">
-                  Send Invite
+                <button
+                  onClick={() => {
+                    console.log("Invite sent successfully");
+                    setIsInviteOpen(false);
+                  }}
+                  className="flex-1 bg-foreground text-background py-4 font-black uppercase tracking-[0.2em] transition-opacity hover:opacity-90"
+                >
+                  {t.sendInvitation}
                 </button>
               </div>
+
             </motion.div>
           </>
         )}

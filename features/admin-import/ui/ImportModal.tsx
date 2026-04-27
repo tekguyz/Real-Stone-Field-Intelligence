@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { FileDropzone } from "./components/FileDropzone";
 import { ImportPreviewTable } from "./components/ImportPreviewTable";
 import { SuccessOverlay } from "./components/SuccessOverlay";
+import { useUserStore } from "../../../entities/user/store";
+import { dict } from "../../../entities/i18n/dict";
 
 interface ImportModalProps {
   isOpen: boolean;
@@ -15,6 +17,8 @@ interface ImportModalProps {
 
 export function ImportModal({ isOpen, onClose }: ImportModalProps) {
   const { data: existingJobs = [] } = useJobs();
+  const { language } = useUserStore();
+  const t = dict[language].admin;
   const { parseCSV, parsedData, error, isParsing, clearData } =
     useStoneAppIngestion(existingJobs);
   const { mutate: importJobs, isPending: isImporting } = useImportJobs();
@@ -43,7 +47,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
     if (file.type === "text/csv" || file.name.endsWith(".csv")) {
       parseCSV(file);
     } else {
-      alert("Please upload a valid CSV file.");
+      alert(language === "es" ? "Por favor suba un archivo CSV válido." : "Please upload a valid CSV file.");
     }
   };
 
@@ -114,7 +118,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
           <div className="flex items-center gap-3">
             <Upload className="w-5 h-5 text-rsg-gold" />
             <h2 className="font-black uppercase tracking-[0.2em] text-rsg-text">
-              Import StoneApp Data
+              {t.importStoneAppData}
             </h2>
           </div>
           <button
@@ -165,7 +169,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
             onClick={onClose}
             className="px-6 py-3 border border-rsg-border font-black uppercase tracking-widest text-[10px] text-rsg-text hover:bg-rsg-background transition-colors rounded-none"
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             disabled={selectedWoNumbers.size === 0 || isImporting}
@@ -176,10 +180,10 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
             {isImporting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-rsg-background" />
-                Processing Hydration...
+                {t.processingHydration}
               </>
             ) : (
-              `Finalize Import (${selectedWoNumbers.size} Selected)`
+              `${t.finalizeImport} (${selectedWoNumbers.size} ${t.selected})`
             )}
           </button>
         </div>

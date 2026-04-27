@@ -10,9 +10,11 @@ import { ReportHeader } from "../../../../features/job-report/ui/ReportHeader";
 import { ReportStatsGrid } from "../../../../features/job-report/ui/ReportStatsGrid";
 import { ReportEvidenceGallery } from "../../../../features/job-report/ui/ReportEvidenceGallery";
 import { ReportSignatureSection } from "../../../../features/job-report/ui/ReportSignatureSection";
+import { useUserStore } from "../../../../entities/user/store";
+import { dict } from "../../../../entities/i18n/dict";
 
-const formatTime = (dateStr: string | number) => {
-  return new Intl.DateTimeFormat("en-US", {
+const formatTime = (dateStr: string | number, language: string) => {
+  return new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
@@ -27,14 +29,16 @@ export default function MasterJobReport({
   const { id } = use(params);
   const router = useRouter();
   const { data: jobs, isLoading } = useJobs();
+  const { language } = useUserStore();
+  const t = dict[language].admin;
 
   const job = jobs?.find((j: Job) => j.id === id || j.legacy_id === id);
 
   useEffect(() => {
     document.title = job
       ? `Report - ${job.client_name} - ${job.wo_number || job.legacy_id}`
-      : "Job Report";
-  }, [job]);
+      : t.workOrderNotFound;
+  }, [job, t.workOrderNotFound]);
 
   if (isLoading) {
     return (
@@ -54,13 +58,13 @@ export default function MasterJobReport({
     return (
       <div className="w-full h-full flex flex-col items-center justify-center font-mono">
         <h2 className="text-xl font-bold uppercase tracking-widest text-foreground">
-          Job Not Found
+          {t.workOrderNotFound}
         </h2>
         <button
           onClick={() => router.back()}
           className="mt-4 border border-border px-4 py-2 hover:bg-surface transition-colors"
         >
-          RETURN TO JOBS
+          {t.returnToJobs}
         </button>
       </div>
     );
@@ -120,6 +124,9 @@ export default function MasterJobReport({
         : `MODERATE (±${avg.toFixed(1)}M)`
       : "UNKNOWN";
 
+  const isPendingExecution = job.status === "pending" || job.status === "assigned";
+  const showCompletionData = !isPendingExecution;
+
   return (
     <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-background print:bg-white print:p-0 print:m-0 min-h-screen">
       <div className="flex justify-between items-center mb-8 print:hidden">
@@ -134,14 +141,14 @@ export default function MasterJobReport({
           className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] hover:text-rsg-gold transition-colors group cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Back to Dashboard
+          {t.backToDashboard}
         </button>
         <button
           onClick={handlePrint}
           className="btn-brutal px-6 py-2 flex items-center gap-2 uppercase hover:opacity-90 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] print:hidden bg-rsg-gold text-rsg-background font-semibold"
         >
           <Printer className="w-4 h-4" />
-          PRINT REPORT
+          {t.printReport}
         </button>
       </div>
 
@@ -151,17 +158,29 @@ export default function MasterJobReport({
         className="w-full border-4 border-foreground print:border-black bg-card print:bg-white flex flex-col rounded-none"
       >
         <ReportHeader job={job} headerWoId={headerWoId} />
+        
+        {isPendingExecution && (
+          <div className="bg-[#ff5f00] text-white p-4 text-center font-black uppercase tracking-[0.3em] border-b-4 border-foreground print:border-black">
+            {t.awaitingFieldExecution}
+          </div>
+        )}
+
         <ReportStatsGrid job={job} avgAccuracy={avgAccuracy} />
-        <ReportEvidenceGallery
-          allPhotos={allPhotos}
-          getProofMetadata={getProofMetadata}
-          formatTime={formatTime}
-        />
-        <ReportSignatureSection
-          signatureUrl={signatureUrl}
-          jobId={job.id}
-          updatedAt={job.updated_at}
-        />
+        
+        {showCompletionData && (
+          <>
+            <ReportEvidenceGallery
+              allPhotos={allPhotos}
+              getProofMetadata={getProofMetadata}
+              formatTime={(dateStr) => formatTime(dateStr, language)}
+            />
+            <ReportSignatureSection
+              signatureUrl={signatureUrl}
+              jobId={job.id}
+              updatedAt={job.updated_at}
+            />
+          </>
+        )}
       </motion.div>
     </div>
   );

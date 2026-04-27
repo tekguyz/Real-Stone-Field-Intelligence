@@ -79,16 +79,11 @@ export function useFieldJobDetail(jobId: string) {
       
       haptics.success();
 
-      // Trigger "Job Verified" / "Job Completed" email summary
+      // Trigger email summary via Server Action
       try {
-        await fetch("/api/notify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            job: { ...job, status: "submitted_for_review" },
-            userEmail: "4tekguyz@gmail.com"
-          }),
-        }).catch(err => console.error("Non-blocking email notify error:", err));
+        const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
+        await sendJobVerifiedEmail({ ...job, status: "submitted_for_review" }, "4tekguyz@gmail.com")
+          .catch(err => console.error("Non-blocking email notify error:", err));
       } catch (err) {
         console.error("Failed to trigger email notification", err);
       }

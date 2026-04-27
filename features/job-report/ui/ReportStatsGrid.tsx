@@ -1,16 +1,19 @@
 "use client";
 
 import { Job } from "../../../entities/job/types";
+import { useUserStore } from "../../../entities/user/store";
+import { dict } from "../../../entities/i18n/dict";
 
-const formatHumanDateTime = (dateStr: string | number) => {
+const formatHumanDateTime = (dateStr: string | number, language: string) => {
   if (!dateStr) return "N/A";
   const d = new Date(dateStr);
-  const datePart = new Intl.DateTimeFormat("en-US", {
+  const locale = language === "es" ? "es-ES" : "en-US";
+  const datePart = new Intl.DateTimeFormat(locale, {
     weekday: "long",
     month: "short",
     day: "numeric",
   }).format(d);
-  const timePart = new Intl.DateTimeFormat("en-US", {
+  const timePart = new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
@@ -24,40 +27,43 @@ interface ReportStatsGridProps {
 }
 
 export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
+  const { language } = useUserStore();
+  const t = dict[language].admin;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 divide-y-4 md:divide-y-0 md:divide-x-4 border-b-4 border-foreground print:border-black divide-foreground print:divide-black">
       {/* Column 1: Logistics */}
       <div className="bento-card p-6 flex flex-col gap-4 bg-surface print:bg-white">
         <h3 className="font-black uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
-          Logistics
+          {t.logistics}
         </h3>
         <div className="flex flex-col gap-3">
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Installer Name
+              {language === "es" ? "Nombre Instalador" : "Installer Name"}
             </span>
             <span className="font-bold text-sm uppercase">
               {job.installer_id
                 ? job.installer_id.replace("installer_", "")
-                : "UNASSIGNED"}
+                : t.unassigned}
             </span>
           </div>
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Arrival Time
+              {t.arrivalTime}
             </span>
             <span className="font-bold text-sm uppercase">
               {job.scheduled_arrival
-                ? formatHumanDateTime(job.scheduled_arrival)
+                ? formatHumanDateTime(job.scheduled_arrival, language)
                 : "N/A"}
             </span>
           </div>
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Completion Time
+              {language === "es" ? "Hora de Finalización" : "Completion Time"}
             </span>
             <span className="font-bold text-sm uppercase">
-              {job.updated_at ? formatHumanDateTime(job.updated_at) : "N/A"}
+              {job.updated_at ? formatHumanDateTime(job.updated_at, language) : "N/A"}
             </span>
           </div>
         </div>
@@ -66,12 +72,12 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
       {/* Column 2: Location */}
       <div className="bento-card p-6 flex flex-col gap-4 bg-surface print:bg-white">
         <h3 className="font-black uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
-          Location
+          {t.location}
         </h3>
         <div className="flex flex-col gap-3">
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Full Address
+              {language === "es" ? "Dirección Completa" : "Full Address"}
             </span>
             <span className="font-bold text-sm uppercase break-words block leading-snug">
               {job.address}
@@ -79,7 +85,7 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
           </div>
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Community / Lot
+              {language === "es" ? "Comunidad / Lote" : "Community / Lot"}
             </span>
             <span className="font-bold text-sm uppercase break-words block">
               {job.community_name || "N/A"}
@@ -87,7 +93,7 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
           </div>
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              GPS Accuracy Rating
+              {language === "es" ? "Precisión de GPS" : "GPS Accuracy Rating"}
             </span>
             <span className="font-bold text-sm uppercase block">
               {avgAccuracy}
@@ -99,18 +105,18 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
       {/* Column 3: Scope */}
       <div className="bento-card p-6 flex flex-col gap-4 bg-surface print:bg-white">
         <h3 className="font-black uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
-          Job Scope
+          {t.jobScope}
         </h3>
         <div className="flex flex-col gap-3">
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Job Type
+              {language === "es" ? "Tipo de Trabajo" : "Job Type"}
             </span>
             <span className="font-bold text-sm uppercase">{job.job_type}</span>
           </div>
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Job Scope
+              {t.jobScope}
             </span>
             <div className="flex flex-col gap-1 mt-1 break-words">
               {job.stoneapp_parts && job.stoneapp_parts.length > 0 ? (
@@ -124,12 +130,12 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
                 ))
               ) : (
                 <span className="text-xs font-mono text-foreground/40 italic">
-                  No detailed scope attached.
+                  {t.noScopeData}
                 </span>
               )}
               {job.logistics_notes && (
                 <span className="text-xs font-mono mt-2">
-                  Notes: {job.logistics_notes}
+                  {language === "es" ? "Notas" : "Notes"}: {job.logistics_notes}
                 </span>
               )}
             </div>

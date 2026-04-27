@@ -37,6 +37,8 @@ export default function JobsPage() {
     handleVerify,
     isVerifying,
     toggleFilter,
+    handleSort,
+    sortConfig,
   } = useAdminJobsController();
 
   return (
@@ -48,7 +50,7 @@ export default function JobsPage() {
             {t.workOrderManagement}
           </h1>
           <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">
-            ALL ACTIVE & PENDING INSTALLATIONS
+            {t.allActiveAndPendingInstallations}
           </p>
         </div>
         <button
@@ -56,7 +58,7 @@ export default function JobsPage() {
           className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm print:hidden"
         >
           <Database className="w-4 h-4 text-rsg-gold" />
-          IMPORT DATA
+          {t.importData}
         </button>
       </div>
 
@@ -67,7 +69,7 @@ export default function JobsPage() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground/50" />
             <input
               type="text"
-              placeholder="Search by WO# or Client..."
+              placeholder={t.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-primary transition-colors"
@@ -81,6 +83,8 @@ export default function JobsPage() {
               error={error}
               onJobSelect={setSelectedJob}
               onUpdateInstaller={handleUpdateInstaller}
+              onSort={handleSort}
+              sortConfig={sortConfig}
             />
           </div>
         </div>

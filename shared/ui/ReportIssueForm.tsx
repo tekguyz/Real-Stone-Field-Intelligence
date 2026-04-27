@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useUserStore } from "../entities/user/store";
+import { dict } from "../entities/i18n/dict";
 import {
   Send,
   AlertTriangle,
@@ -22,16 +24,21 @@ export function ReportIssueForm({
   userEmail,
   userName,
 }: ReportIssueFormProps) {
+  const { language } = useUserStore();
+  const t = dict[language].admin; // Use admin dict for shared report form if needed or common keys
+  
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [ticketNumber, setTicketNumber] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("submitting");
+    setTicketNumber(""); // Reset ticket number for new submit
 
     const formData = new FormData(e.currentTarget);
     formData.append("form-name", "report-issue");
@@ -50,6 +57,7 @@ export function ReportIssueForm({
       });
 
       if (response.ok) {
+        setTicketNumber((Math.random() * 100000).toFixed(0));
         setStatus("success");
         e.currentTarget.reset();
         setSelectedFile(null);
@@ -59,7 +67,7 @@ export function ReportIssueForm({
     } catch (err) {
       console.error(err);
       setStatus("error");
-      setErrorMessage("Failed to send report. Please try again.");
+      setErrorMessage(language === "es" ? "Error al enviar el reporte. Por favor intente de nuevo." : "Failed to send report. Please try again.");
     }
   };
 
@@ -81,18 +89,18 @@ export function ReportIssueForm({
         </div>
         <div>
           <h3 className="font-black uppercase tracking-[0.2em] text-xl text-foreground">
-            Report Transmitted
+            {language === "es" ? "Reporte Transmitido" : "Report Transmitted"}
           </h3>
           <p className="text-xs text-foreground/70 mt-2 uppercase font-mono tracking-tighter max-w-[250px]">
-            Logistics has received your report. Ticket #
-            {(Math.random() * 100000).toFixed(0)}
+            {language === "es" ? "Logística ha recibido su reporte. Ticket #" : "Logistics has received your report. Ticket #"}
+            {ticketNumber}
           </p>
         </div>
         <button
           onClick={() => setStatus("idle")}
           className="bg-foreground text-background px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-rsg-gold hover:text-black transition-all mt-4"
         >
-          New Report
+          {language === "es" ? "Nuevo Reporte" : "New Report"}
         </button>
       </motion.div>
     );
@@ -106,39 +114,39 @@ export function ReportIssueForm({
       <div className="flex items-center gap-3 mb-2">
         <AlertTriangle className="w-5 h-5 text-rsg-warning" />
         <h3 className="font-black uppercase tracking-tight text-lg">
-          Report Tool Issue
+          {language === "es" ? "Reportar Problema" : "Report Tool Issue"}
         </h3>
       </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
-          Subject
+           {language === "es" ? "Asunto" : "Subject"}
         </label>
         <input
           required
           name="subject"
           type="text"
-          placeholder="e.g., GPS accuracy issues, Form not saving"
+          placeholder={language === "es" ? "ej., Problemas de GPS, Formulario no guarda" : "e.g., GPS accuracy issues, Form not saving"}
           className="bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-rsg-gold transition-colors"
         />
       </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
-          Details
+           {language === "es" ? "Detalles" : "Details"}
         </label>
         <textarea
           required
           name="message"
           rows={4}
-          placeholder="Describe the issue in detail..."
+          placeholder={language === "es" ? "Describa el problema en detalle..." : "Describe the issue in detail..."}
           className="bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-rsg-gold transition-colors resize-none"
         />
       </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
-          Attachment (Optional)
+           {language === "es" ? "Adjunto (Opcional)" : "Attachment (Optional)"}
         </label>
         <div className="flex items-center gap-2">
           <button
@@ -147,7 +155,7 @@ export function ReportIssueForm({
             className="flex items-center gap-2 px-4 py-3 bg-background border border-border hover:border-rsg-gold transition-all text-sm font-bold uppercase tracking-widest"
           >
             <Paperclip className="w-4 h-4" />
-            {selectedFile ? "Change File" : "Attach Screenshot"}
+            {selectedFile ? (language === "es" ? "Cambiar Archivo" : "Change File") : (language === "es" ? "Adjuntar Captura" : "Attach Screenshot")}
           </button>
           {selectedFile && (
             <div className="flex items-center gap-2 bg-foreground text-background px-3 py-1 text-[10px] font-black">
@@ -176,12 +184,12 @@ export function ReportIssueForm({
         {status === "submitting" ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Transmitting...</span>
+            <span>{language === "es" ? "Transmitiendo..." : "Transmitting..."}</span>
           </>
         ) : (
           <>
             <Send className="w-5 h-5" />
-            <span>Submit Report</span>
+            <span>{language === "es" ? "Enviar Reporte" : "Submit Report"}</span>
           </>
         )}
       </button>
@@ -192,5 +200,6 @@ export function ReportIssueForm({
         </p>
       )}
     </form>
+
   );
 }

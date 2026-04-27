@@ -69,6 +69,11 @@ export function AdminJobDrawer({
     ? displayId
     : "WO-" + displayId;
 
+  const isAssignmentLocked =
+    selectedJob?.status === "in_progress" ||
+    selectedJob?.status === "submitted_for_review" ||
+    selectedJob?.status === "verified";
+
   return (
     <AnimatePresence>
       {selectedJob && (
@@ -105,7 +110,7 @@ export function AdminJobDrawer({
               <button
                 onClick={onClose}
                 className="min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-foreground/5 text-foreground/40 hover:text-foreground transition-colors"
-                title="Close Drawer"
+                title={t.close}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -116,13 +121,13 @@ export function AdminJobDrawer({
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                    Arrival Time
+                    {t.arrivalTime}
                   </span>
                   <div className="bg-surface/50 px-3 py-2 border border-border flex items-center justify-between h-[42px]">
                     <span className="text-xs font-black text-foreground/90 uppercase tracking-tight truncate">
                       {selectedJob.scheduled_arrival ||
                       selectedJob.scheduled_date
-                        ? new Intl.DateTimeFormat("en-US", {
+                        ? new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
                             weekday: "short",
                             month: "short",
                             day: "numeric",
@@ -135,31 +140,33 @@ export function AdminJobDrawer({
                                 selectedJob.scheduled_arrival ||
                                   selectedJob.scheduled_date ||
                                   "",
-                              ),
-                            )
+                                ),
+                              )
                             .toUpperCase()
-                        : "AWAITING"}
+                        : t.awaiting}
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                    Installer
+                <div className="flex flex-col gap-2 relative group-tooltip">
+                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
+                    {t.installer}
+                    {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
                   </span>
                   <select
-                    className={`bg-card w-full border border-border px-3 py-2 text-xs font-black rounded-none focus:outline-none focus:border-rsg-gold font-mono uppercase text-foreground appearance-none h-[42px] ${selectedJob.status === "verified" ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`bg-card w-full border border-border px-3 py-2 text-xs font-black rounded-none focus:outline-none focus:border-rsg-gold font-mono uppercase text-foreground appearance-none h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
                     value={selectedJob.installer_id || "unassigned"}
                     onChange={(e) =>
                       onUpdateInstaller(selectedJob.id, e.target.value)
                     }
-                    disabled={selectedJob.status === "verified"}
+                    disabled={isAssignmentLocked}
                     style={{ WebkitAppearance: "none", MozAppearance: "none" }}
+                    title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
                   >
                     <option
                       value="unassigned"
                       className="bg-background text-foreground py-2"
                     >
-                      UNASSIGNED
+                      {t.unassigned}
                     </option>
                     <option
                       value="installer_juan"
@@ -180,7 +187,7 @@ export function AdminJobDrawer({
               {/* Site info */}
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                  Site Information
+                  {t.siteInformation}
                 </span>
                 <div className="bg-surface/50 p-4 border border-border">
                   <div className="flex items-start gap-3">
@@ -197,7 +204,7 @@ export function AdminJobDrawer({
               {/* Install Scope */}
               <div className="flex flex-col gap-4">
                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                  Job Scope
+                  {t.scope}
                 </span>
                 <div className="flex flex-col gap-3">
                   {selectedJob.stoneapp_parts?.map((part, i) => (
@@ -216,7 +223,7 @@ export function AdminJobDrawer({
                       <div className="grid grid-cols-2 gap-y-1 gap-x-4">
                         <div className="flex justify-between text-[10px]">
                           <span className="text-foreground/40 font-mono uppercase">
-                            Material
+                            {t.material}
                           </span>
                           <span className="font-bold text-foreground/80">
                             {part.material}
@@ -224,7 +231,7 @@ export function AdminJobDrawer({
                         </div>
                         <div className="flex justify-between text-[10px]">
                           <span className="text-foreground/40 font-mono uppercase">
-                            Profile
+                            {dict[language].field.profile}
                           </span>
                           <span className="font-bold text-foreground/80">
                             {part.edgeProfile}
@@ -232,7 +239,7 @@ export function AdminJobDrawer({
                         </div>
                         <div className="flex justify-between text-[10px]">
                           <span className="text-foreground/40 font-mono uppercase">
-                            Thick
+                            {dict[language].field.thickness}
                           </span>
                           <span className="font-bold text-foreground/80">
                             {part.thickness}
@@ -253,7 +260,7 @@ export function AdminJobDrawer({
                     selectedJob.stoneapp_parts.length === 0) && (
                     <div className="p-8 text-center border border-dashed border-border bg-foreground/[0.02]">
                       <span className="text-[10px] font-mono text-foreground/30 uppercase tracking-widest italic">
-                        No installation scope data
+                        {t.noScopeData}
                       </span>
                     </div>
                   )}
@@ -268,8 +275,7 @@ export function AdminJobDrawer({
                 <div className="bg-amber-500/5 border border-amber-500/20 p-4">
                   <p className="text-sm text-foreground/80 leading-relaxed font-bold">
                     &quot;
-                    {selectedJob.logistics_notes ||
-                      "No special logistics recorded for this work order."}
+                    {selectedJob.logistics_notes || t.noLogistics}
                     &quot;
                   </p>
                 </div>
@@ -279,7 +285,7 @@ export function AdminJobDrawer({
               {allPhotos.length > 0 && (
                 <div className="flex flex-col gap-4">
                   <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                    Field Documentation ({allPhotos.length})
+                    {t.fieldDocumentation} ({allPhotos.length})
                   </span>
                   <div className="grid grid-cols-2 gap-3">
                     {allPhotos.map((url, i) => {
@@ -322,7 +328,7 @@ export function AdminJobDrawer({
                   {activeSignature && (
                     <div className="flex flex-col gap-2 mt-4">
                       <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                        Client Signature
+                        {t.clientSignature}
                       </span>
                       <div className="bg-[var(--color-sig-bg)] p-4 border border-border h-32 flex items-center justify-center relative rounded-sm">
                         <Image
@@ -351,7 +357,7 @@ export function AdminJobDrawer({
                   ) : (
                     <ShieldCheck className="w-5 h-5" />
                   )}
-                  Verify & Close Work Order
+                  {t.verifyAndClose}
                 </button>
               )}
 
@@ -360,13 +366,13 @@ export function AdminJobDrawer({
                   onClick={onClose}
                   className="w-full h-14 border border-foreground/20 text-foreground font-black uppercase tracking-[0.2em] transition-colors bg-surface hover:bg-foreground/5 rounded-none"
                 >
-                  CLOSE
+                  {t.close}
                 </button>
                 <a
                   href={`/admin/reports/${selectedJob.id}`}
                   className="flex items-center justify-center w-full h-14 uppercase transition-all rounded-none shadow-[2px_2px_0px_rgba(255,255,255,0.1)] hover:translate-x-[1px] hover:translate-y-[1px] bg-rsg-gold text-rsg-background font-semibold"
                 >
-                  VIEW REPORT
+                  {t.viewReport}
                 </a>
               </div>
             </div>

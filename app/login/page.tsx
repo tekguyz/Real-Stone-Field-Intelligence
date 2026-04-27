@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

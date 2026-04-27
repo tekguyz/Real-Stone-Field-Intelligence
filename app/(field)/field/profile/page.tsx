@@ -67,7 +67,7 @@ export default function FieldProfilePage() {
           </h1>
         </div>
         <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest border border-primary/20">
-          Lead
+          {language === "es" ? "Principal" : "Lead"}
         </span>
       </div>
 
@@ -144,13 +144,13 @@ export default function FieldProfilePage() {
         {/* Theme Switcher - Industrial Segment Control */}
         <section>
           <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
-            Display Theme
+             {language === "es" ? "Tema de Pantalla" : "Display Theme"}
           </h3>
           <div className="bg-surface border border-border flex p-1">
             {[
-              { id: "light", icon: Sun, label: "Light" },
-              { id: "dark", icon: Moon, label: "Dark" },
-              { id: "system", icon: Laptop, label: "Auto" },
+              { id: "light", icon: Sun, label: language === "es" ? "Luz" : "Light" },
+              { id: "dark", icon: Moon, label: language === "es" ? "Oscuro" : "Dark" },
+              { id: "system", icon: Laptop, label: language === "es" ? "Auto" : "Auto" },
             ].map((item) => (
               <button
                 key={item.id}
@@ -179,29 +179,29 @@ export default function FieldProfilePage() {
         <section className="grid grid-cols-1 gap-4">
           <div className="flex flex-col gap-2">
             <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
-              Application Control
+              {language === "es" ? "Control de Aplicación" : "Application Control"}
             </h3>
             <div className="flex flex-col border border-border divide-y divide-border">
               <div className="flex items-center justify-between p-4 bg-surface">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-foreground">
-                    Offline Storage
+                    {language === "es" ? "Almacenaje Offline" : "Offline Storage"}
                   </span>
                   <span className="text-[8px] font-mono text-foreground/40 uppercase">
-                    12 pending syncs
+                    {language === "es" ? "12 sincronizaciones pendientes" : "12 pending syncs"}
                   </span>
                 </div>
                 <button className="text-[8px] font-black uppercase tracking-[0.2em] bg-foreground text-background px-3 py-1.5 active:scale-95 transition-transform">
-                  Sync Now
+                  {language === "es" ? "Sincronizar" : "Sync Now"}
                 </button>
               </div>
               <div className="flex items-center justify-between p-4 bg-surface">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-foreground">
-                    Media Quality
+                    {language === "es" ? "Calidad de Medios" : "Media Quality"}
                   </span>
                   <span className="text-[8px] font-mono text-foreground/40 uppercase">
-                    Standard (Balanced)
+                    {language === "es" ? "Estándar (Equilibrado)" : "Standard (Balanced)"}
                   </span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-foreground/20" />
@@ -209,6 +209,7 @@ export default function FieldProfilePage() {
             </div>
           </div>
         </section>
+
 
         {/* Support & Reporting - High Density */}
         <section className="flex flex-col gap-2">

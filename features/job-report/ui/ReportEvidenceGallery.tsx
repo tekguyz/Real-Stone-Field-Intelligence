@@ -3,6 +3,8 @@
 import { MapPin } from "lucide-react";
 import { CapturedProof } from "../../../entities/job/types";
 import Image from "next/image";
+import { useUserStore } from "../../../entities/user/store";
+import { dict } from "../../../entities/i18n/dict";
 
 interface ReportEvidenceGalleryProps {
   allPhotos: string[];
@@ -15,12 +17,15 @@ export function ReportEvidenceGallery({
   getProofMetadata,
   formatTime,
 }: ReportEvidenceGalleryProps) {
+  const { language } = useUserStore();
+  const t = dict[language];
+
   return (
     <div className="p-6 md:p-10 border-b-4 border-foreground print:border-black">
       <h3 className="font-black uppercase tracking-[0.2em] text-lg mb-6 flex items-center gap-2">
-        Field Evidence
-        <span className="bg-rsg-success text-white px-2 py-0.5 text-xs">
-          VERIFIED
+        {t.admin.fieldEvidence}
+        <span className="bg-status-verified-bg text-status-verified-text px-2 py-0.5 text-xs">
+          {t.status.verified}
         </span>
       </h3>
 
@@ -57,10 +62,10 @@ export function ReportEvidenceGallery({
                             {meta.lat.toFixed(6)}, {meta.lng.toFixed(6)}
                           </span>
                           <span className="text-[9px] font-mono text-background/60 print:text-black/60">
-                            ACCURACY:{" "}
+                            {t.admin.accuracyLabel}:{" "}
                             {meta.accuracy
                               ? meta.accuracy.toFixed(1) + "M"
-                              : "UNKNOWN"}
+                              : t.admin.unknown}
                           </span>
                         </div>
                       ) : meta.location_status === "timeout_unavailable" ? (
@@ -73,7 +78,7 @@ export function ReportEvidenceGallery({
                       ) : (
                         <div className="flex items-center gap-2 bg-foreground text-background print:bg-white print:text-black print:border-2 print:border-black px-2 py-1 mt-1">
                           <span className="text-[10px] font-mono font-bold tracking-widest">
-                            GPS METADATA UNAVAILABLE
+                            {t.admin.gpsMetadataUnavailable}
                           </span>
                         </div>
                       )}
@@ -81,7 +86,7 @@ export function ReportEvidenceGallery({
                   ) : (
                     <div className="flex h-full items-center justify-center">
                       <span className="text-[10px] font-mono text-background/40 print:text-black/40 uppercase">
-                        No Metadata Verified
+                        {t.admin.noMetadataVerified}
                       </span>
                     </div>
                   )}
@@ -93,7 +98,7 @@ export function ReportEvidenceGallery({
       ) : (
         <div className="w-full py-12 border-2 border-dashed border-border bg-foreground/5 print:bg-black/5 flex flex-col items-center justify-center gap-2">
           <span className="text-sm font-bold uppercase tracking-widest text-foreground/40">
-            No photo evidence attached.
+            {t.admin.noPhotoEvidence}
           </span>
         </div>
       )}

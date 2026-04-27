@@ -45,8 +45,8 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             {t.settings}
           </h1>
-          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">
-            SYSTEM CONFIGURATION & PREFERENCES
+          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none uppercase">
+            {language === "es" ? "CONFIGURACIÓN DEL SISTEMA Y PREFERENCIAS" : "SYSTEM CONFIGURATION & PREFERENCES"}
           </p>
         </div>
       </div>
@@ -88,10 +88,10 @@ export default function SettingsPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <h2 className="text-xl font-bold tracking-tight">
-                          Admin User
+                          {language === "es" ? "Usuario Administrador" : "Admin User"}
                         </h2>
                         <span className="bg-primary/10 border border-primary/20 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-primary">
-                          Principal Architect
+                          {language === "es" ? "Arquitecto Principal" : "Principal Architect"}
                         </span>
                       </div>
                       <p className="text-sm text-foreground/50 font-mono uppercase tracking-tighter">
@@ -103,7 +103,7 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="flex flex-col gap-6">
                       <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">
-                        Preferences
+                        {language === "es" ? "Preferencias" : "Preferences"}
                       </h3>
 
                       <div className="flex flex-col gap-1.5">
@@ -128,9 +128,9 @@ export default function SettingsPage() {
                         </label>
                         <div className="flex bg-surface border border-border p-1 rounded-sm w-full">
                           {[
-                            { id: "light", icon: Sun, label: "Light" },
-                            { id: "dark", icon: Moon, label: "Dark" },
-                            { id: "system", icon: Laptop, label: "Auto" },
+                            { id: "light", icon: Sun, label: language === "es" ? "Luz" : "Light" },
+                            { id: "dark", icon: Moon, label: language === "es" ? "Oscuro" : "Dark" },
+                            { id: "system", icon: Laptop, label: language === "es" ? "Auto" : "Auto" },
                           ].map((item) => (
                             <button
                               key={item.id}
@@ -151,23 +151,23 @@ export default function SettingsPage() {
 
                     <div className="flex flex-col gap-6">
                       <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">
-                        System Info
+                        {language === "es" ? "Información del Sistema" : "System Info"}
                       </h3>
                       <div className="bg-surface border border-border p-4 flex flex-col gap-4">
                         <div className="flex justify-between items-center text-[10px]">
                           <span className="font-mono text-foreground/40 uppercase">
-                            App Version
+                            {language === "es" ? "Versión de App" : "App Version"}
                           </span>
                           <span className="font-black">v0.8.2-beta</span>
                         </div>
                         <div className="flex justify-between items-center text-[10px]">
                           <span className="font-mono text-foreground/40 uppercase">
-                            Storage Used
+                            {language === "es" ? "Almacenaje Usado" : "Storage Used"}
                           </span>
                           <span className="font-black">12.4 MB / 500 MB</span>
                         </div>
                         <button className="w-full py-2 bg-foreground/5 border border-border text-[9px] font-black uppercase tracking-widest hover:bg-rsg-error hover:text-white transition-colors">
-                          Purge Offline Cache
+                          {language === "es" ? "Limpiar Caché" : "Purge Offline Cache"}
                         </button>
                       </div>
                     </div>
@@ -182,8 +182,8 @@ export default function SettingsPage() {
                       <AlertTriangle className="w-3 h-3 group-hover:text-rsg-warning" />
                       <span>
                         {showReportForm
-                          ? "Hide Support Tool"
-                          : "Report System Issue"}
+                          ? (language === "es" ? "Ocultar Herramienta" : "Hide Support Tool")
+                          : (language === "es" ? "Reportar Problema" : "Report System Issue")}
                       </span>
                     </button>
 
@@ -203,7 +203,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="flex flex-col gap-8">
                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">
-                      Automation & Ingestion
+                       {t.automationIngestion}
                     </h3>
 
                     <div className="flex items-center justify-between py-4 border-b border-border">
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                           {t.verifiedProofEmail}
                         </h4>
                         <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">
-                          Automatic customer delivery upon verification.
+                          {language === "es" ? "Envío automático al cliente tras verificación." : "Automatic customer delivery upon verification."}
                         </p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer shrink-0">
@@ -231,15 +231,15 @@ export default function SettingsPage() {
                           StoneApp Integration
                         </h4>
                         <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">
-                          Real-time sync of work order status.
+                          {language === "es" ? "Sincronización en tiempo real del estado de órdenes." : "Real-time sync of work order status."}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-[9px] font-black uppercase tracking-widest text-rsg-success bg-rsg-success/10 px-2 py-0.5 border border-rsg-success/20">
-                          Active
+                          {language === "es" ? "Activo" : "Active"}
                         </span>
                         <button className="text-[9px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
-                          Re-sync
+                          {language === "es" ? "Re-sync" : "Re-sync"}
                         </button>
                       </div>
                     </div>
@@ -251,7 +251,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="flex flex-col gap-8">
                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 border-b border-border pb-2">
-                      Access Control
+                       {t.accessControl}
                     </h3>
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-border">
@@ -260,7 +260,7 @@ export default function SettingsPage() {
                           {t.masterPin}
                         </h4>
                         <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">
-                          Global administrative override PIN.
+                          {t.globalOverridePin}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export default function SettingsPage() {
                           </div>
                         ))}
                         <button className="ml-2 text-[9px] font-black uppercase tracking-widest text-primary hover:underline">
-                          Change
+                          {language === "es" ? "Cambiar" : "Change"}
                         </button>
                       </div>
                     </div>
@@ -281,19 +281,19 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between py-4 border-b border-border">
                       <div>
                         <h4 className="font-bold text-foreground uppercase text-xs tracking-tight">
-                          Audit Log Depth
+                          {t.auditLogDepth}
                         </h4>
                         <p className="text-xs text-foreground/50 mt-1 uppercase font-mono tracking-tighter">
-                          How long to persist field operation logs.
+                          {language === "es" ? "Tiempo de persistencia de registros de campo." : "How long to persist field operation logs."}
                         </p>
                       </div>
                       <select
                         defaultValue="90 Days"
                         className="bg-surface border border-border px-3 py-2 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-primary"
                       >
-                        <option>30 Days</option>
-                        <option>90 Days</option>
-                        <option>1 Year</option>
+                        <option>30 {t.days}</option>
+                        <option>90 {t.days}</option>
+                        <option>1 {language === "es" ? "Año" : "Year"}</option>
                       </select>
                     </div>
                   </div>
@@ -305,16 +305,17 @@ export default function SettingsPage() {
               {saved && (
                 <span className="text-green-500 flex items-center gap-1 text-[10px] font-black uppercase tracking-[0.2em] animate-in fade-in">
                   <CheckCircle2 className="w-4 h-4" />
-                  Preferences saved
+                  {language === "es" ? "Preferencias guardadas" : "Preferences saved"}
                 </span>
               )}
               <button
                 onClick={handleSave}
                 className="bg-foreground text-background px-6 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98]"
               >
-                Save Changes
+                {t.saveChanges}
               </button>
             </div>
+
           </div>
         </div>
       </div>

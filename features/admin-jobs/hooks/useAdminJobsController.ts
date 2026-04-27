@@ -13,6 +13,11 @@ export function useAdminJobsController() {
     string[]
   >([]);
 
+  const [sortConfig, setSortConfig] = useState<{
+    key: "legacy_id" | "client_name" | "scheduled_arrival";
+    direction: "asc" | "desc";
+  }>({ key: "scheduled_arrival", direction: "desc" });
+
   const { data: jobs, isLoading, error } = useJobs();
   const updateInstaller = useUpdateJobInstaller();
   const updateStatus = useUpdateJobStatus();
@@ -31,14 +36,9 @@ export function useAdminJobsController() {
     const job = jobs?.find((j) => j.id === jobId);
     if (job) {
       try {
-        await fetch("/api/notify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            job: { ...job, status: "verified" },
-            userEmail: "4tekguyz@gmail.com",
-          }),
-        }).catch(err => console.error("Non-blocking email notify error:", err));
+        const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
+        await sendJobVerifiedEmail({ ...job, status: "verified" }, "4tekguyz@gmail.com")
+          .catch(err => console.error("Non-blocking email notify error:", err));
       } catch (err) {
         console.error("Failed to trigger email notification", err);
       }
@@ -75,9 +75,16 @@ export function useAdminJobsController() {
     [currentJobs],
   );
 
+  const handleSort = (key: "legacy_id" | "client_name" | "scheduled_arrival") => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
   const filteredJobs = useMemo(
-    () =>
-      currentJobs.filter((job) => {
+    () => {
+      const filtered = currentJobs.filter((job) => {
         const matchesSearch =
           job.client_name.toLowerCase().includes(search.toLowerCase()) ||
           job.legacy_id.toLowerCase().includes(search.toLowerCase());
@@ -98,13 +105,30 @@ export function useAdminJobsController() {
         return (
           matchesSearch && matchesStatus && matchesCity && matchesInstaller
         );
-      }),
+      });
+
+      return [...filtered].sort((a, b) => {
+        const key = sortConfig.key;
+        let valA: any = a[key] || "";
+        let valB: any = b[key] || "";
+        
+        if (key === "scheduled_arrival") {
+          valA = a.scheduled_arrival || a.scheduled_date || "";
+          valB = b.scheduled_arrival || b.scheduled_date || "";
+        }
+        
+        if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    },
     [
       currentJobs,
       search,
       selectedStatuses,
       selectedCityFilters,
       selectedInstallerFilters,
+      sortConfig,
     ],
   );
 
@@ -139,5 +163,7 @@ export function useAdminJobsController() {
     handleVerify,
     isVerifying: updateStatus.isPending,
     toggleFilter,
+    handleSort,
+    sortConfig,
   };
 }
