@@ -19,10 +19,12 @@ export function useStoneAppIngestion(existingJobs: Job[] = []) {
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [isParsing, setIsParsing] = useState(false);
+  const [hasParsed, setHasParsed] = useState(false);
 
   const parseCSV = (file: File) => {
     setIsParsing(true);
     setError(null);
+    setHasParsed(false);
 
     // Create a set of existing WO numbers for fast lookup
     const existingWoSet = new Set(
@@ -96,11 +98,13 @@ export function useStoneAppIngestion(existingJobs: Job[] = []) {
           console.error(err);
         } finally {
           setIsParsing(false);
+          setHasParsed(true);
         }
       },
       error: (err) => {
         setError(`CSV Error: ${err.message}`);
         setIsParsing(false);
+        setHasParsed(true);
       },
     });
   };
@@ -108,6 +112,7 @@ export function useStoneAppIngestion(existingJobs: Job[] = []) {
   const clearData = () => {
     setParsedData([]);
     setError(null);
+    setHasParsed(false);
   };
 
   return {
@@ -115,6 +120,7 @@ export function useStoneAppIngestion(existingJobs: Job[] = []) {
     parsedData,
     error,
     isParsing,
+    hasParsed,
     clearData,
   };
 }

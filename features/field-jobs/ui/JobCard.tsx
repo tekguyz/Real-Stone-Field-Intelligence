@@ -4,9 +4,10 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { dict } from "../../../entities/i18n/dict";
-import { Job, JobStatusBadge } from "../../../entities/job";
+import { Job, JobStatus } from "../../../entities/job";
 import { summarizeJobScope } from "../../../shared/lib/utils";
 import { Clock, MapPin } from "lucide-react";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
 
 interface JobCardProps {
   job: Job;
@@ -60,7 +61,7 @@ export function JobCard({ job, language, index }: JobCardProps) {
               <h3 className="text-lg font-bold text-foreground uppercase tracking-tight leading-tight truncate">
                 {job.client_name}
               </h3>
-              <JobStatusBadge
+              <StatusBadge
                 status={job.status}
                 className="shrink-0 scale-75 origin-top-right"
               />

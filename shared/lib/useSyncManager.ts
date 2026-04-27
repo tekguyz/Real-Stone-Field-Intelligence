@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { db, purgePhotoBlobs } from "@/shared/api/sync-queue";
 import { jobService } from "@/entities/job/api";
 import { useUserStore } from "@/entities/user/store";
+import { JOB_STATUSES } from "@/lib/constants/statuses";
 
 export type SyncStatus = "ONLINE" | "OFFLINE" | "SYNCING";
 
@@ -64,7 +65,7 @@ export function useSyncManager() {
             item.payload.newStatus,
             isDevMode,
           );
-          if (item.payload.newStatus === "submitted_for_review" || item.payload.newStatus === "verified") {
+          if (item.payload.newStatus === JOB_STATUSES.REVIEW || item.payload.newStatus === JOB_STATUSES.VERIFIED) {
             purgePhotoBlobs(item.payload.jobId);
           }
         }

@@ -1,18 +1,38 @@
 import { dict } from "../../../entities/i18n/dict";
-import { Filter } from "lucide-react";
+import { Filter, ChevronDown, ChevronUp, Search, X } from "lucide-react";
 import { useUserStore } from "../../../entities/user/store";
-import { JobStatus } from "../../../entities/job";
+import { JOB_STATUSES, STATUS_SORT_ORDER, JobStatus } from "@/lib/constants/statuses";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { useState, useMemo } from "react";
 
-const statusColors: Record<JobStatus, string> = {
-  verified: "bg-rsg-success text-white",
-  in_progress: "bg-rsg-gold text-black",
-  submitted_for_review: "bg-rsg-warning text-black",
-  assigned: "bg-foreground text-background",
-  pending: "bg-zinc-500 text-white",
-};
+import { Job } from "../../../entities/job/types";
+
+function FilterAccordion({ title, count, defaultOpen = false, children }: { title: string, count?: number, defaultOpen?: boolean, children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-border/50  last:border-0 py-1">
+      <button 
+        onClick={() => setIsOpen(!isOpen)} 
+        className="flex items-center justify-between w-full text-[11px] font-mono uppercase tracking-widest font-black text-foreground/70 hover:text-foreground transition-colors group"
+      >
+        <span>{title} {count !== undefined && count > 0 && `(${count})`}</span>
+        <span className="text-foreground/30 group-hover:text-primary transition-colors">
+          {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+        </span>
+      </button>
+      {isOpen && (
+        <div className="pt-2 pb-1 flex flex-col gap-1.5">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function AdminJobsFilters({
   isLoading,
+  preset,
+  setPreset,
   selectedStatuses,
   setSelectedStatuses,
   selectedCityFilters,
@@ -22,8 +42,11 @@ export function AdminJobsFilters({
   cities,
   installers,
   toggleFilter,
+  allJobs,
 }: {
   isLoading: boolean;
+  preset: string | null;
+  setPreset: React.Dispatch<React.SetStateAction<string | null>>;
   selectedStatuses: string[];
   setSelectedStatuses: React.Dispatch<React.SetStateAction<string[]>>;
   selectedCityFilters: string[];
@@ -36,114 +59,131 @@ export function AdminJobsFilters({
     setter: React.Dispatch<React.SetStateAction<string[]>>,
     value: string,
   ) => void;
+  allJobs: Job[];
 }) {
   const { language } = useUserStore();
   const t = dict[language].admin;
 
+  const [installerSearch, setInstallerSearch] = useState("");
+
+  const counts = useMemo(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return {
+      inProgress: allJobs.filter(j => j.status === JOB_STATUSES.ACTIVE).length,
+      needsReview: allJobs.filter(j => j.status === JOB_STATUSES.REVIEW).length,
+      unassigned: allJobs.filter(j => !j.installer_id).length,
+      today: allJobs.filter(j => (j.scheduled_arrival || j.scheduled_date)?.split("T")[0] === today).length
+    };
+  }, [allJobs]);
+  
+  const handlePreset = (newPreset: string) => {
+    if (preset === newPreset) {
+      setPreset(null);
+    } else {
+      setPreset(newPreset);
+      // Clear manual filters when selecting a preset to avoid confusion
+      setSelectedStatuses([]);
+      setSelectedCityFilters([]);
+      setSelectedInstallerFilters([]);
+    }
+  };
+
+  const clearAll = () => {
+    setPreset(null);
+    setSelectedStatuses([]);
+    setSelectedCityFilters([]);
+    setSelectedInstallerFilters([]);
+    setInstallerSearch("");
+  };
+
+  const activeFiltersCount = selectedStatuses.length + selectedCityFilters.length + selectedInstallerFilters.length + (preset ? 1 : 0);
+
+  const statusOptions = Object.values(JOB_STATUSES).sort((a, b) => STATUS_SORT_ORDER[a] - STATUS_SORT_ORDER[b]);
+
+  const filteredInstallers = installers.filter(inst => inst && inst.toLowerCase().includes(installerSearch.toLowerCase()));
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-2 text-xl font-medium tracking-tight">
-        <Filter className="w-5 h-5 text-primary" />
-        {t.filters}
+    <div className="flex flex-col gap-2 sticky overflow-y-auto" style={{ top: "var(--header-height, 4rem)", height: "calc(100vh - var(--header-height, 4rem))" }}>
+      <div className="flex items-center justify-between pb-1 border-b border-border">
+        <div className="flex items-center gap-2 text-xl font-medium tracking-tight">
+          <Filter className="w-5 h-5 text-primary" />
+          {t.filters}
+        </div>
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={clearAll}
+            className="text-[9px] font-mono text-foreground/40 hover:text-rsg-gold transition-colors font-black tracking-widest uppercase flex items-center gap-1"
+          >
+            <X className="w-3 h-3" />
+            {t.clearAll}
+          </button>
+        )}
       </div>
 
-      <div className="bg-card border border-border p-4 flex flex-col gap-4">
-        <div>
-          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
-            {t.smartPresets}
-          </h3>
-          <div className="grid grid-cols-1 gap-1.5">
-            <button
-              onClick={() => setSelectedStatuses(["assigned", "in_progress"])}
-              className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-rsg-gold bg-rsg-gold/5 text-rsg-text/80 hover:bg-rsg-gold/15 text-left transition-colors"
-            >
-              {dict[language].status.in_progress}
-            </button>
-            <button
-              onClick={() => setSelectedStatuses(["submitted_for_review"])}
-              className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-rsg-warning bg-rsg-warning/5 text-rsg-warning hover:bg-rsg-warning/15 text-left transition-colors"
-            >
-              {dict[language].status.submitted_for_review}
-            </button>
-            <button
-              onClick={() => setSelectedStatuses(["pending"])}
-              className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-border/30 bg-rsg-surface text-rsg-text/40 hover:bg-rsg-surface/80 text-left transition-colors"
-            >
-              {dict[language].status.pending}
-            </button>
-            <button
-              onClick={() => setSelectedStatuses([])}
-              className="px-4 py-1 text-[9px] font-mono text-foreground/30 hover:text-primary transition-colors text-right font-black tracking-widest uppercase mt-1"
-            >
-              {t.clearAll}
-            </button>
-          </div>
-        </div>
+      <div className="bg-card border border-border p-3 flex flex-col gap-0">
+        
+        <FilterAccordion title={t.smartPresets} defaultOpen={true}>
+           <div className="grid grid-cols-1 gap-1.5">
+              {[
+                { label: "In Progress", value: "In Progress", count: counts.inProgress, color: "border-status-active-bg bg-status-active-bg/5 text-status-active-text hover:bg-status-active-bg/15" },
+                { label: "Needs Review", value: "Needs Review", count: counts.needsReview, color: "border-status-review-bg bg-status-review-bg/5 text-status-review-text hover:bg-status-review-bg/15" },
+                { label: "Unassigned", value: "Unassigned", count: counts.unassigned, color: "border-border/50 bg-surface text-foreground/60 hover:bg-surface/80" },
+                { label: "Today", value: "Today", count: counts.today, color: "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" }
+              ].map(p => (
+                <button
+                  key={p.value}
+                  onClick={() => handlePreset(p.value)}
+                  className={`px-3 py-2 text-[10px] font-black uppercase tracking-widest border text-left transition-colors flex items-center justify-between ${preset === p.value ? "ring-1 ring-primary " + p.color : "border-border/30 bg-surface/30 text-foreground/50 hover:bg-surface"}`}
+                >
+                  <span>{p.label} <span className="ml-1 opacity-40">({p.count})</span></span>
+                  {preset === p.value && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                </button>
+              ))}
+           </div>
+        </FilterAccordion>
 
-        <div className="h-px bg-border/50" />
-
-        <div>
-          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
-            {t.status}
-          </h3>
-          <div className="flex flex-col gap-0.5">
-            {Object.keys(statusColors).map((statusKey) => (
+        <FilterAccordion title={t.status} count={selectedStatuses.length} defaultOpen={true}>
+            {statusOptions.map((statusKey) => (
               <label
                 key={statusKey}
-                className="flex items-center gap-3 cursor-pointer group py-1.5"
+                className="flex items-center gap-3 cursor-pointer group py-1"
               >
-                <div className="relative flex items-center">
+                <div className="relative flex items-center shrink-0">
                   <input
                     type="checkbox"
                     className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent peer transition-all"
                     checked={selectedStatuses.includes(statusKey)}
-                    onChange={() => toggleFilter(setSelectedStatuses, statusKey)}
+                    onChange={() => {
+                       setPreset(null);
+                       toggleFilter(setSelectedStatuses, statusKey);
+                    }}
                   />
-                  <div className={`absolute inset-0 scale-75 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none ${
-                    statusKey === 'pending' ? 'bg-[oklch(var(--status-pending))]' :
-                    statusKey === 'submitted_for_review' ? 'bg-[oklch(var(--status-review))]' :
-                    statusKey === 'in_progress' ? 'bg-[oklch(var(--status-active))]' :
-                    statusKey === 'verified' ? 'bg-[oklch(var(--status-verified))]' :
-                    'bg-[oklch(var(--status-assigned))]'
-                  }`} />
+                  <div className="absolute inset-0 scale-75 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none bg-primary" />
                 </div>
-                <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono">
-                  {
-                    dict[language].status[
-                      statusKey as keyof typeof dict.en.status
-                    ]
-                  }
-                </span>
+                <StatusBadge status={statusKey as JobStatus} className="scale-[0.8] origin-left" />
               </label>
             ))}
-          </div>
-        </div>
+        </FilterAccordion>
 
-        <div className="h-px bg-border/50" />
-
-        <div>
-          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
-            {t.city}
-          </h3>
+        <FilterAccordion title={t.city} count={selectedCityFilters.length}>
           {isLoading ? (
             <div className="flex gap-2 flex-col">
               <div className="h-3 bg-rsg-gold/5 animate-pulse w-1/2" />
-              <div className="h-3 bg-rsg-gold/5 animate-pulse w-2/3" />
             </div>
           ) : (
-            <div className="flex flex-col gap-0.5">
-              {cities.slice(0, 5).map((city) => (
+            <>
+              {cities.map((city) => (
                 <label
                   key={city}
-                  className="flex items-center gap-3 cursor-pointer group py-1.5"
+                  className="flex items-center gap-3 cursor-pointer group py-1"
                 >
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all"
+                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0"
                     checked={selectedCityFilters.includes(city!)}
-                    onChange={() => toggleFilter(setSelectedCityFilters, city!)}
+                    onChange={() => { setPreset(null); toggleFilter(setSelectedCityFilters, city!); }}
                   />
-                  <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono">
+                  <span className="text-xs text-foreground/70 group-hover:text-foreground transition-colors uppercase font-mono truncate">
                     {city}
                   </span>
                 </label>
@@ -153,50 +193,62 @@ export function AdminJobsFilters({
                   {t.noCities}
                 </span>
               )}
-            </div>
+            </>
           )}
-        </div>
+        </FilterAccordion>
 
-        <div className="h-px bg-border/50" />
-
-        <div>
-          <h3 className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest mb-2 font-black">
-            {t.installer}
-          </h3>
+        <FilterAccordion title={t.installer} count={selectedInstallerFilters.length}>
           {isLoading ? (
             <div className="flex gap-2 flex-col">
               <div className="h-3 bg-rsg-gold/5 animate-pulse w-3/4" />
-              <div className="h-3 bg-rsg-gold/5 animate-pulse w-1/2" />
             </div>
           ) : (
-            <div className="flex flex-col gap-0.5">
-              <label className="flex items-center gap-3 cursor-pointer group py-1.5">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all"
-                  checked={selectedInstallerFilters.includes("unassigned")}
-                  onChange={() =>
-                    toggleFilter(setSelectedInstallerFilters, "unassigned")
-                  }
-                />
-                <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono italic">
-                  {t.unassigned}
-                </span>
-              </label>
-              {installers.map((inst) => (
+            <>
+              {installers.length > 6 && (
+                <div className="relative mb-2">
+                   <Search className="w-3 h-3 absolute left-2 top-1/2 -translate-y-1/2 text-foreground/40" />
+                   <input 
+                      type="text" 
+                      placeholder="Search..."
+                      value={installerSearch}
+                      onChange={e => setInstallerSearch(e.target.value)}
+                      className="w-full bg-background border border-border pl-7 pr-2 py-1 text-[10px] font-mono focus:outline-none focus:border-primary"
+                   />
+                </div>
+              )}
+              
+              {(!installerSearch || "unassigned".includes(installerSearch.toLowerCase())) && (
+                <label className="flex items-center gap-3 cursor-pointer group py-1">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0"
+                    checked={selectedInstallerFilters.includes("unassigned")}
+                    onChange={() => {
+                      setPreset(null);
+                      toggleFilter(setSelectedInstallerFilters, "unassigned");
+                    }}
+                  />
+                  <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono italic">
+                    {t.unassigned}
+                  </span>
+                </label>
+              )}
+
+              {filteredInstallers.sort().map((inst) => (
                 <label
                   key={inst}
-                  className="flex items-center gap-3 cursor-pointer group py-1.5"
+                  className="flex items-center gap-3 cursor-pointer group py-1"
                 >
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all"
+                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0"
                     checked={selectedInstallerFilters.includes(inst!)}
-                    onChange={() =>
-                      toggleFilter(setSelectedInstallerFilters, inst!)
-                    }
+                    onChange={() => {
+                      setPreset(null);
+                      toggleFilter(setSelectedInstallerFilters, inst!);
+                    }}
                   />
-                  <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono">
+                  <span className="text-xs text-foreground/70 group-hover:text-foreground transition-colors uppercase font-mono truncate">
                     {inst!.replace("installer_", "")}
                   </span>
                 </label>
@@ -206,9 +258,10 @@ export function AdminJobsFilters({
                   {t.noInstallers}
                 </span>
               )}
-            </div>
+            </>
           )}
-        </div>
+        </FilterAccordion>
+
       </div>
     </div>
   );

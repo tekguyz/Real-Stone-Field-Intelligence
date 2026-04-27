@@ -24,6 +24,8 @@ export default function JobsPage() {
     setSearch,
     selectedStatuses,
     setSelectedStatuses,
+    preset,
+    setPreset,
     selectedCityFilters,
     setSelectedCityFilters,
     selectedInstallerFilters,
@@ -37,8 +39,7 @@ export default function JobsPage() {
     handleVerify,
     isVerifying,
     toggleFilter,
-    handleSort,
-    sortConfig,
+    allJobs
   } = useAdminJobsController();
 
   return (
@@ -83,8 +84,6 @@ export default function JobsPage() {
               error={error}
               onJobSelect={setSelectedJob}
               onUpdateInstaller={handleUpdateInstaller}
-              onSort={handleSort}
-              sortConfig={sortConfig}
             />
           </div>
         </div>
@@ -93,6 +92,8 @@ export default function JobsPage() {
         <div className="lg:col-span-1">
           <AdminJobsFilters
             isLoading={isLoading}
+            preset={preset}
+            setPreset={setPreset}
             selectedStatuses={selectedStatuses}
             setSelectedStatuses={setSelectedStatuses}
             selectedCityFilters={selectedCityFilters}
@@ -102,6 +103,7 @@ export default function JobsPage() {
             cities={cities}
             installers={installers}
             toggleFilter={toggleFilter}
+            allJobs={allJobs}
           />
         </div>
       </div>

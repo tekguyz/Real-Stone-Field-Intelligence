@@ -9,7 +9,8 @@ import { ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFieldJobDetail } from "../../../../../features/field-jobs/hooks/useFieldJobDetail";
-import { JobStatusBadge } from "../../../../../entities/job";
+import { JobStatus } from "../../../../../entities/job";
+import { StatusBadge } from "../../../../../components/ui/StatusBadge";
 import {
   JobBlockScope,
   JobBlockSite,
@@ -18,6 +19,7 @@ import {
   JobActionFooter,
   CapturedProofGrid,
 } from "../../../../../features/field-jobs/ui/JobDetailComponents";
+import { JOB_STATUSES } from "../../../../../lib/constants/statuses";
 
 export default function FieldJobDetail({
   params,
@@ -78,8 +80,8 @@ export default function FieldJobDetail({
     e.preventDefault();
     const hasUnsavedChanges =
       processedPhotos.length > 0 || signatureData !== null;
-    const isSealed = job.status === "verified";
-    if (!isSealed && !isSubmitting && hasUnsavedChanges) {
+    const isVerified = job.status === JOB_STATUSES.VERIFIED;
+    if (!isVerified && !isSubmitting && hasUnsavedChanges) {
       if (!window.confirm(language === "es" ? "Los cambios no guardados se perderán. ¿Salir de todos modos?" : "Unsaved changes will be lost. Exit anyway?")) {
         return;
       }
@@ -113,7 +115,7 @@ export default function FieldJobDetail({
           <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-tight pr-4">
             {job.client_name}
           </h1>
-          <JobStatusBadge status={job.status} />
+          <StatusBadge status={job.status} />
         </section>
 
         <div className="flex flex-col gap-6 bg-card border border-border p-3 sm:p-4">
@@ -136,14 +138,14 @@ export default function FieldJobDetail({
         )}
 
         {/* Verification Lock or Capture */}
-        {job.status === "verified" ? (
+        {job.status === JOB_STATUSES.VERIFIED ? (
           <div className="bg-rsg-success text-rsg-surface px-6 py-5 flex flex-col items-center justify-center text-center gap-3 mt-4 border-2 border-rsg-border relative overflow-hidden">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-rsg-border text-rsg-surface px-3 py-0.5 text-[8px] font-black uppercase tracking-[0.4em]">
               {language === "es" ? "Bloqueo de Seguridad" : "Security Lock"}
             </div>
             <CheckCircle2 className="w-10 h-10 text-rsg-surface mt-2" />
             <div className="font-black uppercase tracking-[0.3em] text-lg leading-none">
-              {language === "es" ? "TRABAJO SELLADO Y VERIFICADO" : "JOB SEALED & VERIFIED"}
+              {language === "es" ? "TRABAJO VERIFICADO" : "JOB VERIFIED"}
             </div>
             <div className="w-16 h-0.5 bg-rsg-surface/30 my-1" />
             <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-rsg-surface/80 leading-relaxed">

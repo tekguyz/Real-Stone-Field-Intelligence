@@ -12,6 +12,7 @@ import { ReportEvidenceGallery } from "../../../../features/job-report/ui/Report
 import { ReportSignatureSection } from "../../../../features/job-report/ui/ReportSignatureSection";
 import { useUserStore } from "../../../../entities/user/store";
 import { dict } from "../../../../entities/i18n/dict";
+import { JOB_STATUSES } from "../../../../lib/constants/statuses";
 
 const formatTime = (dateStr: string | number, language: string) => {
   return new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
@@ -124,7 +125,7 @@ export default function MasterJobReport({
         : `MODERATE (±${avg.toFixed(1)}M)`
       : "UNKNOWN";
 
-  const isPendingExecution = job.status === "pending" || job.status === "assigned";
+  const isPendingExecution = job.status === JOB_STATUSES.PENDING || job.status === JOB_STATUSES.ASSIGNED;
   const showCompletionData = !isPendingExecution;
 
   return (

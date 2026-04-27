@@ -3,6 +3,31 @@ import { supabase } from "../../shared/api/supabase";
 import { mockJobs } from "../../shared/api/mock-data";
 import { Job } from "./types";
 import { useUserStore } from "../user/store";
+import { JOB_STATUSES, JobStatus } from "@/lib/constants/statuses";
+
+function mapDbStatusToJobStatus(dbStatus: string): JobStatus {
+  switch (dbStatus) {
+    case "assigned": return JOB_STATUSES.ASSIGNED;
+    case "in_progress": return JOB_STATUSES.ACTIVE;
+    case "submitted_for_review": return JOB_STATUSES.REVIEW;
+    case "verified": return JOB_STATUSES.VERIFIED;
+    case "pending":
+    default:
+       return JOB_STATUSES.PENDING;
+  }
+}
+
+function mapJobStatusToDbStatus(status: JobStatus): string {
+  switch (status) {
+    case JOB_STATUSES.ASSIGNED: return "assigned";
+    case JOB_STATUSES.ACTIVE: return "in_progress";
+    case JOB_STATUSES.REVIEW: return "submitted_for_review";
+    case JOB_STATUSES.VERIFIED: return "verified";
+    case JOB_STATUSES.PENDING:
+    default:
+       return "pending";
+  }
+}
 
 /**
  * Service orchestrator that intercepts calls based on isDevMode.
@@ -69,7 +94,7 @@ export const jobService = {
       client_name: row.client_name,
       address: row.address,
       stoneapp_parts: row.stoneapp_parts as Job["stoneapp_parts"],
-      status: row.status as Job["status"],
+      status: mapDbStatusToJobStatus(row.status),
       job_type: row.job_type as Job["job_type"],
       scheduled_date: row.scheduled_date,
       scheduled_arrival: row.scheduled_arrival,
@@ -122,7 +147,7 @@ export const jobService = {
 
     const { error } = await supabase
       .from("jobs")
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ status: mapJobStatusToDbStatus(newStatus), updated_at: new Date().toISOString() })
       .eq("id", jobId);
 
     if (error) {
@@ -323,7 +348,7 @@ export const jobService = {
       client_name: j.client_name,
       address: j.address,
       stoneapp_parts: j.stoneapp_parts,
-      status: j.status,
+      status: mapJobStatusToDbStatus(j.status),
       job_type: j.job_type,
       scheduled_date: j.scheduled_date,
       scheduled_arrival: j.scheduled_arrival,

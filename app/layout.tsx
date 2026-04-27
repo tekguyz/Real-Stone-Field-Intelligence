@@ -5,6 +5,7 @@ import { ThemeProvider } from "./theme-provider";
 import { ReactQueryProvider } from "../shared/lib/providers/query-provider";
 import { DemoBanner } from "../features/demo-switcher/DemoBanner";
 import { IOSInstallBanner } from "../components/IOSInstallBanner";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -76,6 +77,7 @@ export default function RootLayout({
               {children}
             </div>
             <IOSInstallBanner />
+            <Toaster position="top-right" expand={true} richColors theme="system" />
           </ReactQueryProvider>
         </ThemeProvider>
       </body>

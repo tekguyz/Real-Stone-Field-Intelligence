@@ -1,7 +1,9 @@
 import { CheckCircle2, AlertTriangle, Info } from "lucide-react";
 import { Job } from "../../../../entities/job/types";
+import { JobStatus } from "../../../../lib/constants/statuses";
 import { useUserStore } from "../../../../entities/user/store";
 import { dict } from "../../../../entities/i18n/dict";
+import { StatusBadge } from "../../../../components/ui/StatusBadge";
 
 interface ImportPreviewTableProps {
   parsedData: Job[];
@@ -22,6 +24,8 @@ export function ImportPreviewTable({
 }: ImportPreviewTableProps) {
   const { language } = useUserStore();
   const t = dict[language].admin;
+
+  const hasErrorsInSet = (parsedData as any[]).some(j => !j.wo_number || !j.address);
 
   return (
     <div className="flex flex-col gap-6">
@@ -51,32 +55,31 @@ export function ImportPreviewTable({
       <div className="border border-rsg-border overflow-x-auto bg-rsg-surface rounded-none">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-rsg-background border-b border-rsg-border">
-              <th className="px-4 py-3 w-10">
-                <div
-                  onClick={toggleSelectAll}
-                  className="w-4 h-4 border-2 border-rsg-border bg-rsg-surface flex items-center justify-center cursor-pointer transition-colors rounded-none"
-                >
+            <tr className="bg-surface sticky top-0 z-10 border-b border-border">
+              <th className="px-4 py-4 w-10 cursor-pointer group" onClick={toggleSelectAll}>
+                <div className="w-4 h-4 border-2 border-border bg-card flex items-center justify-center transition-colors group-hover:border-primary rounded-none">
                   {selectedWoNumbers.size === parsedData.length && (
-                    <div className="w-2 h-2 bg-rsg-gold" />
+                    <div className="w-2 h-2 bg-primary" />
                   )}
                 </div>
               </th>
-              <th className="px-4 py-3 font-mono text-[10px] uppercase tracking-widest text-rsg-text font-black">
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
                 {t.statusHeader}
               </th>
-              <th className="px-4 py-3 font-mono text-[10px] uppercase tracking-widest text-rsg-text font-black">
-                {t.woIdHeader}
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
+                WO#
               </th>
-              <th className="px-4 py-3 font-mono text-[10px] uppercase tracking-widest text-rsg-text font-black">
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
                 {t.clientHeader}
               </th>
-              <th className="px-4 py-3 font-mono text-[10px] uppercase tracking-widest text-rsg-text font-black">
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
                 {t.communityHeader}
               </th>
-              <th className="px-4 py-3 font-mono text-[10px] uppercase tracking-widest text-rsg-text font-black">
-                {t.errorsHeader}
-              </th>
+              {hasErrorsInSet && (
+                <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
+                  {t.errorsHeader}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-rsg-border">
@@ -88,58 +91,52 @@ export function ImportPreviewTable({
               return (
                 <tr
                   key={idx}
-                  className={`text-xs transition-colors hover:bg-rsg-background/50 
+                  className={`transition-colors hover:bg-primary/5 group
                     ${hasError ? "bg-red-500/5" : ""} 
-                    ${isSelected ? "bg-rsg-gold/10" : ""} 
+                    ${isSelected ? "bg-primary/10" : ""} 
                     ${isConflict ? "bg-amber-500/5" : ""}
-                    ${isSelected ? "border-l-2 border-l-rsg-gold" : "border-l-2 border-l-transparent"}`}
+                    ${isSelected ? "border-l-2 border-l-primary" : "border-l-2 border-l-transparent"}`}
                 >
-                  <td className="px-4 py-3">
-                    <div
-                      onClick={() => toggleJob(job.wo_number!)}
-                      className="w-4 h-4 border-2 border-rsg-border bg-rsg-surface flex items-center justify-center cursor-pointer transition-colors rounded-none"
-                    >
+                  <td className="px-4 py-4 cursor-pointer" onClick={() => toggleJob(job.wo_number!)}>
+                    <div className="w-4 h-4 border-2 border-border bg-card flex items-center justify-center transition-colors group-hover:border-primary rounded-none">
                       {isSelected && (
-                        <div className="w-2 h-2 bg-rsg-gold rounded-none" />
+                        <div className="w-2 h-2 bg-primary rounded-none" />
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    {isConflict ? (
-                      <div className="flex items-center gap-1.5">
-                         <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-600 font-black text-[8px] uppercase tracking-widest border border-amber-500/30 rounded-none">
+                  <td className="px-4 py-4 flex items-center gap-2">
+                    <StatusBadge status={job.status as JobStatus} className="scale-90 origin-left" />
+                    {isConflict && (
+                      <div className="group/info relative flex items-center">
+                        <span className="px-1.5 py-0.5 bg-muted text-muted-foreground font-black text-[8px] uppercase tracking-widest border border-border rounded-none ml-1">
                           {t.existingStatus}
                         </span>
-                        <div className="group relative">
-                          <Info className="w-3 h-3 text-amber-500 cursor-help" />
-                          <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-48 p-2 bg-rsg-surface border border-rsg-border shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-[60] pointer-events-none text-[9px] leading-tight font-medium uppercase tracking-wider text-rsg-text rounded-none">
-                            {t.workOrderExistsTooltip}
-                          </div>
+                        <Info className="w-3 h-3 text-muted-foreground cursor-help ml-1" />
+                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-48 p-2 bg-card border border-border shadow-xl opacity-0 group-hover/info:opacity-100 transition-opacity z-[60] pointer-events-none text-[9px] leading-tight font-medium uppercase tracking-wider text-foreground rounded-none">
+                          {t.workOrderExistsTooltip}
                         </div>
                       </div>
-                    ) : (
-                      <span className="px-1.5 py-0.5 bg-rsg-gold/20 text-rsg-gold font-black text-[8px] uppercase tracking-widest border border-rsg-gold/30 rounded-none">
-                        {t.newStatus}
-                      </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 font-mono font-bold text-rsg-gold">
+                  <td className="px-4 py-4 text-sm font-medium text-foreground">
                     {job.wo_number}
                   </td>
-                  <td className="px-4 py-3 font-bold uppercase tracking-tight text-rsg-text">
+                  <td className="px-4 py-4 text-sm font-medium text-foreground uppercase">
                     {job.client_name}
                   </td>
-                  <td className="px-4 py-3 uppercase text-rsg-text/70">
+                  <td className="px-4 py-4 text-xs text-muted-foreground uppercase">
                     {job.community_name || "N/A"}
                   </td>
-                  <td className="px-4 py-3">
-                    {hasError && (
-                      <div className="flex items-center gap-1 text-red-500 font-black uppercase text-[10px] tracking-widest">
-                        <AlertTriangle className="w-3 h-3" />
-                        {t.criticalDataMissing}
-                      </div>
-                    )}
-                  </td>
+                  {hasErrorsInSet && (
+                    <td className="px-4 py-4">
+                      {hasError && (
+                        <div className="flex items-center gap-1 text-red-500 font-black uppercase text-[10px] tracking-widest">
+                          <AlertTriangle className="w-3 h-3" />
+                          {t.criticalDataMissing}
+                        </div>
+                      )}
+                    </td>
+                  )}
                 </tr>
               );
             })}

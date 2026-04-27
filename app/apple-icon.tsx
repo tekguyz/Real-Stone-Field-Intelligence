@@ -16,7 +16,6 @@ export default function Icon() {
           justifyContent: 'center',
           backgroundColor: '#000000',
           border: '2px solid #b87c1f', // Gold border
-          borderRadius: '40px',
         }}
       >
         <svg 

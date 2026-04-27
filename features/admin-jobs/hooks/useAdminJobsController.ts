@@ -1,22 +1,23 @@
 import { useState, useMemo } from "react";
 import { useJobs, useUpdateJobInstaller, useUpdateJobStatus } from "../../../entities/job/api";
 import { Job } from "../../../entities/job/types";
+import { JOB_STATUSES } from "@/lib/constants/statuses";
+import { useUserStore } from "../../../entities/user/store";
+
+import { toast } from "sonner";
 
 export function useAdminJobsController() {
+  const { language } = useUserStore();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [search, setSearch] = useState("");
 
+  const [preset, setPreset] = useState<string | null>(null); // "Today", "Unassigned", "Needs Review", "In Progress"
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedCityFilters, setSelectedCityFilters] = useState<string[]>([]);
   const [selectedInstallerFilters, setSelectedInstallerFilters] = useState<
     string[]
   >([]);
-
-  const [sortConfig, setSortConfig] = useState<{
-    key: "legacy_id" | "client_name" | "scheduled_arrival";
-    direction: "asc" | "desc";
-  }>({ key: "scheduled_arrival", direction: "desc" });
 
   const { data: jobs, isLoading, error } = useJobs();
   const updateInstaller = useUpdateJobInstaller();
@@ -24,20 +25,25 @@ export function useAdminJobsController() {
 
   const handleUpdateInstaller = (jobId: string, installerId: string) => {
     const value = installerId === "unassigned" ? null : installerId;
-    updateInstaller.mutate({ jobId, installerId: value });
+    updateInstaller.mutate({ jobId, installerId: value }, {
+      onSuccess: () => {
+        toast.success(language === "es" ? "Instalador actualizado." : "Installer assigned.");
+      }
+    });
     if (selectedJob && selectedJob.id === jobId) {
       setSelectedJob({ ...selectedJob, installer_id: value });
     }
   };
 
   const handleVerify = async (jobId: string) => {
-    await updateStatus.mutateAsync({ jobId, status: "verified" });
+    await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
+    toast.success(language === "es" ? "Trabajo verificado y cerrado." : "Job verified and closed.");
 
     const job = jobs?.find((j) => j.id === jobId);
     if (job) {
       try {
         const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
-        await sendJobVerifiedEmail({ ...job, status: "verified" }, "4tekguyz@gmail.com")
+        await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
           .catch(err => console.error("Non-blocking email notify error:", err));
       } catch (err) {
         console.error("Failed to trigger email notification", err);
@@ -75,19 +81,25 @@ export function useAdminJobsController() {
     [currentJobs],
   );
 
-  const handleSort = (key: "legacy_id" | "client_name" | "scheduled_arrival") => {
-    setSortConfig((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
-  };
-
   const filteredJobs = useMemo(
     () => {
       const filtered = currentJobs.filter((job) => {
         const matchesSearch =
           job.client_name.toLowerCase().includes(search.toLowerCase()) ||
           job.legacy_id.toLowerCase().includes(search.toLowerCase());
+
+        let matchesPreset = true;
+        if (preset === "Today") {
+          const today = new Date().toISOString().split("T")[0];
+          const jobDate = (job.scheduled_arrival || job.scheduled_date)?.split("T")[0];
+          matchesPreset = today === jobDate;
+        } else if (preset === "In Progress") {
+          matchesPreset = job.status === JOB_STATUSES.ACTIVE;
+        } else if (preset === "Needs Review") {
+          matchesPreset = job.status === JOB_STATUSES.REVIEW;
+        } else if (preset === "Unassigned") {
+          matchesPreset = !job.installer_id;
+        }
 
         const matchesStatus =
           selectedStatuses.length === 0 ||
@@ -103,24 +115,11 @@ export function useAdminJobsController() {
             : selectedInstallerFilters.includes("unassigned"));
 
         return (
-          matchesSearch && matchesStatus && matchesCity && matchesInstaller
+          matchesSearch && matchesStatus && matchesCity && matchesInstaller && matchesPreset
         );
       });
 
-      return [...filtered].sort((a, b) => {
-        const key = sortConfig.key;
-        let valA: any = a[key] || "";
-        let valB: any = b[key] || "";
-        
-        if (key === "scheduled_arrival") {
-          valA = a.scheduled_arrival || a.scheduled_date || "";
-          valB = b.scheduled_arrival || b.scheduled_date || "";
-        }
-        
-        if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
-        if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
-        return 0;
-      });
+      return filtered;
     },
     [
       currentJobs,
@@ -128,7 +127,7 @@ export function useAdminJobsController() {
       selectedStatuses,
       selectedCityFilters,
       selectedInstallerFilters,
-      sortConfig,
+      preset,
     ],
   );
 
@@ -148,6 +147,8 @@ export function useAdminJobsController() {
     setSelectedJob,
     search,
     setSearch,
+    preset,
+    setPreset,
     selectedStatuses,
     setSelectedStatuses,
     selectedCityFilters,
@@ -157,13 +158,12 @@ export function useAdminJobsController() {
     isLoading,
     error,
     filteredJobs,
+    allJobs: currentJobs,
     cities,
     installers,
     handleUpdateInstaller,
     handleVerify,
     isVerifying: updateStatus.isPending,
     toggleFilter,
-    handleSort,
-    sortConfig,
   };
 }

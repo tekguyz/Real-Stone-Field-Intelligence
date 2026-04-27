@@ -8,12 +8,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../../entities/user/store";
 import { usePermissions } from "../../../shared/lib/usePermissions";
+import { JOB_STATUSES } from "../../../lib/constants/statuses";
+import { toast } from "sonner";
 
 import { haptics } from "../../../shared/lib/haptics";
 
 export function useFieldJobDetail(jobId: string) {
   const router = useRouter();
-  const { isDevMode } = useUserStore();
+  const { isDevMode, language } = useUserStore();
   const { data: jobs, isLoading: isJobsLoading } = useJobs();
   const updateStatus = useUpdateJobStatus();
   const queryClient = useQueryClient();
@@ -32,7 +34,7 @@ export function useFieldJobDetail(jobId: string) {
     usePermissions();
 
   const job = jobs?.find((j) => j.id === jobId || j.legacy_id === jobId);
-  const isSealed = job?.status === "verified";
+  const isVerified = job?.status === JOB_STATUSES.VERIFIED;
 
   const isFormValid = processedPhotos.length > 0;
 
@@ -42,7 +44,7 @@ export function useFieldJobDetail(jobId: string) {
       processedPhotos.length > 0 || signatureData !== null;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges && !isSubmitting && !isSealed) {
+      if (hasUnsavedChanges && !isSubmitting && !isVerified) {
         e.preventDefault();
         e.returnValue = "Unsaved changes will be lost";
       }
@@ -50,10 +52,10 @@ export function useFieldJobDetail(jobId: string) {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [processedPhotos.length, signatureData, isSubmitting, isSealed]);
+  }, [processedPhotos.length, signatureData, isSubmitting, isVerified]);
 
   const handleSubmitReview = async () => {
-    if (!isFormValid || !job || isSealed) return;
+    if (!isFormValid || !job || isVerified) return;
     setIsSubmitting(true);
 
     try {
@@ -73,16 +75,17 @@ export function useFieldJobDetail(jobId: string) {
       // Final State Update
       await jobService.updateJobStatus(
         job.id,
-        "submitted_for_review",
+        JOB_STATUSES.REVIEW,
         isDevMode,
       );
+      toast.success(language === "es" ? "Revisión enviada" : "Review submitted successfully.");
       
       haptics.success();
 
       // Trigger email summary via Server Action
       try {
         const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
-        await sendJobVerifiedEmail({ ...job, status: "submitted_for_review" }, "4tekguyz@gmail.com")
+        await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.REVIEW }, "4tekguyz@gmail.com")
           .catch(err => console.error("Non-blocking email notify error:", err));
       } catch (err) {
         console.error("Failed to trigger email notification", err);
@@ -91,7 +94,7 @@ export function useFieldJobDetail(jobId: string) {
       queryClient.setQueryData(["jobs", isDevMode], (old: any) => {
         if (!old) return old;
         return old.map((j: any) =>
-          j.id === job.id ? { ...j, status: "submitted_for_review" } : j,
+          j.id === job.id ? { ...j, status: JOB_STATUSES.REVIEW } : j,
         );
       });
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
@@ -111,7 +114,7 @@ export function useFieldJobDetail(jobId: string) {
   };
 
   const handleCaptureImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isSealed) return;
+    if (isVerified) return;
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -183,7 +186,7 @@ export function useFieldJobDetail(jobId: string) {
   };
 
   const removePhoto = (index: number) => {
-    if (isSealed) return;
+    if (isVerified) return;
     setProcessedPhotos((prev) => {
       const photoToRemove = prev[index];
       const updated = [...prev];
@@ -225,7 +228,7 @@ export function useFieldJobDetail(jobId: string) {
   }, [signatureData, isDevMode, job]);
 
   const checkPermissions = async (type: "camera" | "gallery") => {
-    if (isSealed) return false;
+    if (isVerified) return false;
 
     await checkStatus();
 

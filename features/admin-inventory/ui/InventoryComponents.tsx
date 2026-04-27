@@ -1,7 +1,21 @@
 import { Search } from "lucide-react";
 import { InventoryLot } from "../hooks/useInventoryController";
 import { dict } from "../../../entities/i18n/dict";
-import { Building2, Truck, Link as LinkIcon, ChevronRight } from "lucide-react";
+import { Building2, Truck, Link as LinkIcon, ChevronRight, ArrowUpDown } from "lucide-react";
+import { useSortableTable } from "../../../shared/lib/useSortableTable";
+
+const SortIcon = ({ 
+  columnKey, 
+  sortConfig 
+}: { 
+  columnKey: string;
+  sortConfig: { key: any; direction: "asc" | "desc" | null };
+}) => {
+  const isActive = sortConfig.key === columnKey;
+  return (
+    <ArrowUpDown className={`w-3 h-3 ml-1 transition-colors ${isActive && sortConfig.direction ? "text-rsg-gold" : "text-foreground/20"}`} />
+  );
+};
 
 export function InventoryFilters({
   search,
@@ -33,78 +47,117 @@ export function InventoryTable({
 }) {
   const t = dict[language].admin;
 
+  const { sortedData, sortConfig, handleSort } = useSortableTable(lots, "inventory", { key: "id", direction: "asc" });
+
   return (
     <div className="bg-card border border-border overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-rsg-surface/50 text-foreground/60 font-medium border-b border-border">
+          <thead className="bg-surface sticky top-0 z-10 border-b border-border">
             <tr>
-              <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
-                {t.lotNumber}
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("id")}
+              >
+                <div className="flex items-center">
+                  {t.lotNumber}
+                  <SortIcon columnKey="id" sortConfig={sortConfig} />
+                </div>
               </th>
-              <th className="px-6 py-4">{t.materialType}</th>
-              <th className="px-6 py-4">Quantity</th>
-              <th className="px-6 py-4">{t.status}</th>
-              <th className="px-6 py-4">{t.jobLink}</th>
-              <th className="px-6 py-4"></th>
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("materialName")}
+              >
+                <div className="flex items-center">
+                  {t.materialType}
+                  <SortIcon columnKey="materialName" sortConfig={sortConfig} />
+                </div>
+              </th>
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("slabs")}
+              >
+                <div className="flex items-center">
+                  Quantity
+                  <SortIcon columnKey="slabs" sortConfig={sortConfig} />
+                </div>
+              </th>
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("status")}
+              >
+                <div className="flex items-center">
+                  {t.status}
+                  <SortIcon columnKey="status" sortConfig={sortConfig} />
+                </div>
+              </th>
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("job_legacy_id")}
+              >
+                <div className="flex items-center">
+                  {t.jobLink}
+                  <SortIcon columnKey="job_legacy_id" sortConfig={sortConfig} />
+                </div>
+              </th>
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {lots.map((lot) => (
+            {sortedData.map((lot) => (
               <tr
                 key={lot.id}
                 className="hover:bg-rsg-surface/30 transition-colors group cursor-pointer"
               >
-                <td className="px-6 py-4 font-mono text-xs font-semibold text-primary">
+                <td className="px-4 py-4 text-sm font-medium text-foreground">
                   {lot.id.toUpperCase()}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-4 py-4">
                   <div className="flex flex-col">
-                    <span className="font-semibold text-foreground/90">
+                    <span className="text-sm font-medium text-foreground">
                       {lot.materialName}
                     </span>
-                    <span className="text-[10px] text-foreground/40 font-mono uppercase">
+                    <span className="text-xs text-muted-foreground uppercase">
                       {lot.thickness}
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 font-mono text-xs">
+                <td className="px-4 py-4 text-sm font-medium text-foreground">
                   {lot.slabs} SLABS
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-4 py-4">
                   {lot.status === "on-site" ? (
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border border-rsg-success/20 bg-rsg-success/10 text-rsg-success">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest bg-status-verified-bg/10 text-status-verified-text border border-status-verified-bg/20">
                       <Building2 className="w-3 h-3" />
                       {t.onSiteWarehouse}
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] border border-rsg-gold/20 bg-rsg-gold/10 text-rsg-gold">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest bg-status-pending-bg/10 text-status-pending-text border border-status-pending-bg/20">
                       <Truck className="w-3 h-3" />
                       {t.inTransit}
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-4 py-4">
                   {lot.job_legacy_id ? (
                     <div className="flex items-center gap-2 group-hover:text-primary transition-colors">
-                      <LinkIcon className="w-3 h-3 text-foreground/40" />
+                      <LinkIcon className="w-3 h-3 text-muted-foreground" />
                       <div className="flex flex-col">
-                        <span className="font-mono text-[10px] leading-none mb-1">
+                        <span className="text-sm font-medium text-foreground">
                           {lot.job_legacy_id}
                         </span>
-                        <span className="text-xs text-foreground/70 truncate max-w-[120px]">
+                        <span className="text-xs text-muted-foreground truncate max-w-[120px]">
                           {lot.job_client}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <span className="text-[10px] text-foreground/30 font-mono italic">
+                    <span className="text-xs text-muted-foreground italic uppercase">
                       UNASSIGNED STOCK
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <ChevronRight className="w-4 h-4 text-foreground/20 group-hover:text-primary transition-colors inline" />
+                <td className="px-4 py-4 text-right">
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary transition-colors inline" />
                 </td>
               </tr>
             ))}

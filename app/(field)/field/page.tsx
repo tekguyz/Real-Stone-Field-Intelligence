@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
 import { useJobs } from "../../../entities/job/api";
+import { JOB_STATUSES } from "../../../lib/constants/statuses";
 import {
   ClipboardList,
   MapPin,
@@ -49,7 +50,7 @@ export default function FieldPage() {
 
   // Filter jobs for this specific installer
   const myJobs = jobs?.filter((j) => j.installer_id === activeRole) || [];
-  const activeCount = myJobs.filter((j) => j.status === "in_progress").length;
+  const activeCount = myJobs.filter((j) => j.status === JOB_STATUSES.ACTIVE).length;
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">

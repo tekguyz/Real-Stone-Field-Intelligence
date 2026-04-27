@@ -5,14 +5,10 @@ import {
   useUpdateJobInstaller,
 } from "../../../entities/job/api";
 import { Job } from "../../../entities/job/types";
+import { JOB_STATUSES } from "../../../lib/constants/statuses";
 
 export function useCommandCenterController() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-
-  const [sortConfig, setSortConfig] = useState<{
-    key: "legacy_id" | "client_name" | "scheduled_arrival";
-    direction: "asc" | "desc";
-  }>({ key: "scheduled_arrival", direction: "desc" });
 
   const { data: jobs, isLoading, error } = useJobs();
   const updateStatus = useUpdateJobStatus();
@@ -20,39 +16,15 @@ export function useCommandCenterController() {
 
   const currentJobs = useMemo(() => jobs || [], [jobs]);
 
-  const handleSort = (key: "legacy_id" | "client_name" | "scheduled_arrival") => {
-    setSortConfig((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
-  };
-
-  const sortedJobs = useMemo(() => {
-    return [...currentJobs].sort((a, b) => {
-      const key = sortConfig.key;
-      let valA: any = a[key] || "";
-      let valB: any = b[key] || "";
-      
-      if (key === "scheduled_arrival") {
-        valA = a.scheduled_arrival || a.scheduled_date || "";
-        valB = b.scheduled_arrival || b.scheduled_date || "";
-      }
-      
-      if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
-      if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
-    });
-  }, [currentJobs, sortConfig]);
-
   const handleVerify = async (jobId: string) => {
-    await updateStatus.mutateAsync({ jobId, status: "verified" });
+    await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
 
     // Find the job to pass its details
     const job = currentJobs.find((j) => j.id === jobId);
     if (job) {
       try {
         const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
-        await sendJobVerifiedEmail({ ...job, status: "verified" }, "4tekguyz@gmail.com")
+        await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
           .catch(err => console.error("Non-blocking email notify error:", err));
       } catch (err) {
         console.error("Failed to trigger email notification", err);
@@ -72,11 +44,11 @@ export function useCommandCenterController() {
 
   const stats = useMemo(
     () => ({
-      pending: currentJobs.filter((j) => j.status === "pending").length,
+      pending: currentJobs.filter((j) => j.status === JOB_STATUSES.PENDING).length,
       active: currentJobs.filter(
-        (j) => j.status === "in_progress" || j.status === "assigned",
+        (j) => j.status === JOB_STATUSES.ACTIVE || j.status === JOB_STATUSES.ASSIGNED,
       ).length,
-      review: currentJobs.filter((j) => j.status === "submitted_for_review")
+      review: currentJobs.filter((j) => j.status === JOB_STATUSES.REVIEW)
         .length,
     }),
     [currentJobs],
@@ -85,14 +57,12 @@ export function useCommandCenterController() {
   return {
     selectedJob,
     setSelectedJob,
-    currentJobs: sortedJobs,
+    currentJobs,
     isLoading,
     error,
     handleVerify,
     handleUpdateInstaller,
     isVerifying: updateStatus.isPending,
     stats,
-    handleSort,
-    sortConfig,
   };
 }

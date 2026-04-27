@@ -1,10 +1,13 @@
-import { Job, JobStatusBadge } from "../../../entities/job";
+import { Job } from "../../../entities/job";
 import { dict } from "../../../entities/i18n/dict";
 import { X, MapPin, Loader2, ShieldCheck, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useUserStore } from "../../../entities/user/store";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
+
+import { JOB_STATUSES } from "../../../lib/constants/statuses";
 
 export function AdminJobDrawer({
   selectedJob,
@@ -70,9 +73,9 @@ export function AdminJobDrawer({
     : "WO-" + displayId;
 
   const isAssignmentLocked =
-    selectedJob?.status === "in_progress" ||
-    selectedJob?.status === "submitted_for_review" ||
-    selectedJob?.status === "verified";
+    selectedJob?.status === JOB_STATUSES.ACTIVE ||
+    selectedJob?.status === JOB_STATUSES.REVIEW ||
+    selectedJob?.status === JOB_STATUSES.VERIFIED;
 
   return (
     <AnimatePresence>
@@ -101,7 +104,7 @@ export function AdminJobDrawer({
                   <h2 className="text-lg font-black tracking-tight uppercase leading-none">
                     {selectedJob.client_name}
                   </h2>
-                  <JobStatusBadge
+                  <StatusBadge
                     status={selectedJob.status}
                     className="w-fit scale-90 origin-left"
                   />
@@ -346,11 +349,11 @@ export function AdminJobDrawer({
             </div>
 
             <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-6">
-              {onVerifyJob && activeRole === "admin" && selectedJob.status === "submitted_for_review" && (
+              {onVerifyJob && activeRole === "admin" && selectedJob.status === JOB_STATUSES.REVIEW && (
                 <button
                   onClick={() => onVerifyJob(selectedJob.id)}
                   disabled={isVerifying}
-                  className="w-full py-4 uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 bg-rsg-gold text-rsg-background font-semibold print:hidden"
+                  className="w-full py-4 uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold print:hidden"
                 >
                   {isVerifying ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -364,13 +367,13 @@ export function AdminJobDrawer({
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={onClose}
-                  className="w-full h-14 border border-foreground/20 text-foreground font-black uppercase tracking-[0.2em] transition-colors bg-surface hover:bg-foreground/5 rounded-none"
+                  className="w-full h-14 border border-foreground/20 text-foreground font-black uppercase tracking-[0.2em] transition-colors bg-card hover:bg-foreground/5 rounded-none"
                 >
                   {t.close}
                 </button>
                 <a
                   href={`/admin/reports/${selectedJob.id}`}
-                  className="flex items-center justify-center w-full h-14 uppercase transition-all rounded-none shadow-[2px_2px_0px_rgba(255,255,255,0.1)] hover:translate-x-[1px] hover:translate-y-[1px] bg-rsg-gold text-rsg-background font-semibold"
+                  className="flex items-center justify-center w-full h-14 uppercase transition-all rounded-none shadow-[2px_2px_0px_rgba(255,255,255,0.1)] hover:translate-x-[1px] hover:translate-y-[1px] bg-primary text-primary-foreground font-semibold"
                 >
                   {t.viewReport}
                 </a>

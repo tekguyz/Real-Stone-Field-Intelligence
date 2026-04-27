@@ -9,6 +9,7 @@ import { ImportPreviewTable } from "./components/ImportPreviewTable";
 import { SuccessOverlay } from "./components/SuccessOverlay";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
+import { toast } from "sonner";
 
 interface ImportModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
   const { data: existingJobs = [] } = useJobs();
   const { language } = useUserStore();
   const t = dict[language].admin;
-  const { parseCSV, parsedData, error, isParsing, clearData } =
+  const { parseCSV, parsedData, error, isParsing, hasParsed, clearData } =
     useStoneAppIngestion(existingJobs);
   const { mutate: importJobs, isPending: isImporting } = useImportJobs();
   const [isDragging, setIsDragging] = useState(false);
@@ -47,7 +48,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
     if (file.type === "text/csv" || file.name.endsWith(".csv")) {
       parseCSV(file);
     } else {
-      alert(language === "es" ? "Por favor suba un archivo CSV válido." : "Please upload a valid CSV file.");
+      toast.error(language === "es" ? "Por favor suba un archivo CSV válido." : "Please upload a valid CSV file.");
     }
   };
 
@@ -81,6 +82,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
 
     importJobs(jobsToImport, {
       onSuccess: () => {
+        toast.success(language === "es" ? "Trabajos importados con éxito." : "Jobs imported successfully.");
         setImportCount(jobsToImport.length);
         setShowSuccess(true);
         setTimeout(() => {
@@ -130,7 +132,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 bg-rsg-background">
-          {parsedData.length === 0 ? (
+          {!hasParsed ? (
             <FileDropzone
               isDragging={isDragging}
               isParsing={isParsing}
@@ -143,6 +145,22 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
               onDrop={handleDrop}
               onFileSelect={handleFile}
             />
+          ) : parsedData.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center border-2 border-dashed border-rsg-border bg-rsg-surface">
+              <AlertTriangle className="w-12 h-12 text-rsg-gold mb-4 opacity-50" />
+              <p className="text-sm font-black uppercase tracking-widest text-rsg-text">
+                No unimported records found
+              </p>
+              <p className="text-[10px] uppercase font-mono text-rsg-text/60 mt-2">
+                All records in this file might have errors or are empty.
+              </p>
+              <button 
+                onClick={clearData}
+                className="mt-6 px-4 py-2 border border-rsg-border bg-rsg-background hover:bg-rsg-border/20 text-[10px] font-black uppercase tracking-wider transition-colors"
+               >
+                 Try Another File
+              </button>
+            </div>
           ) : (
             <ImportPreviewTable
               parsedData={parsedData}

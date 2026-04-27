@@ -3,6 +3,7 @@ import { dict } from "../../../entities/i18n/dict";
 import { ProcessedImage } from "../../../shared/lib/image-processor";
 import { SignaturePad } from "../../../shared/ui/SignaturePad";
 import { summarizeJobScope } from "../../../shared/lib/utils";
+import { JOB_STATUSES } from "../../../lib/constants/statuses";
 import { useState } from "react";
 import {
   MapPin,
@@ -461,7 +462,7 @@ export function JobActionFooter({
   language,
 }: any) {
   const isSubmitted =
-    jobStatus === "submitted_for_review" || jobStatus === "verified";
+    jobStatus === JOB_STATUSES.REVIEW || jobStatus === JOB_STATUSES.VERIFIED;
 
   return (
     <section className="pt-4 border-t border-border">

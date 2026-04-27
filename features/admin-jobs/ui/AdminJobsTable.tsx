@@ -1,29 +1,27 @@
-import { Job, JobStatusBadge } from "../../../entities/job";
+import { Job } from "../../../entities/job";
 import { dict } from "../../../entities/i18n/dict";
 import {
   MapPin,
-  ChevronRight,
-  HardHat,
   Loader2,
   AlertTriangle,
   ArrowUpDown,
 } from "lucide-react";
 import { summarizeJobScope } from "../../../shared/lib/utils";
 import { useUserStore } from "../../../entities/user/store";
+import { useSortableTable } from "../../../shared/lib/useSortableTable";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { JOB_STATUSES } from "@/lib/constants/statuses";
 
 const SortIcon = ({ 
   columnKey, 
-  onSort, 
   sortConfig 
 }: { 
   columnKey: string;
-  onSort?: (key: any) => void;
-  sortConfig?: { key: string; direction: "asc" | "desc" };
+  sortConfig: { key: any; direction: "asc" | "desc" | null };
 }) => {
-  if (!onSort || !sortConfig) return null;
   const isActive = sortConfig.key === columnKey;
   return (
-    <ArrowUpDown className={`w-3 h-3 ml-1 transition-colors ${isActive ? "text-rsg-gold" : "text-foreground/20"}`} />
+    <ArrowUpDown className={`w-3 h-3 ml-2 transition-colors ${isActive && sortConfig.direction ? "text-rsg-gold" : "text-foreground/10"}`} />
   );
 };
 
@@ -33,19 +31,17 @@ export function AdminJobsTable({
   error,
   onJobSelect,
   onUpdateInstaller,
-  onSort,
-  sortConfig,
 }: {
   jobs: Job[];
   isLoading: boolean;
   error: Error | null;
   onJobSelect: (job: Job) => void;
   onUpdateInstaller: (jobId: string, installerId: string) => void;
-  onSort?: (key: "legacy_id" | "client_name" | "scheduled_arrival") => void;
-  sortConfig?: { key: string; direction: "asc" | "desc" };
 }) {
   const { language } = useUserStore();
   const t = dict[language].admin;
+
+  const { sortedData, sortConfig, handleSort } = useSortableTable(jobs, "adminJobs", { key: "scheduled_arrival", direction: "desc" });
 
   if (isLoading) {
     return (
@@ -71,145 +67,147 @@ export function AdminJobsTable({
     <div className="relative">
       {/* Mobile Horizontal Scroll Hint */}
       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden z-10" />
-      <div className="overflow-auto max-h-[600px]">
-        <table className="w-full text-left text-sm whitespace-nowrap relative">
-          <thead className="bg-rsg-surface/90 backdrop-blur-sm text-foreground/60 font-medium border-b border-border sticky top-0 z-20 shadow-sm">
+      <div className="overflow-auto max-h-[700px]">
+        <table className="w-full text-left text-sm whitespace-nowrap relative border-separate border-spacing-0">
+          <thead className="bg-surface sticky top-0 z-20 shadow-sm border-b border-border">
             <tr>
               <th 
-                className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest cursor-pointer hover:text-foreground transition-colors"
-                onClick={() => onSort?.("legacy_id")}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                onClick={() => handleSort("legacy_id")}
               >
                 <div className="flex items-center">
                   {t.legacyId}
-                  <SortIcon columnKey="legacy_id" onSort={onSort} sortConfig={sortConfig} />
+                  <SortIcon columnKey="legacy_id" sortConfig={sortConfig} />
                 </div>
               </th>
               <th 
-                className="px-6 py-4 cursor-pointer hover:text-foreground transition-colors"
-                onClick={() => onSort?.("client_name")}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                onClick={() => handleSort("client_name")}
               >
                 <div className="flex items-center">
                   {t.client}
-                  <SortIcon columnKey="client_name" onSort={onSort} sortConfig={sortConfig} />
+                  <SortIcon columnKey="client_name" sortConfig={sortConfig} />
                 </div>
               </th>
-              <th className="px-6 py-4">{t.scope}</th>
-              <th className="px-6 py-4">{t.installer}</th>
-              <th className="px-6 py-4">{t.status}</th>
+              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left border-b border-border">{t.scope}</th>
               <th 
-                className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest cursor-pointer hover:text-foreground transition-colors"
-                onClick={() => onSort?.("scheduled_arrival")}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                onClick={() => handleSort("installer_id")}
+              >
+                <div className="flex items-center">
+                  {t.installer}
+                  <SortIcon columnKey="installer_id" sortConfig={sortConfig} />
+                </div>
+              </th>
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                onClick={() => handleSort("status")}
+              >
+                <div className="flex items-center">
+                  {t.status}
+                  <SortIcon columnKey="status" sortConfig={sortConfig} />
+                </div>
+              </th>
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                onClick={() => handleSort("scheduled_arrival")}
               >
                 <div className="flex items-center">
                   {t.installDate}
-                  <SortIcon columnKey="scheduled_arrival" onSort={onSort} sortConfig={sortConfig} />
+                  <SortIcon columnKey="scheduled_arrival" sortConfig={sortConfig} />
                 </div>
               </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border">
-            {jobs.map((job) => {
+        <tbody className="divide-y divide-border/50">
+            {sortedData.map((job) => {
               const isAssignmentLocked =
-                job.status === "in_progress" ||
-                job.status === "submitted_for_review" ||
-                job.status === "verified";
+                job.status === JOB_STATUSES.ACTIVE ||
+                job.status === JOB_STATUSES.REVIEW ||
+                job.status === JOB_STATUSES.VERIFIED;
               return (
                 <tr
                   key={job.id}
-                  className="hover:bg-rsg-surface/30 transition-colors group cursor-pointer"
+                  className="hover:bg-primary/5 transition-colors group cursor-pointer"
                   onClick={() => onJobSelect(job)}
                 >
-                  <td className="px-6 py-4 font-mono text-xs text-foreground/50">
+                  <td className="p-4 text-sm font-medium text-foreground">
                     {job.legacy_id}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-foreground/90">
+                      <span className="text-sm font-medium text-foreground">
                         {job.client_name}
                       </span>
-                      <div className="flex items-center gap-1 text-[10px] text-foreground/40 font-mono italic uppercase mt-0.5">
-                        <MapPin className="w-3 h-3" />
-                        {job.community_name || job.address.split(",")[0]}
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground uppercase mt-0.5">
+                        <MapPin className="w-3 h-3 shrink-0" />
+                        <span className="truncate max-w-[150px]">
+                          {job.community_name || job.address.split(",")[0]}
+                        </span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-foreground/80">
+                      <span className="text-sm font-medium text-foreground">
                         {summarizeJobScope(job.stoneapp_parts)}
                       </span>
-                      <span className="text-[10px] text-foreground/40 font-mono uppercase">
+                      <span className="text-xs text-muted-foreground uppercase truncate max-w-[120px]">
                         {job.job_type}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                  <td className="p-4" onClick={(e) => e.stopPropagation()}>
                     <select
-                      className={`bg-transparent border border-transparent hover:border-border cursor-pointer text-xs rounded-none px-2 py-1 font-mono uppercase focus:outline-none focus:border-rsg-gold transition-colors text-foreground appearance-none ${isAssignmentLocked ? "opacity-40 cursor-not-allowed" : ""}`}
+                      className={`bg-transparent border border-transparent hover:border-border cursor-pointer text-sm font-medium text-foreground rounded-none px-0 py-0 uppercase focus:outline-none focus:border-primary/30 transition-colors appearance-none ${isAssignmentLocked ? "opacity-40 cursor-not-allowed" : ""}`}
                       value={job.installer_id || "unassigned"}
                       onChange={(e) => onUpdateInstaller(job.id, e.target.value)}
                       disabled={isAssignmentLocked}
                       style={{ WebkitAppearance: "none", MozAppearance: "none" }}
-                      title={isAssignmentLocked ? "Locked" : ""}
                     >
-                  <option
-                    value="unassigned"
-                    className="bg-background text-foreground"
-                  >
-                    {t.unassigned}
-                  </option>
-                  <option
-                    value="installer_juan"
-                    className="bg-background text-foreground"
-                  >
-                    JUAN
-                  </option>
-                  <option
-                    value="installer_carlos"
-                    className="bg-background text-foreground"
-                  >
-                    CARLOS
-                  </option>
-                </select>
-              </td>
-              <td className="px-6 py-4">
-                <JobStatusBadge status={job.status} />
-              </td>
-              <td className="px-6 py-4">
-                {job.scheduled_arrival || job.scheduled_date ? (
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-foreground/90 text-sm">
-                      {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                        month: "short",
-                        day: "numeric",
-                      }).format(
-                        new Date(
-                          job.scheduled_arrival || job.scheduled_date || "",
-                        ),
-                      )}
-                    </span>
-                    <span className="text-[10px] text-foreground/60 font-mono uppercase">
-                      {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      }).format(
-                        new Date(
-                          job.scheduled_arrival || job.scheduled_date || "",
-                        ),
-                      )}
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-[10px] text-foreground/40 font-mono italic uppercase">
-                    TBD
-                  </span>
-                )}
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
+                      <option value="unassigned">{t.unassigned}</option>
+                      <option value="installer_juan">JUAN</option>
+                      <option value="installer_carlos">CARLOS</option>
+                    </select>
+                  </td>
+                  <td className="p-4">
+                    <StatusBadge status={job.status} />
+                  </td>
+                  <td className="p-4">
+                    {job.scheduled_arrival || job.scheduled_date ? (
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-foreground">
+                          {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                            month: "short",
+                            day: "numeric",
+                          }).format(
+                            new Date(
+                              job.scheduled_arrival || job.scheduled_date || "",
+                            ),
+                          )}
+                        </span>
+                        <span className="text-xs text-muted-foreground uppercase">
+                          {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          }).format(
+                            new Date(
+                              job.scheduled_arrival || job.scheduled_date || "",
+                            ),
+                          )}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic uppercase">
+                        TBD
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
       </table>
       {jobs.length === 0 && (
         <div className="p-8 text-center text-foreground/50 text-sm">

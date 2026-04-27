@@ -9,6 +9,7 @@ import { AdminJobDrawer } from "../../../features/admin-jobs/ui/AdminJobDrawer";
 import { TrendingUp, AlertTriangle, Database } from "lucide-react";
 import { ImportModal } from "../../../features/admin-import/ui/ImportModal";
 import { useState } from "react";
+import { JOB_STATUSES } from "../../../lib/constants/statuses";
 
 export default function CommandCenterPage() {
   const { language } = useUserStore();
@@ -67,8 +68,6 @@ export default function CommandCenterPage() {
             isLoading={isLoading}
             error={error}
             onJobSelect={setSelectedJob}
-            onSort={handleSort}
-            sortConfig={sortConfig}
           />
         </div>
 
@@ -110,7 +109,7 @@ export default function CommandCenterPage() {
                   },
                   {
                     label: t.verifiedShort,
-                    value: currentJobs.filter(j => j.status === 'verified').length,
+                    value: currentJobs.filter(j => j.status === JOB_STATUSES.VERIFIED).length,
                     color: "border-rsg-success",
                     sub: t.completed,
                   },
@@ -151,7 +150,7 @@ export default function CommandCenterPage() {
             ) : (
               <div className="flex flex-col gap-2">
                 {currentJobs
-                  .filter((j) => j.status === "submitted_for_review")
+                  .filter((j) => j.status === JOB_STATUSES.REVIEW)
                   .slice(0, 3)
                   .map((job) => (
                     <div

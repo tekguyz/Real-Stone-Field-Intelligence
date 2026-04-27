@@ -1,9 +1,6 @@
-export type JobStatus =
-  | "pending"
-  | "assigned"
-  | "in_progress"
-  | "submitted_for_review"
-  | "verified";
+import { JobStatus } from "@/lib/constants/statuses";
+
+export type { JobStatus };
 export type JobType = "template" | "install" | "service";
 
 export interface JobScopePart {
