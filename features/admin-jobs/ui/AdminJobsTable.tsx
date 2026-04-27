@@ -57,14 +57,13 @@ export function AdminJobsTable({
               <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
                 {t.legacyId}
               </th>
-            <th className="px-6 py-4">{t.client}</th>
-            <th className="px-6 py-4">{t.scope}</th>
-            <th className="px-6 py-4">{t.installer}</th>
-            <th className="px-6 py-4">{t.status}</th>
+            <th className="px-6 py-4">Client</th>
+            <th className="px-6 py-4">Job Scope</th>
+            <th className="px-6 py-4">Installer</th>
+            <th className="px-6 py-4">Status</th>
             <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
-              {t.installDate}
+              Install Date
             </th>
-            <th className="px-6 py-4"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
@@ -158,9 +157,6 @@ export function AdminJobsTable({
                     TBD
                   </span>
                 )}
-              </td>
-              <td className="px-6 py-4 text-right">
-                <ChevronRight className="w-4 h-4 text-foreground/20 group-hover:text-primary transition-colors inline" />
               </td>
             </tr>
           ))}

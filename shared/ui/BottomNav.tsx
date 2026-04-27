@@ -50,7 +50,7 @@ export function BottomNav() {
   if (isKeyboardVisible) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-6 pb-safe z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-6 pb-safe z-50 print:hidden">
       <div className="max-w-md mx-auto flex justify-around items-center h-14">
         {navItems.map((item) => (
           <Link
@@ -58,7 +58,7 @@ export function BottomNav() {
             href={item.href}
             className={`relative flex flex-col items-center justify-center gap-1 w-20 h-full transition-all active:scale-90 rounded-none ${
               item.isActive
-                ? "text-rsg-text dark:text-rsg-gold"
+                ? "text-rsg-gold border-t-2 border-rsg-gold bg-rsg-gold/10"
                 : "text-rsg-text/40 hover:text-rsg-text/60"
             }`}
           >
@@ -66,18 +66,9 @@ export function BottomNav() {
               className="w-5 h-5"
               strokeWidth={item.isActive ? 2.5 : 2}
             />
-            <span
-              className={`text-[9px] font-bold uppercase tracking-widest ${item.isActive ? "text-rsg-text dark:text-rsg-gold font-black" : "text-rsg-text/40"}`}
-            >
+            <span className="text-[9px] font-bold uppercase tracking-widest">
               {item.label}
             </span>
-            {item.isActive && (
-              <motion.div
-                layoutId="nav-glow"
-                className="absolute top-0 w-full h-[2px] bg-rsg-text dark:bg-rsg-gold"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-              />
-            )}
           </Link>
         ))}
       </div>

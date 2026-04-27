@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function summarizeJobScope(parts: JobScopePart[] | null): string {
-  if (!parts || parts.length === 0) return "No Scope";
+  if (!parts || parts.length === 0) return "No Job Scope";
 
   const mainParts = parts.slice(0, 2).map((p) => p.partType);
   if (parts.length > 2) {

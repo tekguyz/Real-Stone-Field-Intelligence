@@ -53,50 +53,48 @@ export function JobCard({ job, language, index }: JobCardProps) {
       className={`relative group bg-card transition-all active:scale-[0.98] border border-border rounded-none overflow-hidden mb-3`}
     >
       <Link href={`/field/job/${job.id}`} className="block">
-        <div className="p-3 sm:p-4 pb-0">
-          {/* Header Row: Client Name & Status Pill */}
-          <div className="flex justify-between items-start gap-4 mb-0.5">
-            <h3 className="text-lg font-bold text-foreground uppercase tracking-tight leading-tight">
-              {job.client_name}
-            </h3>
-            <JobStatusBadge
-              status={job.status}
-              className="shrink-0 scale-75 origin-top-right"
-            />
-          </div>
-
-          {/* WO-ID */}
-          <div className="mb-1">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-rsg-gold">
-              {job.legacy_id || `WO-${job.id.slice(0, 6)}`}
-            </span>
-          </div>
-
-          {/* Scope Summary */}
-          <div className="mb-3">
-            <p className="text-sm text-foreground/90 font-medium italic leading-tight truncate">
-              {summarizeJobScope(job.stoneapp_parts)}
-            </p>
-          </div>
-
-          {/* Meta Lines: Geography & Time */}
-          <div className="flex flex-col gap-1 mt-3 pt-3 border-t border-border/30 text-[10px] mb-3">
-            <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider">
-              <MapPin className="w-3 h-3 shrink-0" />
-              <span className="truncate">{getLocationText()}</span>
+        <div className="p-3 sm:p-4 pb-3 flex items-center">
+          <div className="flex-1 min-w-0">
+            {/* Header Row: Client Name & Status Pill */}
+            <div className="flex justify-between items-start gap-4 mb-0.5">
+              <h3 className="text-lg font-bold text-foreground uppercase tracking-tight leading-tight truncate">
+                {job.client_name}
+              </h3>
+              <JobStatusBadge
+                status={job.status}
+                className="shrink-0 scale-75 origin-top-right"
+              />
             </div>
-            <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider">
-              <Clock className="w-3 h-3 shrink-0" />
-              <span>
-                {formatScheduledTime(job.scheduled_arrival || job.scheduled_date)}
+
+            {/* WO-ID */}
+            <div className="mb-1">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-rsg-gold">
+                {job.legacy_id || `WO-${job.id.slice(0, 6)}`}
               </span>
             </div>
-          </div>
-        </div>
 
-        {/* Action Slab */}
-        <div className="w-full min-h-[44px] bg-rsg-gold text-primary-foreground font-mono font-black uppercase tracking-widest text-xs flex items-center justify-center border-t border-rsg-border/20 active:opacity-90">
-          START JOB
+            {/* Scope Summary */}
+            <div className="mb-3">
+              <p className="text-sm text-foreground/90 font-medium italic leading-tight truncate">
+                {summarizeJobScope(job.stoneapp_parts)}
+              </p>
+            </div>
+
+            {/* Meta Lines: Geography & Time */}
+            <div className="flex flex-col gap-1 mt-3 pt-3 border-t border-border/30 text-[10px]">
+              <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider w-full">
+                <MapPin className="w-3 h-3 shrink-0" />
+                <span className="truncate">{getLocationText()}</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider">
+                <Clock className="w-3 h-3 shrink-0" />
+                <span>
+                  {formatScheduledTime(job.scheduled_arrival || job.scheduled_date)}
+                </span>
+              </div>
+            </div>
+          </div>
+          <ChevronRight className="ml-auto shrink-0 text-muted-foreground" strokeWidth={2} />
         </div>
       </Link>
     </motion.div>

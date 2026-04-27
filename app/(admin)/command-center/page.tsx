@@ -40,7 +40,7 @@ export default function CommandCenterPage() {
         </div>
         <button
           onClick={() => setIsImportOpen(true)}
-          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm"
+          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm print:hidden"
         >
           <Database className="w-4 h-4 text-rsg-gold" />
           IMPORT DATA

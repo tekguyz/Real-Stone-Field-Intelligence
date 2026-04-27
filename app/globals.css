@@ -11,9 +11,16 @@
     --rsg-border: 0.8 0.01 75;
 
     /* Status Colors (Light Mode) */
-    --status-pending: 0.6 0.18 50; /* Deep, high-contrast burnt orange */
-    --status-verified: 0.65 0.15 145; /* Success Green */
-    --status-active: 0.65 0.15 250; /* Industrial Blue/Cyan */
+    --status-assigned-bg: 0.7 0.01 250;
+    --status-assigned-text: 0.2 0.01 250;
+    --status-pending-bg: 0.6 0.18 50;
+    --status-pending-text: 1 0 0;
+    --status-active-bg: 0.65 0.15 250;
+    --status-active-text: 1 0 0;
+    --status-review-bg: 0.65 0.2 300;
+    --status-review-text: 1 0 0;
+    --status-verified-bg: 0.65 0.15 145;
+    --status-verified-text: 1 0 0;
 
     --rsg-error: 0.55 0.18 28; /* Deep Red */
 
@@ -36,10 +43,17 @@
     --rsg-text: 0.98 0.005 75;
     --rsg-border: 0.26 0.01 75;
 
-    /* Status Colors (Dark Mode) - Even more vibrant to glow */
-    --status-pending: 0.75 0.22 55; /* High chroma, glowing amber */
-    --status-verified: 0.7 0.16 145;
-    --status-active: 0.7 0.16 250; /* High-energy Blue/Cyan */
+    /* Status Colors (Dark Mode) */
+    --status-assigned-bg: 0.4 0.01 250;
+    --status-assigned-text: 0.9 0.01 250;
+    --status-pending-bg: 0.75 0.22 55;
+    --status-pending-text: 0 0 0;
+    --status-active-bg: 0.7 0.16 250;
+    --status-active-text: 0 0 0;
+    --status-review-bg: 0.7 0.2 300;
+    --status-review-text: 0 0 0;
+    --status-verified-bg: 0.7 0.16 145;
+    --status-verified-text: 0 0 0;
     --rsg-error: 0.65 0.2 28;
 
     --sig-bg: 0.22 0.01 75;
@@ -63,9 +77,16 @@
   --color-rsg-border: oklch(var(--rsg-border));
 
   /* Status Colors Mappings */
-  --color-status-pending: oklch(var(--status-pending));
-  --color-status-verified: oklch(var(--status-verified));
-  --color-status-active: oklch(var(--status-active));
+  --color-status-assigned-bg: oklch(var(--status-assigned-bg));
+  --color-status-assigned-text: oklch(var(--status-assigned-text));
+  --color-status-pending-bg: oklch(var(--status-pending-bg));
+  --color-status-pending-text: oklch(var(--status-pending-text));
+  --color-status-active-bg: oklch(var(--status-active-bg));
+  --color-status-active-text: oklch(var(--status-active-text));
+  --color-status-review-bg: oklch(var(--status-review-bg));
+  --color-status-review-text: oklch(var(--status-review-text));
+  --color-status-verified-bg: oklch(var(--status-verified-bg));
+  --color-status-verified-text: oklch(var(--status-verified-text));
 
   --color-rsg-error: oklch(var(--rsg-error));
 
@@ -88,6 +109,9 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    min-height: 100dvh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   
   /* Accessible Focus Rings */

@@ -14,7 +14,7 @@ export function ReportSignatureSection({
   updatedAt,
 }: ReportSignatureSectionProps) {
   return (
-    <div className="p-6 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-surface print:bg-white break-inside-avoid">
+    <div className="p-6 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-surface print:bg-white print:break-inside-avoid">
       <div className="flex flex-col gap-2 w-full max-w-sm">
         <h3 className="font-black uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
           Client Authorization

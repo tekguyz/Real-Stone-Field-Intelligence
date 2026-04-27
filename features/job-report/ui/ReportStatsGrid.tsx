@@ -99,7 +99,7 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
       {/* Column 3: Scope */}
       <div className="bento-card p-6 flex flex-col gap-4 bg-surface print:bg-white">
         <h3 className="font-black uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
-          Scope of Work
+          Job Scope
         </h3>
         <div className="flex flex-col gap-3">
           <div>
@@ -110,7 +110,7 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
           </div>
           <div>
             <span className="text-[10px] font-mono text-foreground/60 print:text-black/60 uppercase block">
-              Summarized Scope
+              Job Scope
             </span>
             <div className="flex flex-col gap-1 mt-1 break-words">
               {job.stoneapp_parts && job.stoneapp_parts.length > 0 ? (

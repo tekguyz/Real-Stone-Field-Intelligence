@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useJobs, useUpdateJobInstaller } from "../../../entities/job/api";
+import { useJobs, useUpdateJobInstaller, useUpdateJobStatus } from "../../../entities/job/api";
 import { Job } from "../../../entities/job/types";
 
 export function useAdminJobsController() {
@@ -15,12 +15,37 @@ export function useAdminJobsController() {
 
   const { data: jobs, isLoading, error } = useJobs();
   const updateInstaller = useUpdateJobInstaller();
+  const updateStatus = useUpdateJobStatus();
 
   const handleUpdateInstaller = (jobId: string, installerId: string) => {
     const value = installerId === "unassigned" ? null : installerId;
     updateInstaller.mutate({ jobId, installerId: value });
     if (selectedJob && selectedJob.id === jobId) {
       setSelectedJob({ ...selectedJob, installer_id: value });
+    }
+  };
+
+  const handleVerify = async (jobId: string) => {
+    await updateStatus.mutateAsync({ jobId, status: "verified" });
+
+    const job = jobs?.find((j) => j.id === jobId);
+    if (job) {
+      try {
+        await fetch("/api/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            job: { ...job, status: "verified" },
+            userEmail: "4tekguyz@gmail.com",
+          }),
+        }).catch(err => console.error("Non-blocking email notify error:", err));
+      } catch (err) {
+        console.error("Failed to trigger email notification", err);
+      }
+    }
+
+    if (selectedJob && selectedJob.id === jobId) {
+      setSelectedJob(null);
     }
   };
 
@@ -111,6 +136,8 @@ export function useAdminJobsController() {
     cities,
     installers,
     handleUpdateInstaller,
+    handleVerify,
+    isVerifying: updateStatus.isPending,
     toggleFilter,
   };
 }

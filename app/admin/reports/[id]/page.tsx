@@ -121,7 +121,7 @@ export default function MasterJobReport({
       : "UNKNOWN";
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-background print:bg-white print:p-0 min-h-screen">
+    <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-background print:bg-white print:p-0 print:m-0 min-h-screen">
       <div className="flex justify-between items-center mb-8 print:hidden">
         <button
           onClick={() => {
@@ -138,7 +138,7 @@ export default function MasterJobReport({
         </button>
         <button
           onClick={handlePrint}
-          className="btn-brutal px-6 py-2 flex items-center gap-2 hover:bg-rsg-gold hover:text-black transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]"
+          className="btn-brutal px-6 py-2 flex items-center gap-2 uppercase hover:opacity-90 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] print:hidden bg-rsg-gold text-rsg-background font-semibold"
         >
           <Printer className="w-4 h-4" />
           PRINT REPORT

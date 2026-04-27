@@ -67,7 +67,7 @@ export function DemoBanner() {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 h-10 bg-rsg-gold text-black flex items-center justify-between px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md">
+    <div className="fixed top-0 left-0 right-0 h-10 bg-rsg-gold text-black flex items-center justify-between px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md print:hidden">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 group">
           <button

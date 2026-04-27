@@ -53,11 +53,11 @@ export function CommandCenterTable({
                   <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest">
                     {t.legacyId}
                   </th>
-                <th className="px-6 py-4">{t.client}</th>
-                <th className="px-6 py-4">{t.installationScope}</th>
-                <th className="px-6 py-4">{t.status}</th>
-                <th className="px-6 py-4">{t.installDate}</th>
-                <th className="px-6 py-4"></th>
+                <th className="px-6 py-4">Client</th>
+                <th className="px-6 py-4">Job Scope</th>
+                <th className="px-6 py-4">Installer</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Install Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -83,6 +83,9 @@ export function CommandCenterTable({
                   </td>
                   <td className="px-6 py-4 text-foreground/80 font-medium">
                     {summarizeJobScope(job.stoneapp_parts)}
+                  </td>
+                  <td className="px-6 py-4 text-foreground/80 font-medium uppercase font-mono text-[10px] tracking-widest">
+                    {job.installer_id ? job.installer_id.replace('installer_', '') : 'UNASSIGNED'}
                   </td>
                   <td className="px-6 py-4">
                     <JobStatusBadge status={job.status} />
@@ -117,11 +120,8 @@ export function CommandCenterTable({
                         TBD
                       </span>
                     )}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <ChevronRight className="w-4 h-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
               ))}
             </tbody>
           </table>

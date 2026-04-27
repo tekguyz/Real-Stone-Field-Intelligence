@@ -42,8 +42,8 @@ export const dict = {
       filters: "Smart Filters",
       city: "City",
       installer: "Installer",
-      scope: "Scope",
-      installationScope: "Installation Scope",
+      scope: "Job Scope",
+      installationScope: "Job Scope",
       createJob: "Create Job",
 
       // Team Page
@@ -91,7 +91,7 @@ export const dict = {
       activeJobs: "Active Jobs",
       profile: "Profile",
       jobs: "Jobs",
-      scope: "Scope of Work",
+      scope: "Job Scope",
       back: "Back",
       help: "Help & Support",
       dispatchSupport: "Dispatch Support",
@@ -153,8 +153,8 @@ export const dict = {
       filters: "Filtros Inteligentes",
       city: "Ciudad",
       installer: "Instalador",
-      scope: "Alcance",
-      installationScope: "Alcance de Instalación",
+      scope: "Job Scope",
+      installationScope: "Job Scope",
       createJob: "Crear Trabajo",
 
       // Team Page

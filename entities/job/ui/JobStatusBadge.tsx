@@ -16,17 +16,17 @@ export function JobStatusBadge({
   const getStatusStyles = (status: JobStatus) => {
     switch (status) {
       case "verified":
-        return "bg-status-verified text-white border-status-verified/40";
+        return "bg-status-verified-bg text-status-verified-text border-transparent";
       case "in_progress":
-        return "bg-status-active text-white border-status-active/40";
+        return "bg-status-active-bg text-status-active-text border-transparent";
       case "submitted_for_review":
-        return "bg-status-pending text-background border-status-pending/40 shadow-[3px_3px_0px_#1f1f1f] dark:shadow-[3px_3px_0px_white]";
+        return "bg-status-review-bg text-status-review-text border-transparent shadow-[3px_3px_0px_#1f1f1f] dark:shadow-[3px_3px_0px_white]";
       case "assigned":
-        return "bg-foreground text-background border-transparent";
+        return "bg-status-assigned-bg text-status-assigned-text border-transparent";
       case "pending":
-        return "bg-status-pending text-background border-status-pending/40";
+        return "bg-status-pending-bg text-status-pending-text border-transparent";
       default:
-        return "bg-rsg-surface text-rsg-text border-rsg-border";
+        return "bg-status-assigned-bg text-status-assigned-text border-transparent";
     }
   };
 

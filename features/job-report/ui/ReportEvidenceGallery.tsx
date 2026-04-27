@@ -31,7 +31,7 @@ export function ReportEvidenceGallery({
             return (
               <div
                 key={i}
-                className="flex flex-col border-2 border-foreground print:border-black bg-surface print:bg-white break-inside-avoid"
+                className="flex flex-col border-2 border-foreground print:border-black bg-surface print:bg-white print:break-inside-avoid"
               >
                 <div className="aspect-video w-full relative bg-foreground/5 print:bg-black/5">
                   <Image

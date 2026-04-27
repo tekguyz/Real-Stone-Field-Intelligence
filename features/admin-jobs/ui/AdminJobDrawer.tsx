@@ -19,7 +19,7 @@ export function AdminJobDrawer({
   onVerifyJob?: (jobId: string) => void;
   isVerifying?: boolean;
 }) {
-  const { language, isDevMode } = useUserStore();
+  const { language, isDevMode, activeRole } = useUserStore();
   const t = dict[language].admin;
   const [localCaptures, setLocalCaptures] = useState<{
     photos: string[];
@@ -197,8 +197,7 @@ export function AdminJobDrawer({
               {/* Install Scope */}
               <div className="flex flex-col gap-4">
                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                  {t.installationScope} (
-                  {selectedJob.stoneapp_parts?.length || 0})
+                  Job Scope
                 </span>
                 <div className="flex flex-col gap-3">
                   {selectedJob.stoneapp_parts?.map((part, i) => (
@@ -341,11 +340,11 @@ export function AdminJobDrawer({
             </div>
 
             <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-6">
-              {onVerifyJob && selectedJob.status === "submitted_for_review" && (
+              {onVerifyJob && activeRole === "admin" && selectedJob.status === "submitted_for_review" && (
                 <button
                   onClick={() => onVerifyJob(selectedJob.id)}
                   disabled={isVerifying}
-                  className="w-full bg-rsg-success text-white py-4 font-black tracking-[0.2em] uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 border border-rsg-success"
+                  className="w-full py-4 uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 bg-rsg-gold text-rsg-background font-semibold print:hidden"
                 >
                   {isVerifying ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -365,7 +364,7 @@ export function AdminJobDrawer({
                 </button>
                 <a
                   href={`/admin/reports/${selectedJob.id}`}
-                  className="flex items-center justify-center w-full h-14 bg-foreground text-background font-black uppercase tracking-[0.2em] transition-all hover:bg-rsg-gold hover:text-black rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]"
+                  className="flex items-center justify-center w-full h-14 uppercase transition-all rounded-none shadow-[2px_2px_0px_rgba(255,255,255,0.1)] hover:translate-x-[1px] hover:translate-y-[1px] bg-rsg-gold text-rsg-background font-semibold"
                 >
                   VIEW REPORT
                 </a>

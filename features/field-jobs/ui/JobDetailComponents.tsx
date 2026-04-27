@@ -40,7 +40,7 @@ export function JobBlockScope({
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
-        {language === "en" ? "Installation Scope" : "Alcance de la Instalación"}
+        {"Job Scope"}
       </h3>
       <div className="bg-surface/50 border-l-2 border-primary pl-3 py-1">
         <p className="text-sm font-bold italic leading-tight text-foreground/90">
@@ -75,11 +75,11 @@ export function JobBlockScope({
             >
               {isExpanded ? (
                 <>
-                  Collapse Scope <ChevronUp className="w-3 h-3" />
+                  Collapse Job Scope <ChevronUp className="w-3 h-3" />
                 </>
               ) : (
                 <>
-                  View Full Scope ({parts.length}){" "}
+                  View Full Job Scope ({parts.length}){" "}
                   <ChevronDown className="w-3 h-3" />
                 </>
               )}
@@ -482,9 +482,9 @@ export function JobActionFooter({
           <button
             onClick={handleSubmitReview}
             disabled={isSubmitting || !isFormValid}
-            className={`w-full h-14 font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+            className={`w-full h-14 font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
               isFormValid
-                ? "bg-foreground text-background hover:opacity-90"
+                ? "bg-rsg-gold text-rsg-background hover:opacity-90"
                 : "bg-surface border border-border text-foreground/30 cursor-not-allowed"
             }`}
           >
