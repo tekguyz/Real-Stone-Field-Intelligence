@@ -66,6 +66,7 @@ export default function CommandCenterPage() {
             isLoading={isLoading}
             error={error}
             onJobSelect={setSelectedJob}
+            onUpdateInstaller={handleUpdateInstaller}
           />
         </div>
 

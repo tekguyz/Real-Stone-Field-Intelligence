@@ -10,6 +10,7 @@ import { summarizeJobScope } from "../../../shared/lib/utils";
 import { useUserStore } from "../../../entities/user/store";
 import { useSortableTable } from "../../../shared/lib/useSortableTable";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { JOB_STATUSES } from "@/lib/constants/statuses";
 
 const SortIcon = ({ 
   columnKey, 
@@ -29,11 +30,13 @@ export function CommandCenterTable({
   isLoading,
   error,
   onJobSelect,
+  onUpdateInstaller,
 }: {
   jobs: Job[];
   isLoading: boolean;
   error: Error | null;
   onJobSelect: (job: Job) => void;
+  onUpdateInstaller: (jobId: string, installerId: string) => void;
 }) {
   const { language } = useUserStore();
   const t = dict[language].admin;
@@ -111,75 +114,91 @@ export function CommandCenterTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border/50">
-          {sortedData.map((job) => (
-            <tr
-              key={job.id}
-              className="hover:bg-primary/5 transition-colors cursor-pointer group"
-              onClick={() => onJobSelect(job)}
-            >
-              <td className="p-4 text-sm font-medium text-foreground">
-                {job.legacy_id}
-              </td>
-              <td className="p-4">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground">
-                    {job.client_name}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground uppercase mt-0.5">
-                    <MapPin className="w-3 h-3" />
-                    {job.community_name || job.address.split(",")[0]}
-                  </div>
-                </div>
-              </td>
-              <td className="p-4">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground">
-                    {summarizeJobScope(job.stoneapp_parts)}
-                  </span>
-                  <span className="text-xs text-muted-foreground uppercase">
-                    {job.job_type}
-                  </span>
-                </div>
-              </td>
-              <td className="p-4 text-sm font-medium text-foreground uppercase">
-                {job.installer_id ? job.installer_id.replace('installer_', '').toUpperCase() : t.unassigned}
-              </td>
-              <td className="p-4">
-                <StatusBadge status={job.status} />
-              </td>
-              <td className="p-4">
-                {job.scheduled_arrival || job.scheduled_date ? (
+          {sortedData.map((job) => {
+            const isAssignmentLocked =
+              job.status === JOB_STATUSES.ACTIVE ||
+              job.status === JOB_STATUSES.REVIEW ||
+              job.status === JOB_STATUSES.VERIFIED;
+            return (
+              <tr
+                key={job.id}
+                className="hover:bg-primary/5 transition-colors cursor-pointer group"
+                onClick={() => onJobSelect(job)}
+              >
+                <td className="p-4 text-sm font-medium text-foreground">
+                  {job.legacy_id}
+                </td>
+                <td className="p-4">
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-foreground">
-                      {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                        month: "short",
-                        day: "numeric",
-                      }).format(
-                        new Date(
-                          job.scheduled_arrival || job.scheduled_date || "",
-                        ),
-                      )}
+                      {job.client_name}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground uppercase mt-0.5">
+                      <MapPin className="w-3 h-3" />
+                      {job.community_name || job.address.split(",")[0]}
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-foreground">
+                      {summarizeJobScope(job.stoneapp_parts)}
                     </span>
                     <span className="text-xs text-muted-foreground uppercase">
-                      {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      }).format(
-                        new Date(
-                          job.scheduled_arrival || job.scheduled_date || "",
-                        ),
-                      )}
+                      {job.job_type}
                     </span>
                   </div>
-                ) : (
-                  <span className="text-xs text-muted-foreground italic uppercase">
-                    TBD
-                  </span>
-                )}
-              </td>
+                </td>
+                <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                  <select
+                    className={`bg-transparent border border-transparent hover:border-border cursor-pointer text-sm font-medium text-foreground rounded-none px-0 py-0 uppercase focus:outline-none focus:border-primary/30 transition-colors appearance-none ${isAssignmentLocked ? "opacity-40 cursor-not-allowed" : ""}`}
+                    value={job.installer_id || "unassigned"}
+                    onChange={(e) => onUpdateInstaller(job.id, e.target.value)}
+                    disabled={isAssignmentLocked}
+                    style={{ WebkitAppearance: "none", MozAppearance: "none" }}
+                  >
+                    <option value="unassigned">{t.unassigned}</option>
+                    <option value="installer_juan">JUAN</option>
+                    <option value="installer_carlos">CARLOS</option>
+                  </select>
+                </td>
+                <td className="p-4">
+                  <StatusBadge status={job.status} />
+                </td>
+                <td className="p-4">
+                  {job.scheduled_arrival || job.scheduled_date ? (
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-foreground">
+                        {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                          month: "short",
+                          day: "numeric",
+                        }).format(
+                          new Date(
+                            job.scheduled_arrival || job.scheduled_date || "",
+                          ),
+                        )}
+                      </span>
+                      <span className="text-xs text-muted-foreground uppercase">
+                        {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        }).format(
+                          new Date(
+                            job.scheduled_arrival || job.scheduled_date || "",
+                          ),
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-muted-foreground italic uppercase">
+                      TBD
+                    </span>
+                  )}
+                </td>
               </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
           {jobs.length === 0 && (

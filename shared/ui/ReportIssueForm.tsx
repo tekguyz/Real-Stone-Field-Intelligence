@@ -37,10 +37,11 @@ export function ReportIssueForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setStatus("submitting");
     setTicketNumber(""); // Reset ticket number for new submit
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     formData.append("form-name", "report-issue");
     formData.append("role", userRole);
     if (userEmail) formData.append("email", userEmail);
@@ -59,7 +60,7 @@ export function ReportIssueForm({
       if (response.ok) {
         setTicketNumber((Math.random() * 100000).toFixed(0));
         setStatus("success");
-        e.currentTarget.reset();
+        form.reset();
         setSelectedFile(null);
       } else {
         throw new Error("Form submission failed");
