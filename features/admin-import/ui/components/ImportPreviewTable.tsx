@@ -1,9 +1,23 @@
-import { CheckCircle2, AlertTriangle, Info } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Info, ArrowUpDown } from "lucide-react";
 import { Job } from "../../../../entities/job/types";
 import { JobStatus } from "../../../../lib/constants/statuses";
 import { useUserStore } from "../../../../entities/user/store";
 import { dict } from "../../../../entities/i18n/dict";
 import { StatusBadge } from "../../../../components/ui/StatusBadge";
+import { useSortableTable } from "../../../../shared/lib/useSortableTable";
+
+const SortIcon = ({ 
+  columnKey, 
+  sortConfig 
+}: { 
+  columnKey: string;
+  sortConfig: { key: any; direction: "asc" | "desc" | null };
+}) => {
+  const isActive = sortConfig.key === columnKey;
+  return (
+    <ArrowUpDown className={`w-3 h-3 ml-2 transition-colors ${isActive && sortConfig.direction ? "text-primary" : "text-muted-foreground/30"}`} />
+  );
+};
 
 interface ImportPreviewTableProps {
   parsedData: Job[];
@@ -25,7 +39,9 @@ export function ImportPreviewTable({
   const { language } = useUserStore();
   const t = dict[language].admin;
 
-  const hasErrorsInSet = (parsedData as any[]).some(j => !j.wo_number || !j.address);
+  const { sortedData, sortConfig, handleSort } = useSortableTable(parsedData, "importPreview", { key: "wo_number", direction: "asc" });
+
+  const hasErrorsInSet = (sortedData as any[]).some(j => !j.wo_number || !j.address);
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,17 +79,41 @@ export function ImportPreviewTable({
                   )}
                 </div>
               </th>
-              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
-                {t.statusHeader}
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("status")}
+              >
+                <div className="flex items-center">
+                  {t.statusHeader}
+                  <SortIcon columnKey="status" sortConfig={sortConfig} />
+                </div>
               </th>
-              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
-                WO#
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("wo_number")}
+              >
+                <div className="flex items-center">
+                  WO#
+                  <SortIcon columnKey="wo_number" sortConfig={sortConfig} />
+                </div>
               </th>
-              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
-                {t.clientHeader}
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("client_name")}
+              >
+                <div className="flex items-center">
+                  {t.clientHeader}
+                  <SortIcon columnKey="client_name" sortConfig={sortConfig} />
+                </div>
               </th>
-              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
-                {t.communityHeader}
+              <th 
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => handleSort("community_name")}
+              >
+                <div className="flex items-center">
+                  {t.communityHeader}
+                  <SortIcon columnKey="community_name" sortConfig={sortConfig} />
+                </div>
               </th>
               {hasErrorsInSet && (
                 <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
@@ -83,7 +123,7 @@ export function ImportPreviewTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-rsg-border">
-            {(parsedData as any[]).map((job, idx) => {
+            {(sortedData as any[]).map((job, idx) => {
               const hasError = !job.wo_number || !job.address;
               const isSelected = selectedWoNumbers.has(job.wo_number!);
               const isConflict = job.conflict;

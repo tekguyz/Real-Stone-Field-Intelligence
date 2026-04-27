@@ -26,8 +26,6 @@ export default function CommandCenterPage() {
     handleUpdateInstaller,
     isVerifying,
     stats,
-    handleSort,
-    sortConfig,
   } = useCommandCenterController();
 
   return (
