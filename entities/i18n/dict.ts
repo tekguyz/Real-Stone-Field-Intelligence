@@ -124,6 +124,7 @@ export const dict = {
       city: "City",
       installer: "Installer",
       scope: "Job Scope",
+      jobScope: "Job Scope",
       installationScope: "Job Scope",
       createJob: "Create Job",
 
@@ -322,6 +323,7 @@ export const dict = {
       city: "Ciudad",
       installer: "Instalador",
       scope: "Alcance del Trabajo",
+      jobScope: "Alcance del Trabajo",
       installationScope: "Alcance de Instalación",
       createJob: "Crear Trabajo",
 
