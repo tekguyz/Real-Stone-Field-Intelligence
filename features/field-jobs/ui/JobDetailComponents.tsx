@@ -115,22 +115,22 @@ export function JobBlockSite({
               "_blank",
             );
           }}
-          className="w-9 h-9 flex items-center justify-center shrink-0 bg-foreground text-background active:scale-[0.95] transition-transform"
+          className="w-11 h-11 flex items-center justify-center shrink-0 bg-foreground text-background active:scale-[0.95] transition-transform border border-border"
         >
-          <MapPin className="w-3.5 h-3.5 fill-primary stroke-foreground" />
+          <MapPin className="w-4 h-4 fill-primary stroke-foreground" />
         </button>
         <div className="flex flex-col gap-1 w-full">
           <p className="font-bold text-sm text-foreground leading-tight underline decoration-foreground/20 underline-offset-2">
             {job.address}
           </p>
           {community && (
-            <span className="text-[10px] uppercase font-mono tracking-widest text-rsg-gold font-bold">
+            <span className="text-[10px] uppercase font-mono tracking-widest text-[#f97316] dark:text-rsg-gold font-bold">
               {community}
             </span>
           )}
           {job.logistics_notes && (
-            <div className="mt-2 pt-2 border-t border-border/50 text-[11px] text-rsg-gold font-medium leading-tight">
-              <span className="font-bold uppercase tracking-widest text-[9px] mr-1 opacity-60">
+            <div className="mt-2 pt-2 border-t border-border/50 text-[11px] text-[#ea580c] dark:text-rsg-gold font-bold leading-tight uppercase tracking-tight">
+              <span className="font-black uppercase tracking-widest text-[9px] mr-1 opacity-60">
                 Logistics:
               </span>
               {job.logistics_notes}
@@ -184,7 +184,11 @@ export function JobBlockArrival({
 
 const formatTime = (ts: number) => {
   const d = new Date(ts);
-  return `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")} ${d.getHours() >= 12 ? "PM" : "AM"}`;
+  const hours = d.getHours();
+  const h12 = hours % 12 || 12;
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  return `${h12}:${minutes} ${ampm}`;
 };
 
 export function DocumentationCapture({

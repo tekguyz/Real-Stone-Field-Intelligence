@@ -24,8 +24,8 @@ export function useAdminJobsController() {
   const updateInstaller = useUpdateJobInstaller();
   const updateStatus = useUpdateJobStatus();
 
-  const handleUpdateInstaller = (jobId: string, installerId: string) => {
-    const value = installerId === "unassigned" ? null : installerId;
+  const handleUpdateInstaller = (jobId: string, installerId: string | null) => {
+    const value = (installerId === "unassigned" || installerId === null) ? null : installerId;
     updateInstaller.mutate({ jobId, installerId: value }, {
       onSuccess: () => {
         toast.success(language === "es" ? "Instalador actualizado." : "Installer assigned.");
@@ -37,22 +37,27 @@ export function useAdminJobsController() {
   };
 
   const handleVerify = async (jobId: string) => {
-    await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
-    toast.success(language === "es" ? "Trabajo verificado y cerrado." : "Job verified and closed.");
+    try {
+      await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
+      toast.success(language === "es" ? "Trabajo verificado y cerrado." : "Job verified and closed.");
 
-    const job = jobs?.find((j) => j.id === jobId);
-    if (job) {
-      try {
-        const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
-        await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
-          .catch(err => console.error("Non-blocking email notify error:", err));
-      } catch (err) {
-        console.error("Failed to trigger email notification", err);
+      const job = jobs?.find((j) => j.id === jobId);
+      if (job) {
+        try {
+          const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
+          await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
+            .catch(err => console.error("Non-blocking email notify error:", err));
+        } catch (err) {
+          console.error("Failed to trigger email notification", err);
+        }
       }
-    }
 
-    if (selectedJob && selectedJob.id === jobId) {
-      setSelectedJob(null);
+      if (selectedJob && selectedJob.id === jobId) {
+        setSelectedJob(null);
+      }
+    } catch (err) {
+      console.error("Verification failed:", err);
+      toast.error(language === "es" ? "Error al verificar el trabajo." : "Failed to verify job.");
     }
   };
 

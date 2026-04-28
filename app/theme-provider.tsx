@@ -7,5 +7,17 @@ export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
+  }, []);
+
+  return (
+    <NextThemesProvider {...props}>
+      <div className={!mounted ? "transition-none [&_*]:transition-none" : ""}>
+        {children}
+      </div>
+    </NextThemesProvider>
+  );
 }

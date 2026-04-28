@@ -70,14 +70,13 @@ export default function JobsPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Button
+          <button
             onClick={() => setIsImportOpen(true)}
-            variant="outline"
-            className="h-12 px-6 font-black tracking-[0.2em] uppercase border-r-4 border-b-4 border-primary rounded-none"
+            className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm print:hidden"
           >
-            <Database className="w-4 h-4 text-rsg-gold mr-2" />
+            <Database className="w-4 h-4 text-rsg-gold" />
             {t.importData}
-          </Button>
+          </button>
         </div>
       </div>
 

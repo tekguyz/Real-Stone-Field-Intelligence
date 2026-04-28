@@ -6,7 +6,6 @@ import { X, Upload, AlertTriangle, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { FileDropzone } from "./components/FileDropzone";
 import { ImportPreviewTable } from "./components/ImportPreviewTable";
-import { SuccessOverlay } from "./components/SuccessOverlay";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
 import { toast } from "sonner";
@@ -28,8 +27,6 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
     new Set(),
   );
   const [prevParsedData, setPrevParsedData] = useState<Job[]>([]);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [importCount, setImportCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (parsedData !== prevParsedData) {
@@ -83,13 +80,8 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
     importJobs(jobsToImport, {
       onSuccess: () => {
         toast.success(language === "es" ? "Trabajos importados con éxito." : "Jobs imported successfully.");
-        setImportCount(jobsToImport.length);
-        setShowSuccess(true);
-        setTimeout(() => {
-          setShowSuccess(false);
-          onClose();
-          clearData();
-        }, 2000);
+        onClose();
+        clearData();
       },
     });
   };
@@ -112,10 +104,6 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative w-full max-w-4xl bg-rsg-surface border-2 border-rsg-border shadow-[10px_10px_0px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[90vh] rounded-none"
       >
-        <AnimatePresence>
-          {showSuccess && <SuccessOverlay importCount={importCount} />}
-        </AnimatePresence>
-
         <div className="h-14 border-b border-rsg-border px-6 flex items-center justify-between bg-rsg-surface">
           <div className="flex items-center gap-3">
             <Upload className="w-5 h-5 text-rsg-gold" />

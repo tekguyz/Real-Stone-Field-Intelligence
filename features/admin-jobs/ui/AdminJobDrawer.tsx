@@ -1,21 +1,11 @@
 import { Job } from "../../../entities/job";
 import { dict } from "../../../entities/i18n/dict";
-import { X, MapPin, Loader2, ShieldCheck, Clock, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useUserStore } from "../../../entities/user/store";
-import Image from "next/image";
 import { useState, useEffect } from "react";
-import { StatusBadge } from "../../../components/ui/StatusBadge";
-import { formatInstallerName } from "../../../shared/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../components/ui/select";
-
-import { JOB_STATUSES } from "../../../lib/constants/statuses";
+import { AdminJobDrawerHeader } from "./AdminJobDrawerHeader";
+import { AdminJobDrawerContent } from "./AdminJobDrawerContent";
+import { AdminJobDrawerFooter } from "./AdminJobDrawerFooter";
 
 export function AdminJobDrawer({
   selectedJob,
@@ -27,7 +17,7 @@ export function AdminJobDrawer({
 }: {
   selectedJob: Job | null;
   onClose: () => void;
-  onUpdateInstaller: (jobId: string, installerId: string) => void;
+  onUpdateInstaller: (jobId: string, installerId: string | null) => void;
   onVerifyJob?: (jobId: string) => void;
   isVerifying?: boolean;
   installers?: string[];
@@ -65,7 +55,7 @@ export function AdminJobDrawer({
   const allPhotos = Array.from(
     new Set([...(selectedJob?.photos || []), ...localCaptures.photos]),
   );
-  // Fallback map pin logic using generated proofs or stored captured_proof
+
   const getProofMetadata = (url: string) => {
     const fromJob = selectedJob?.captured_proof?.find((p) => p.url === url);
     if (fromJob) return fromJob;
@@ -75,15 +65,6 @@ export function AdminJobDrawer({
   };
 
   const activeSignature = selectedJob?.signature_url || localCaptures.signature;
-
-  const displayId =
-    selectedJob?.wo_number || selectedJob?.legacy_id?.substring(0, 8) || "";
-  const headerWoId = displayId.startsWith("WO-")
-    ? displayId
-    : "WO-" + displayId;
-
-  const isAssignmentLocked =
-    selectedJob?.status === JOB_STATUSES.VERIFIED;
 
   return (
     <AnimatePresence>
@@ -103,285 +84,32 @@ export function AdminJobDrawer({
             transition={{ type: "spring", damping: 30, stiffness: 400, mass: 1.5 }}
             className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border z-[110] flex flex-col"
           >
-            <div className="p-4 md:p-6 border-b border-border flex justify-between items-start bg-rsg-surface/30 pb-4">
-              <div className="flex flex-col gap-1">
-                <span className="font-mono text-[10px] text-foreground/40 block uppercase tracking-[0.2em]">
-                  {headerWoId}
-                </span>
-                <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-black tracking-tight uppercase leading-none">
-                    {selectedJob.client_name}
-                  </h2>
-                  <StatusBadge
-                    status={selectedJob.status}
-                    className="w-fit scale-90 origin-left"
-                  />
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-foreground/5 text-foreground/40 hover:text-foreground transition-colors"
-                title={t.close}
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            <AdminJobDrawerHeader 
+              job={selectedJob} 
+              onClose={onClose} 
+              t={t} 
+            />
 
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-8">
-              {/* Logistics Grid */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                    {t.arrivalTime}
-                  </span>
-                  <div className="bg-rsg-surface/50 px-3 py-2 border border-border flex items-center justify-between h-[42px]">
-                    <span className="text-xs font-black text-foreground/90 uppercase tracking-tight truncate">
-                      {selectedJob.scheduled_arrival ||
-                      selectedJob.scheduled_date
-                        ? new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "2-digit",
-                            hour12: true,
-                          })
-                            .format(
-                              new Date(
-                                selectedJob.scheduled_arrival ||
-                                  selectedJob.scheduled_date ||
-                                  "",
-                                ),
-                              )
-                            .toUpperCase()
-                        : t.awaiting}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2 relative group-tooltip">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
-                    {t.installer}
-                    {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
-                  </span>
-                  <Select
-                    disabled={isAssignmentLocked}
-                    value={selectedJob.installer_id || "unassigned"}
-                    onValueChange={(val) => onUpdateInstaller(selectedJob.id, val as string)}
-                  >
-                    <SelectTrigger 
-                      className={`w-full bg-rsg-surface/50 border border-border px-3 py-2 text-xs font-black rounded-none focus:ring-1 focus:ring-rsg-gold font-mono uppercase text-foreground h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
-                      title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
-                    >
-                      <SelectValue placeholder={t.unassigned} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
-                      {installers.map((inst) => (
-                        <SelectItem 
-                          key={inst} 
-                          value={inst} 
-                          className="text-xs uppercase font-bold"
-                        >
-                          {formatInstallerName(inst)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+            <AdminJobDrawerContent
+              job={selectedJob}
+              t={t}
+              language={language}
+              installers={installers}
+              onUpdateInstaller={onUpdateInstaller}
+              localCaptures={localCaptures}
+              allPhotos={allPhotos}
+              getProofMetadata={getProofMetadata}
+              activeSignature={activeSignature}
+            />
 
-              {/* Site info */}
-              <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                  {t.siteInformation}
-                </span>
-                <div className="bg-rsg-surface/50 p-4 border border-border">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-foreground/90 text-sm leading-tight">
-                        {selectedJob.address}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Install Scope */}
-              <div className="flex flex-col gap-4">
-                <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                  {t.scope}
-                </span>
-                <div className="flex flex-col gap-3">
-                  {selectedJob.stoneapp_parts?.map((part, i) => (
-                    <div
-                      key={i}
-                      className="border border-border p-4 bg-rsg-surface/20 flex flex-col gap-2 border-l-4 border-l-primary"
-                    >
-                      <div className="flex justify-between items-center pr-2">
-                        <span className="text-xs font-black uppercase text-foreground">
-                          {part.partType}
-                        </span>
-                        <span className="text-[10px] font-mono text-primary font-bold">
-                          {part.slabId}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-y-1 gap-x-4">
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-foreground/40 font-mono uppercase">
-                            {t.material}
-                          </span>
-                          <span className="font-bold text-foreground/80">
-                            {part.material}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-foreground/40 font-mono uppercase">
-                            {dict[language].field.profile}
-                          </span>
-                          <span className="font-bold text-foreground/80">
-                            {part.edgeProfile}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-foreground/40 font-mono uppercase">
-                            {dict[language].field.thickness}
-                          </span>
-                          <span className="font-bold text-foreground/80">
-                            {part.thickness}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-foreground/40 font-mono uppercase">
-                            Seams
-                          </span>
-                          <span className="font-bold text-foreground/80">
-                            {part.seams}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {(!selectedJob.stoneapp_parts ||
-                    selectedJob.stoneapp_parts.length === 0) && (
-                    <div className="p-8 text-center border border-dashed border-border bg-foreground/[0.02]">
-                      <span className="text-[10px] font-mono text-foreground/30 uppercase tracking-widest italic">
-                        {t.noScopeData}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Logistics Notes */}
-              <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-3">
-                  {t.logistics}
-                </span>
-                <div className="bg-amber-500/5 border border-amber-500/20 p-4">
-                  <p className="text-sm text-foreground/80 leading-relaxed font-bold">
-                    &quot;
-                    {selectedJob.logistics_notes || t.noLogistics}
-                    &quot;
-                  </p>
-                </div>
-              </div>
-
-              {/* Verified Proofs */}
-              {allPhotos.length > 0 && (
-                <div className="flex flex-col gap-4">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                    {t.fieldDocumentation} ({allPhotos.length})
-                  </span>
-                  <div className="grid grid-cols-2 gap-3">
-                    {allPhotos.map((url, i) => {
-                      const meta = getProofMetadata(url);
-                      return (
-                        <div
-                          key={i}
-                          className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden"
-                        >
-                          <Image
-                            src={url}
-                            alt={`Proof ${i + 1}`}
-                            fill
-                            className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                            referrerPolicy="no-referrer"
-                          />
-                          <div className="absolute inset-x-0 bottom-0 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-between items-center">
-                            <span className="text-[10px] font-mono text-white uppercase relative z-10">
-                              Proof {i + 1}
-                            </span>
-                            {meta?.lat && meta?.lng && (
-                              <button
-                                onClick={() =>
-                                  window.open(
-                                    `https://maps.google.com/?q=${meta.lat},${meta.lng}`,
-                                    "_blank",
-                                  )
-                                }
-                                className="bg-rsg-gold text-background p-1.5 hover:opacity-80 transition-opacity z-10 border border-transparent"
-                                title="Open GPS Coordinate in Maps"
-                              >
-                                <MapPin className="w-3 h-3" />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {activeSignature && (
-                    <div className="flex flex-col gap-2 mt-4">
-                      <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
-                        {t.clientSignature}
-                      </span>
-                      <div className="bg-[var(--color-sig-bg)] p-4 border border-border h-32 flex items-center justify-center relative rounded-sm">
-                        <Image
-                          src={activeSignature}
-                          alt="Signature"
-                          fill
-                          className="object-contain p-4"
-                          referrerPolicy="no-referrer"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="p-6 border-t border-border bg-rsg-surface/30 flex flex-col gap-6">
-              {onVerifyJob && activeRole === "admin" && selectedJob.status === JOB_STATUSES.REVIEW && (
-                <button
-                  onClick={() => onVerifyJob(selectedJob.id)}
-                  disabled={isVerifying}
-                  className="w-full py-4 uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold print:hidden"
-                >
-                  {isVerifying ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <ShieldCheck className="w-5 h-5" />
-                  )}
-                  {t.verifyAndClose}
-                </button>
-              )}
-
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={onClose}
-                  className="w-full h-14 border border-foreground/20 text-foreground font-black uppercase tracking-[0.2em] transition-colors bg-card hover:bg-foreground/5 rounded-none"
-                >
-                  {t.close}
-                </button>
-                <a
-                  href={`/admin/reports/${selectedJob.id}`}
-                  className="flex items-center justify-center w-full h-14 uppercase transition-all rounded-none shadow-[2px_2px_0px_rgba(255,255,255,0.1)] hover:translate-x-[1px] hover:translate-y-[1px] bg-primary text-primary-foreground font-semibold"
-                >
-                  {t.viewReport}
-                </a>
-              </div>
-            </div>
+            <AdminJobDrawerFooter
+              job={selectedJob}
+              onClose={onClose}
+              onVerifyJob={onVerifyJob}
+              isVerifying={isVerifying}
+              activeRole={activeRole}
+              t={t}
+            />
           </motion.div>
         </>
       )}

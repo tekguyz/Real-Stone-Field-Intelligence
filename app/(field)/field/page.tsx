@@ -48,14 +48,22 @@ export default function FieldPage() {
     );
   }
 
-  // Filter jobs for this specific installer
-  const myJobs = jobs?.filter((j) => j.installer_id === activeRole) || [];
-  const activeCount = myJobs.filter((j) => j.status === JOB_STATUSES.ACTIVE).length;
+  // Filter jobs for this specific installer - exact case-insensitive match
+  const myJobs = jobs?.filter((j) => j.installer_id?.toLowerCase() === activeRole?.toLowerCase()) || [];
+  const activeCount = myJobs.filter((j) => {
+    const s = j.status?.toLowerCase();
+    return (
+      s === JOB_STATUSES.ACTIVE.toLowerCase() || 
+      s === JOB_STATUSES.ASSIGNED.toLowerCase() ||
+      s === JOB_STATUSES.PENDING.toLowerCase() ||
+      s === "active" || s === "assigned" || s === "pending" || s === "in_progress"
+    );
+  }).length;
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">
-      {/* Neo-Brutalist Strict Header - Exactly h-14 */}
-      <div className="sticky top-0 z-50 h-14 px-4 bg-background border-b border-border flex justify-between items-center shrink-0">
+      {/* Neo-Brutalist Strict Header - Exactly h-16 */}
+      <div className="sticky top-0 z-50 h-16 px-4 bg-background border-b border-border flex justify-between items-center shrink-0 w-full">
         <div className="flex items-center gap-2 max-w-[40%]">
           <div className="w-8 h-8 bg-primary/10 flex items-center justify-center shrink-0">
             <Mountain className="w-5 h-5 text-primary" />

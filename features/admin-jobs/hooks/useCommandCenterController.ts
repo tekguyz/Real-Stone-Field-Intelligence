@@ -17,25 +17,29 @@ export function useCommandCenterController() {
   const currentJobs = useMemo(() => jobs || [], [jobs]);
 
   const handleVerify = async (jobId: string) => {
-    await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
+    try {
+      await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
 
-    // Find the job to pass its details
-    const job = currentJobs.find((j) => j.id === jobId);
-    if (job) {
-      try {
-        const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
-        await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
-          .catch(err => console.error("Non-blocking email notify error:", err));
-      } catch (err) {
-        console.error("Failed to trigger email notification", err);
+      // Find the job to pass its details
+      const job = currentJobs.find((j) => j.id === jobId);
+      if (job) {
+        try {
+          const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
+          await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
+            .catch(err => console.error("Non-blocking email notify error:", err));
+        } catch (err) {
+          console.error("Failed to trigger email notification", err);
+        }
       }
-    }
 
-    setSelectedJob(null);
+      setSelectedJob(null);
+    } catch (err) {
+      console.error("Verification failed:", err);
+    }
   };
 
-  const handleUpdateInstaller = (jobId: string, installerId: string) => {
-    const value = installerId === "unassigned" ? null : installerId;
+  const handleUpdateInstaller = (jobId: string, installerId: string | null) => {
+    const value = (installerId === "unassigned" || installerId === null) ? null : installerId;
     updateInstaller.mutate({ jobId, installerId: value });
     if (selectedJob && selectedJob.id === jobId) {
       setSelectedJob({ ...selectedJob, installer_id: value });

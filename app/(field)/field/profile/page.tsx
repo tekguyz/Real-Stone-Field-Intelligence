@@ -1,57 +1,28 @@
 "use client";
 
-import {
-  User,
-  Globe,
-  Lock,
-  LogOut,
-  ChevronRight,
-  ShieldCheck,
-  Languages,
-  Eye,
-  EyeOff,
-  Phone,
-  AlertTriangle,
-  ExternalLink,
-  Sun,
-  Moon,
-  Laptop,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { motion } from "motion/react";
-import { useUserStore } from "../../../../entities/user/store";
-import { dict } from "../../../../entities/i18n/dict";
-import { useTheme } from "next-themes";
-import { ReportIssueForm } from "../../../../shared/ui/ReportIssueForm";
+import { LogOut } from "lucide-react";
+import { useProfileController } from "../../../../features/field-profile/hooks/useProfileController";
+import { ProfileInfo } from "../../../../features/field-profile/ui/ProfileInfo";
+import { ProfilePreferences } from "../../../../features/field-profile/ui/ProfilePreferences";
+import { ProfileAppControls } from "../../../../features/field-profile/ui/ProfileAppControls";
+import { ProfileSupport } from "../../../../features/field-profile/ui/ProfileSupport";
 
 export default function FieldProfilePage() {
-  const { activeRole, language, setLanguage, setManualThemeOverride } =
-    useUserStore();
-  const { theme, setTheme } = useTheme();
-  const t = dict[language].field;
-  const router = useRouter();
-
-  const [showReportForm, setShowReportForm] = useState(false);
-  const handleThemeChange = (newTheme: string) => {
-    setTheme(newTheme);
-    setManualThemeOverride(true);
-  };
-
-  const [showPin, setShowPin] = useState(false);
-  const fullName =
-    activeRole.split("_")[1]?.charAt(0).toUpperCase() +
-      activeRole.split("_")[1]?.slice(1) || "Installer";
-  const initials =
-    activeRole.split("_")[1]?.substring(0, 2).toUpperCase() || "IN";
-
-  const handleLanguageToggle = (lang: "en" | "es") => {
-    if (language !== lang) setLanguage(lang);
-  };
-
-  const handleLogout = () => {
-    router.push("/login");
-  };
+  const {
+    t,
+    language,
+    theme,
+    fullName,
+    initials,
+    activeRole,
+    showPin,
+    setShowPin,
+    showReportForm,
+    setShowReportForm,
+    handleThemeChange,
+    handleLanguageToggle,
+    handleLogout
+  } = useProfileController();
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in slide-in-from-bottom-4 duration-500">
@@ -73,195 +44,33 @@ export default function FieldProfilePage() {
 
       <div className="p-4 flex flex-col gap-6 pt-6">
         {/* Profile Info - Dense Text */}
-        <div className="flex flex-col mb-2">
-          <h2 className="text-2xl font-black text-foreground tracking-tight uppercase leading-none">
-            {fullName}
-          </h2>
-          <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mt-1">
-            ID: 884-29
-          </span>
-        </div>
+        <ProfileInfo 
+          fullName={fullName} 
+          initials={initials} 
+          showPin={showPin} 
+          setShowPin={setShowPin} 
+          language={language} 
+        />
 
-        {/* Masked PIN - High Security Feel */}
-        <section className="bg-surface border border-border p-4 relative group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-foreground/30 group-hover:bg-primary transition-colors" />
-          <div className="flex justify-between items-center mb-3 pl-3">
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-foreground/40" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">
-                {t.accessPin}
-              </span>
-            </div>
-            <button
-              onClick={() => setShowPin(!showPin)}
-              className="p-2 text-foreground/40 hover:text-primary transition-colors"
-            >
-              {showPin ? (
-                <EyeOff className="w-4 h-4" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
-            </button>
-          </div>
-          <div className="bg-foreground/[0.02] border border-border p-3 flex items-center justify-center ml-3 group-hover:bg-primary/[0.02] transition-colors">
-            <span
-              className={`font-mono text-lg tracking-[0.5em] font-black ${showPin ? "text-primary" : "text-foreground/20"}`}
-            >
-              {showPin ? "4 4 5 2" : "• • • •"}
-            </span>
-          </div>
-        </section>
-
-        {/* Language Switcher - Brutalist Toggle */}
-        <section>
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
-            {t.languageSelection}
-          </h3>
-          <div className="bg-surface border border-border flex p-1">
-            {(["en", "es"] as const).map((lang) => (
-              <button
-                key={lang}
-                onClick={() => handleLanguageToggle(lang)}
-                className={`flex-1 h-12 flex items-center justify-center font-bold text-[10px] uppercase tracking-[0.2em] transition-all relative ${
-                  language === lang
-                    ? "text-primary-foreground z-10"
-                    : "text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
-                }`}
-              >
-                {language === lang && (
-                  <motion.div
-                    layoutId="lang-pill-field"
-                    className="absolute inset-0 bg-primary -z-10"
-                    transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                  />
-                )}
-                {lang === "en" ? "English" : "Español"}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Theme Switcher - Industrial Segment Control */}
-        <section>
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
-             {language === "es" ? "Tema de Pantalla" : "Display Theme"}
-          </h3>
-          <div className="bg-surface border border-border flex p-1">
-            {[
-              { id: "light", icon: Sun, label: language === "es" ? "Luz" : "Light" },
-              { id: "dark", icon: Moon, label: language === "es" ? "Oscuro" : "Dark" },
-              { id: "system", icon: Laptop, label: language === "es" ? "Auto" : "Auto" },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleThemeChange(item.id)}
-                className={`flex-1 h-12 flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-[0.2em] transition-all relative ${
-                  theme === item.id
-                    ? "text-primary-foreground z-10"
-                    : "text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
-                }`}
-              >
-                {theme === item.id && (
-                  <motion.div
-                    layoutId="theme-pill-field"
-                    className="absolute inset-0 bg-primary -z-10"
-                    transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                  />
-                )}
-                <item.icon className="w-3.5 h-3.5" />
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Preferences (Language and Theme) */}
+        <ProfilePreferences 
+          language={language} 
+          theme={theme} 
+          handleLanguageToggle={handleLanguageToggle} 
+          handleThemeChange={handleThemeChange} 
+        />
 
         {/* Combined System & Apps - Neo-Brutalist Grid */}
-        <section className="grid grid-cols-1 gap-4">
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
-              {language === "es" ? "Control de Aplicación" : "Application Control"}
-            </h3>
-            <div className="flex flex-col border border-border divide-y divide-border">
-              <div className="flex items-center justify-between p-4 bg-surface">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground">
-                    {language === "es" ? "Almacenaje Offline" : "Offline Storage"}
-                  </span>
-                  <span className="text-[8px] font-mono text-foreground/40 uppercase">
-                    {language === "es" ? "12 sincronizaciones pendientes" : "12 pending syncs"}
-                  </span>
-                </div>
-                <button className="text-[8px] font-black uppercase tracking-[0.2em] bg-foreground text-background px-3 py-1.5 active:scale-95 transition-transform">
-                  {language === "es" ? "Sincronizar" : "Sync Now"}
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-surface">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground">
-                    {language === "es" ? "Calidad de Medios" : "Media Quality"}
-                  </span>
-                  <span className="text-[8px] font-mono text-foreground/40 uppercase">
-                    {language === "es" ? "Estándar (Equilibrado)" : "Standard (Balanced)"}
-                  </span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-foreground/20" />
-              </div>
-            </div>
-          </div>
-        </section>
-
+        <ProfileAppControls language={language} />
 
         {/* Support & Reporting - High Density */}
-        <section className="flex flex-col gap-2">
-          <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">
-            {t.help}
-          </h3>
-
-          <div className="flex flex-col border border-border divide-y divide-border">
-            <a
-              href="tel:7724899964"
-              className="w-full h-14 bg-surface flex items-center justify-between px-4 active:bg-foreground/5 transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-[0.1em] text-foreground/80">
-                  (772) 489-9964
-                </span>
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
-                {t.callOffice}
-              </span>
-            </a>
-
-            <button
-              onClick={() => setShowReportForm(!showReportForm)}
-              className={`w-full h-14 flex items-center justify-between px-4 active:bg-foreground/5 transition-all group ${showReportForm ? "bg-rsg-gold/5" : "bg-surface"}`}
-            >
-              <div className="flex items-center gap-3">
-                <AlertTriangle
-                  className={`w-4 h-4 ${showReportForm ? "text-rsg-gold" : "text-amber-500"}`}
-                />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80">
-                  {t.reportIssue}
-                </span>
-              </div>
-              <ChevronRight
-                className={`w-4 h-4 transition-transform ${showReportForm ? "rotate-90 text-rsg-gold" : "text-foreground/20"}`}
-              />
-            </button>
-          </div>
-
-          {showReportForm && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-x border-b border-border"
-            >
-              <ReportIssueForm userRole={activeRole} userName={fullName} />
-            </motion.div>
-          )}
-        </section>
+        <ProfileSupport 
+          language={language}
+          showReportForm={showReportForm}
+          setShowReportForm={setShowReportForm}
+          activeRole={activeRole}
+          fullName={fullName}
+        />
 
         {/* System Footer */}
         <div className="mt-8 flex flex-col items-center gap-6 pb-8">

@@ -88,7 +88,10 @@ export function DemoBanner() {
         <div className="flex items-center gap-2 group">
           <UserCircle className="w-5 h-5 opacity-80" />
           <Select value={activeRole} onValueChange={(val) => handleRoleChange(val as Role)}>
-            <SelectTrigger className="bg-transparent border-none h-8 text-black font-bold uppercase p-0 focus:ring-0 focus:ring-offset-0">
+            {/* FIX: Absolute background transparency in all states to kill the faint rectangle.
+                Removed chevron and all shadows/rings. Added text black, font-black, industrial tracking.
+            */}
+            <SelectTrigger className="bg-transparent! border-none h-8 text-black font-black uppercase p-0 shadow-none! outline-none! ring-0! focus:ring-0! hover:bg-transparent! data-[state=open]:bg-transparent! [&>svg]:hidden focus-visible:ring-0! tracking-widest appearance-none">
               <SelectValue>
                 {formatInstallerName(activeRole)}
               </SelectValue>

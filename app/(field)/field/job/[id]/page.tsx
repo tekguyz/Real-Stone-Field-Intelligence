@@ -1,15 +1,11 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use } from "react";
 import { useUserStore } from "../../../../../entities/user/store";
 import { dict } from "../../../../../entities/i18n/dict";
-import { SyncIndicator } from "../../../../../shared/ui/SyncIndicator";
 import { PermissionPrimer } from "../../../../../features/field-jobs/ui/PermissionPrimer";
-import { ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFieldJobDetail } from "../../../../../features/field-jobs/hooks/useFieldJobDetail";
-import { JobStatus } from "../../../../../entities/job";
 import { StatusBadge } from "../../../../../components/ui/StatusBadge";
 import {
   JobBlockScope,
@@ -19,6 +15,10 @@ import {
   JobActionFooter,
   CapturedProofGrid,
 } from "../../../../../features/field-jobs/ui/JobDetailComponents";
+import { FieldJobDetailLoading } from "../../../../../features/field-jobs/ui/FieldJobDetailLoading";
+import { FieldJobDetailError } from "../../../../../features/field-jobs/ui/FieldJobDetailError";
+import { FieldJobDetailVerified } from "../../../../../features/field-jobs/ui/FieldJobDetailVerified";
+import { FieldJobDetailHeader } from "../../../../../features/field-jobs/ui/FieldJobDetailHeader";
 import { JOB_STATUSES } from "../../../../../lib/constants/statuses";
 
 export default function FieldJobDetail({
@@ -51,35 +51,12 @@ export default function FieldJobDetail({
     handleContinueCapture,
   } = useFieldJobDetail(id);
 
-  if (isJobsLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-6">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!job) {
-    return (
-      <div className="p-6 bg-background h-screen">
-        <Link
-          href="/field"
-          className="flex items-center gap-2 text-primary mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          {t.back}
-        </Link>
-        <h1 className="text-2xl font-bold text-foreground">
-          {language === "es" ? "Trabajo no encontrado" : "Job not found"}
-        </h1>
-      </div>
-    );
-  }
+  if (isJobsLoading) return <FieldJobDetailLoading />;
+  if (!job) return <FieldJobDetailError language={language} t={t} />;
 
   const handleBackNavigation = (e: React.MouseEvent) => {
     e.preventDefault();
-    const hasUnsavedChanges =
-      processedPhotos.length > 0 || signatureData !== null;
+    const hasUnsavedChanges = processedPhotos.length > 0 || signatureData !== null;
     const isVerified = job.status === JOB_STATUSES.VERIFIED;
     if (!isVerified && !isSubmitting && hasUnsavedChanges) {
       if (!window.confirm(language === "es" ? "Los cambios no guardados se perderán. ¿Salir de todos modos?" : "Unsaved changes will be lost. Exit anyway?")) {
@@ -91,26 +68,9 @@ export default function FieldJobDetail({
 
   return (
     <div className="flex flex-col min-h-full bg-background pb-12">
-      {/* 100% Solid Header per acceptance criteria */}
-      <div className="h-14 px-4 bg-background border-b border-border sticky top-0 z-20 flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleBackNavigation}
-            className="text-foreground/50 hover:text-primary transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <span className="font-mono text-xs text-foreground/40 uppercase tracking-[0.2em] font-bold">
-            {language === "en" ? "Job Details" : "Detalles"}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <SyncIndicator />
-        </div>
-      </div>
+      <FieldJobDetailHeader language={language} handleBackNavigation={handleBackNavigation} />
 
       <div className="p-4 sm:p-6 flex flex-col gap-6">
-        {/* Block 1 (Header) */}
         <section className="flex justify-between items-start">
           <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-tight pr-4">
             {job.client_name}
@@ -119,51 +79,19 @@ export default function FieldJobDetail({
         </section>
 
         <div className="flex flex-col gap-6 bg-card border border-border p-3 sm:p-4">
-          {/* Block 2 (Installation Scope) */}
           <JobBlockScope job={job} language={language} />
-
-          {/* Block 3 (Project Site) */}
           <JobBlockSite job={job} language={language} />
-
-          {/* Block 4 (Scheduled Arrival) */}
-          <JobBlockArrival
-            scheduledDate={job.scheduled_arrival || job.scheduled_date}
-            language={language}
-          />
+          <JobBlockArrival scheduledDate={job.scheduled_arrival || job.scheduled_date} language={language} />
         </div>
 
-        {/* Display captured proof if it exists */}
-        {job.photos && job.photos.length > 0 && (
-          <CapturedProofGrid photos={job.photos} language={language} />
-        )}
+        {job.photos && job.photos.length > 0 && <CapturedProofGrid photos={job.photos} language={language} />}
 
-        {/* Verification Lock or Capture */}
-        {job.status === JOB_STATUSES.VERIFIED ? (
-          <div className="bg-rsg-success text-rsg-surface px-6 py-5 flex flex-col items-center justify-center text-center gap-3 mt-4 border-2 border-rsg-border relative overflow-hidden">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-rsg-border text-rsg-surface px-3 py-0.5 text-[8px] font-black uppercase tracking-[0.4em]">
-              {language === "es" ? "Bloqueo de Seguridad" : "Security Lock"}
-            </div>
-            <CheckCircle2 className="w-10 h-10 text-rsg-surface mt-2" />
-            <div className="font-black uppercase tracking-[0.3em] text-lg leading-none">
-              {language === "es" ? "TRABAJO VERIFICADO" : "JOB VERIFIED"}
-            </div>
-            <div className="w-16 h-0.5 bg-rsg-surface/30 my-1" />
-            <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-rsg-surface/80 leading-relaxed">
-              {language === "es" ? (
-                <>Documentación finalizada vía HQ.<br />El registro del sitio es inmutable.</>
-              ) : (
-                <>DOCUMENTATION FINALIZED via HQ.<br />Site record is immutable.</>
-              )}
-            </p>
-          </div>
+        {job.status === JOB_STATUSES.VERIFIED || job.status === JOB_STATUSES.REVIEW ? (
+          <FieldJobDetailVerified language={language} status={job.status} />
         ) : (
           <div className="mt-2">
             <DocumentationCapture
-              permissionStatus={
-                cameraStatus === "granted" || locationStatus === "granted"
-                  ? "granted"
-                  : "pending"
-              }
+              permissionStatus={cameraStatus === "granted" || locationStatus === "granted" ? "granted" : "pending"}
               checkPermissions={checkPermissions}
               handleCaptureImage={handleCaptureImage}
               isProcessing={isProcessing}

@@ -3,124 +3,35 @@
 import { useState } from "react";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
-import { Plus, X, Shield, HardHat, Phone, Mail, Eye, EyeOff, Trash2, Edit2, Users } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { TEAM_STATUSES, TeamStatus } from "../../../lib/constants/statuses";
-import { toast } from "sonner";
+import { Plus, Users } from "lucide-react";
 import { EmptyState } from "../../../components/ui/EmptyState";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../components/ui/select";
-
-const mockTeam = [
-  {
-    id: "u-1",
-    name: "Admin User",
-    initials: "AD",
-    role: "Office Admin",
-    status: TEAM_STATUSES.ACTIVE as TeamStatus,
-    pin: "4821",
-    email: "admin@realstone.com",
-    phone: "404-555-0199",
-    isInstaller: false,
-  },
-  {
-    id: "u-2",
-    name: "Juan Perez",
-    initials: "JP",
-    role: "Lead Installer",
-    status: TEAM_STATUSES.ON_SITE as TeamStatus,
-    pin: "8823",
-    email: "jperez@realstone.com",
-    phone: "404-555-0122",
-    job_id: "WO-8402",
-    isInstaller: true,
-  },
-  {
-    id: "u-3",
-    name: "Carlos Ruiz",
-    initials: "CR",
-    role: "Installer",
-    status: TEAM_STATUSES.ON_SITE as TeamStatus,
-    pin: "1102",
-    email: "cruiz@realstone.com",
-    phone: "404-555-0133",
-    job_id: "WO-8418",
-    isInstaller: true,
-  },
-  {
-    id: "u-4",
-    name: "Michael Scott",
-    initials: "MS",
-    role: "Operations Manager",
-    status: TEAM_STATUSES.ACTIVE as TeamStatus,
-    pin: "9982",
-    email: "mscott@realstone.com",
-    phone: "404-555-0144",
-    isInstaller: false,
-  },
-  {
-    id: "u-5",
-    name: "David Silva",
-    initials: "DS",
-    role: "Installer",
-    status: TEAM_STATUSES.OFFLINE as TeamStatus,
-    pin: "5541",
-    email: "dsilva@realstone.com",
-    phone: "404-555-0155",
-    isInstaller: true,
-  },
-];
-
-const TeamStatusBadge = ({ status }: { status: TeamStatus }) => {
-  const { language } = useUserStore();
-  const t = dict[language].admin;
-
-  const config = {
-    [TEAM_STATUSES.ACTIVE]: "bg-status-verified-bg/10 text-status-verified-text border-status-verified-bg/20",
-    [TEAM_STATUSES.ON_SITE]: "bg-status-active-bg/10 text-status-active-text border-status-active-bg/20",
-    [TEAM_STATUSES.OFFLINE]: "bg-muted text-muted-foreground border-border",
-  };
-
-  const labels = {
-    [TEAM_STATUSES.ACTIVE]: t.active,
-    [TEAM_STATUSES.ON_SITE]: t.onSite,
-    [TEAM_STATUSES.OFFLINE]: language === "es" ? "Desconectado" : "Offline",
-  };
-
-  return (
-    <div className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border rounded-none ${config[status]}`}>
-      {labels[status]}
-    </div>
-  );
-};
+import { mockTeam } from "../../../entities/team/model/mock";
+import { TeamMember } from "../../../entities/team/model/types";
+import { TeamMemberCard } from "../../../features/admin-team/ui/TeamMemberCard";
+import { TeamMemberDrawer } from "../../../features/admin-team/ui/TeamMemberDrawer";
+import { InviteMemberDrawer } from "../../../features/admin-team/ui/InviteMemberDrawer";
 
 export default function TeamPage() {
   const { language } = useUserStore();
   const t = dict[language].admin;
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<typeof mockTeam[0] | null>(null);
-  const [showPin, setShowPin] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   return (
     <div className="flex flex-col gap-8 pb-4"> {/* TODO: remove pb when demo banner is removed */}
       {/* Header */}
-      <div className="flex items-end justify-between">
+      <div className="flex justify-between items-end mb-2">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             {t.installationTeam}
           </h1>
-          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none uppercase">
+          <p className="text-foreground/50 mt-1 font-mono text-[10px] leading-none uppercase tracking-[0.2em] font-bold">
             {language === "es" ? "PERSONAL Y CONTROL DE ACCESO" : "PERSONNEL & ACCESS CONTROL"}
           </p>
         </div>
         <button
           onClick={() => setIsInviteOpen(true)}
-          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98]"
+          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm"
         >
           <Plus className="w-4 h-4" />
           {t.inviteMember}
@@ -137,303 +48,27 @@ export default function TeamPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {mockTeam.map((member) => (
-            <div
-              key={member.id}
-              onClick={() => setSelectedMember(member)}
-              tabIndex={0}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setSelectedMember(member)}
-              className={`relative bg-card border p-6 flex flex-col transition-all overflow-hidden cursor-pointer hover:border-primary/30 hover:bg-rsg-surface-2 group outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold focus-visible:ring-inset ${
-                member.status === TEAM_STATUSES.ON_SITE
-                  ? "border-primary/50 bg-gradient-to-br from-card to-primary/5"
-                  : "border-border"
-              }`}
-            >
-              {member.status === TEAM_STATUSES.ON_SITE && (
-                <div className="absolute top-0 right-0 w-2 h-full bg-primary" />
-              )}
-
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-12 h-12 flex-shrink-0 border border-primary/20 bg-primary/10 text-primary flex items-center justify-center font-black text-lg">
-                  {member.initials}
-                </div>
-                <TeamStatusBadge status={member.status} />
-              </div>
-
-              <div>
-                <h3 className="font-bold text-xl group-hover:text-primary transition-colors">{member.name}</h3>
-                <div className="flex items-center gap-2 text-foreground/60 mt-1">
-                  {member.isInstaller ? (
-                    <HardHat className="w-4 h-4" />
-                  ) : (
-                    <Shield className="w-4 h-4" />
-                  )}
-                  <span className="text-sm">{member.role}</span>
-                </div>
-              </div>
-
-              {member.job_id && (
-                <div className="mt-4 p-3 bg-surface/50 border border-border">
-                  <p className="text-[10px] font-mono text-foreground/40 uppercase mb-1">
-                    {language === "es" ? "Asignación:" : "Assignment:"}
-                  </p>
-                  <div className="text-sm font-bold font-mono text-primary">
-                    WO# {member.job_id.replace("WO-", "")}
-                  </div>
-                </div>
-              )}
-
-              <div className="w-full mt-6 pt-5 border-t border-border flex justify-between items-center text-sm">
-                <div className="flex gap-3">
-                  <div className="text-foreground/40">
-                    <Phone className="w-4 h-4" />
-                  </div>
-                  <div className="text-foreground/40">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
-                    {t.pin}:
-                  </span>
-                  <span className="font-mono bg-surface border border-border px-2 py-0.5 text-foreground/80 text-xs">
-                    ••••
-                  </span>
-                </div>
-              </div>
-            </div>
+            <TeamMemberCard 
+              key={member.id} 
+              member={member} 
+              onSelect={setSelectedMember} 
+            />
           ))}
         </div>
       )}
 
       {/* Member Details Slide-over */}
-      <AnimatePresence>
-        {selectedMember && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => { setSelectedMember(null); setShowPin(false); }}
-              className="fixed inset-0 bg-background/40 backdrop-blur-sm z-[100]"
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-card border-l border-border z-[110] flex flex-col"
-            >
-              <div className="p-6 border-b border-border flex justify-between items-center bg-surface/30">
-                <h2 className="text-xl font-black tracking-tight uppercase">
-                  {language === "es" ? "Detalles del Miembro" : "Member Details"}
-                </h2>
-                <button
-                  onClick={() => { setSelectedMember(null); setShowPin(false); }}
-                  className="p-2 hover:text-primary text-foreground/40 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 border-2 border-primary/20 bg-primary/10 text-primary flex items-center justify-center font-black text-2xl">
-                    {selectedMember.initials}
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">{selectedMember.name}</h3>
-                    <div className="flex items-center gap-2 text-foreground/60">
-                      {selectedMember.isInstaller ? <HardHat className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
-                      <span className="text-sm">{selectedMember.role}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="p-4 bg-surface/50 border border-border">
-                    <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-2">
-                      {language === "es" ? "Asignación Actual" : "Current Assignment"}
-                    </p>
-                    <div className="text-base font-bold flex items-center gap-2">
-                      {selectedMember.job_id ? (
-                        <>
-                          <span className="text-primary font-mono whitespace-nowrap">WO# {selectedMember.job_id.replace("WO-", "")}</span>
-                          <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 uppercase tracking-widest border border-primary/20">ON-SITE</span>
-                        </>
-                      ) : (
-                        <span className="text-foreground/40 uppercase italic text-sm">{language === "es" ? "Ninguna" : "None"}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-surface/50 border border-border">
-                    <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-2">
-                      {t.statusHeader}
-                    </p>
-                    <TeamStatusBadge status={selectedMember.status} />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Phone</span>
-                    <span className="text-sm font-medium">{selectedMember.phone}</span>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Email</span>
-                    <span className="text-sm font-medium">{selectedMember.email}</span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-surface/50 border border-border relative group/pin">
-                  <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-2">
-                    {t.pin}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="font-mono text-lg tracking-[0.5em] bg-card border border-border px-3 py-1.5 rounded-none flex items-center min-w-[120px]">
-                      {showPin ? selectedMember.pin : "••••"}
-                    </div>
-                    <button 
-                      onClick={() => setShowPin(!showPin)}
-                      className="p-2 hover:text-primary transition-colors text-foreground/40"
-                    >
-                      {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                  <div className="absolute top-0 right-0 p-2 opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none">
-                     <span className="text-[8px] bg-foreground text-background px-1.5 py-0.5 uppercase tracking-tight">Contact admin to reset PIN</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-3">
-                <button
-                  onClick={() => toast("Coming soon")}
-                  className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-4 font-black uppercase tracking-[0.2em] transition-opacity hover:opacity-90 active:scale-[0.98]"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  {language === "es" ? "Editar Miembro" : "Edit Member"}
-                </button>
-                <button
-                  onClick={() => {
-                    const confirmed = window.confirm(language === "es" ? "¿Eliminar este miembro?" : "Remove this member?");
-                    if (confirmed) toast.error("Member deletion is restricted in demo mode");
-                  }}
-                  className="w-full flex items-center justify-center gap-2 border border-destructive/20 text-destructive hover:bg-destructive/10 py-4 font-black uppercase tracking-[0.2em] transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  {language === "es" ? "Eliminar Miembro" : "Remove Member"}
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <TeamMemberDrawer 
+        selectedMember={selectedMember} 
+        onClose={() => setSelectedMember(null)} 
+      />
 
       {/* Invite Member Slide-over */}
-      <AnimatePresence>
-        {isInviteOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsInviteOpen(false)}
-              className="fixed inset-0 bg-background/40 backdrop-blur-sm z-[100]"
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-card border-l border-border z-[110] flex flex-col"
-            >
-              <div className="p-6 border-b border-border flex justify-between items-center bg-surface/30">
-                <h2 className="text-xl font-black tracking-tight uppercase">
-                  {t.inviteMember}
-                </h2>
-                <button
-                  onClick={() => setIsInviteOpen(false)}
-                  className="p-2 hover:text-primary text-foreground/40 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
-                <div>
-                  <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
-                    {t.fullName}
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full bg-surface/50 border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
-                    placeholder={language === "es" ? "e.g. Juan Pérez" : "e.g. John Doe"}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
-                    {t.emailAddress}
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full bg-surface/50 border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
-                    placeholder="john@realstone.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
-                    {t.userRole}
-                  </label>
-                  <Select defaultValue="installer">
-                    <SelectTrigger className="w-full bg-surface/50 border border-border h-12 text-sm focus:ring-1 focus:ring-primary rounded-none">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="installer">{language === "es" ? "Instalador" : "Installer"}</SelectItem>
-                      <SelectItem value="lead">{language === "es" ? "Instalador Principal" : "Lead Installer"}</SelectItem>
-                      <SelectItem value="admin">{language === "es" ? "Admin de Oficina" : "Office Admin"}</SelectItem>
-                      <SelectItem value="ops">{language === "es" ? "Gerente de Operaciones" : "Operations Manager"}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="p-4 bg-surface/50 border border-border mt-2">
-                  <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">
-                    {t.pin}
-                  </h3>
-                  <p className="text-xs text-foreground/60 leading-relaxed font-bold uppercase">
-                    {language === "es" 
-                      ? "Se generará automáticamente un PIN seguro de 4 dígitos y se enviará a su correo electrónico."
-                      : "A secure 4-digit PIN will be automatically generated and sent to their email."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6 border-t border-border bg-surface/30 flex gap-3 flex-col sm:flex-row">
-                <button
-                  onClick={() => setIsInviteOpen(false)}
-                  className="flex-1 py-4 border border-border bg-foreground/[0.03] text-foreground hover:bg-foreground/10 font-black tracking-[0.2em] uppercase transition-colors"
-                >
-                  {t.cancel}
-                </button>
-                <button
-                  onClick={() => {
-                    console.log("Invite sent successfully");
-                    setIsInviteOpen(false);
-                  }}
-                  className="flex-1 bg-foreground text-background py-4 font-black uppercase tracking-[0.2em] transition-opacity hover:opacity-90"
-                >
-                  {t.sendInvitation}
-                </button>
-              </div>
-
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <InviteMemberDrawer 
+        isOpen={isInviteOpen} 
+        onClose={() => setIsInviteOpen(false)} 
+      />
     </div>
   );
 }
+

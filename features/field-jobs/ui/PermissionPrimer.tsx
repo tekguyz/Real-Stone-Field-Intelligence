@@ -148,15 +148,13 @@ export function PermissionPrimer({
                 </div>
               ) : (
                 <button
-                  className="btn-brutal w-full py-4 relative group"
+                  className="w-full py-4 bg-foreground text-background font-black uppercase tracking-[0.2em] relative flex items-center justify-center gap-3 border-r-4 border-b-4 border-primary shadow-sm hover:opacity-90 active:scale-[0.98] transition-all"
                   onClick={onContinue}
                 >
-                  <div className="relative z-10 flex items-center justify-center gap-2">
-                    <Settings className="w-5 h-5" />
-                    {language === "en"
-                      ? "INITIALIZE SENSORS"
-                      : "INICIALIZAR SENSORES"}
-                  </div>
+                  <Settings className="w-5 h-5 text-rsg-gold" />
+                  {language === "en"
+                    ? "INITIALIZE SENSORS"
+                    : "INICIALIZAR SENSORES"}
                 </button>
               )}
             </div>
