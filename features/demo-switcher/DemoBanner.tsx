@@ -4,8 +4,15 @@ import { useRouter } from "next/navigation";
 import { useUserStore, Role } from "../../entities/user/store";
 import { dict } from "../../entities/i18n/dict";
 import { useEffect, useState, useRef } from "react";
-import { Languages, UserCircle, Sun, Moon } from "lucide-react";
+import { Languages, UserCircle, Sun, Moon, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 export function DemoBanner() {
   const {
@@ -20,21 +27,46 @@ export function DemoBanner() {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
   const selectRef = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(frame);
+    const frame = requestAnimationFrame(() => {
+      setMounted(true);
+      const demoMode = localStorage.getItem("demo_mode");
+      if (demoMode !== null) {
+        setShowBanner(demoMode === "true");
+      }
+    });
+
+    // Listen for storage changes in other tabs
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "demo_mode") {
+        setShowBanner(e.newValue === "true");
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+
+    // Custom event for same-tab updates
+    const handleDemoToggle = () => {
+      const demoMode = localStorage.getItem("demo_mode");
+      setShowBanner(demoMode === "true");
+    };
+    window.addEventListener("demo_mode_changed", handleDemoToggle);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("demo_mode_changed", handleDemoToggle);
+    };
   }, []);
 
-  if (!isDevMode || !mounted) return null;
+  if (!isDevMode || !mounted || !showBanner) return null;
 
   const t = dict[language].demo;
 
-  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newRole = e.target.value as Role;
+  const handleRoleChange = (newRole: Role) => {
     setRole(newRole);
-    e.target.blur(); // Drops focus ring immediately after selection
     if (newRole === "admin") {
       router.push("/command-center");
     } else {
@@ -71,30 +103,17 @@ export function DemoBanner() {
     <div className="fixed top-0 left-0 right-0 h-10 bg-rsg-gold text-black flex items-center justify-between px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md print:hidden">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 group">
-          <button
-            onClick={handleAvatarClick}
-            className="flex items-center gap-2 hover:opacity-70 transition-opacity"
-            aria-label="Toggle Role"
-          >
-            <UserCircle className="w-5 h-5 opacity-80 group-hover:opacity-100 transition-opacity" />
-          </button>
-          <select
-            ref={selectRef}
-            id="role-switcher"
-            value={activeRole}
-            onChange={handleRoleChange}
-            className="bg-transparent border-none focus:outline-none cursor-pointer font-bold appearance-none hover:opacity-80 transition-opacity text-black h-8"
-          >
-            <option value="admin" className="text-black bg-white">
-              {t.admin}
-            </option>
-            <option value="installer_juan" className="text-black bg-white">
-              {t.installer_juan}
-            </option>
-            <option value="installer_carlos" className="text-black bg-white">
-              {t.installer_carlos}
-            </option>
-          </select>
+          <UserCircle className="w-5 h-5 opacity-80" />
+          <Select value={activeRole} onValueChange={(val) => handleRoleChange(val as Role)}>
+            <SelectTrigger className="bg-transparent border-none h-8 text-black font-bold uppercase p-0 focus:ring-0 focus:ring-offset-0">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="admin" className="text-xs font-bold uppercase">{t.admin}</SelectItem>
+              <SelectItem value="installer_juan" className="text-xs font-bold uppercase">{t.installer_juan}</SelectItem>
+              <SelectItem value="installer_carlos" className="text-xs font-bold uppercase">{t.installer_carlos}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

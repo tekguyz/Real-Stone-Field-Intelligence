@@ -26,6 +26,7 @@ export default function CommandCenterPage() {
     handleUpdateInstaller,
     isVerifying,
     stats,
+    installers,
   } = useCommandCenterController();
 
   return (
@@ -67,6 +68,7 @@ export default function CommandCenterPage() {
             error={error}
             onJobSelect={setSelectedJob}
             onUpdateInstaller={handleUpdateInstaller}
+            installers={installers}
           />
         </div>
 
@@ -191,6 +193,7 @@ export default function CommandCenterPage() {
         onUpdateInstaller={handleUpdateInstaller}
         onVerifyJob={handleVerify}
         isVerifying={isVerifying}
+        installers={installers}
       />
 
       <ImportModal

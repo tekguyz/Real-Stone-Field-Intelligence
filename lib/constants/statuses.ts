@@ -8,6 +8,16 @@ export const JOB_STATUSES = {
 
 export type JobStatus = typeof JOB_STATUSES[keyof typeof JOB_STATUSES];
 
+export const TEAM_STATUSES = {
+  ACTIVE: 'Active',
+  ON_SITE: 'On-Site',
+  OFFLINE: 'Offline',
+} as const;
+
+export type TeamStatus = typeof TEAM_STATUSES[keyof typeof TEAM_STATUSES];
+
+export const ARCHIVE_STATUS = 'Archived' as const;
+
 // Workflow sort order (used for Status column sorting)
 export const STATUS_SORT_ORDER: Record<JobStatus, number> = {
   Assigned: 1,

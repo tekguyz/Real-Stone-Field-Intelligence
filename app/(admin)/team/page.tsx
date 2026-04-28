@@ -3,8 +3,18 @@
 import { useState } from "react";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
-import { Plus, X, Shield, HardHat, Phone, Mail } from "lucide-react";
+import { Plus, X, Shield, HardHat, Phone, Mail, Eye, EyeOff, Trash2, Edit2, Users } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { TEAM_STATUSES, TeamStatus } from "../../../lib/constants/statuses";
+import { toast } from "sonner";
+import { EmptyState } from "../../../components/ui/EmptyState";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
 
 const mockTeam = [
   {
@@ -12,8 +22,10 @@ const mockTeam = [
     name: "Admin User",
     initials: "AD",
     role: "Office Admin",
-    status: "active", // online in office
-    pin: "****",
+    status: TEAM_STATUSES.ACTIVE as TeamStatus,
+    pin: "4821",
+    email: "admin@realstone.com",
+    phone: "404-555-0199",
     isInstaller: false,
   },
   {
@@ -21,8 +33,10 @@ const mockTeam = [
     name: "Juan Perez",
     initials: "JP",
     role: "Lead Installer",
-    status: "on-site", // out in the field
-    pin: "****",
+    status: TEAM_STATUSES.ON_SITE as TeamStatus,
+    pin: "8823",
+    email: "jperez@realstone.com",
+    phone: "404-555-0122",
     job_id: "WO-8402",
     isInstaller: true,
   },
@@ -31,8 +45,10 @@ const mockTeam = [
     name: "Carlos Ruiz",
     initials: "CR",
     role: "Installer",
-    status: "on-site",
-    pin: "****",
+    status: TEAM_STATUSES.ON_SITE as TeamStatus,
+    pin: "1102",
+    email: "cruiz@realstone.com",
+    phone: "404-555-0133",
     job_id: "WO-8418",
     isInstaller: true,
   },
@@ -41,8 +57,10 @@ const mockTeam = [
     name: "Michael Scott",
     initials: "MS",
     role: "Operations Manager",
-    status: "active",
-    pin: "****",
+    status: TEAM_STATUSES.ACTIVE as TeamStatus,
+    pin: "9982",
+    email: "mscott@realstone.com",
+    phone: "404-555-0144",
     isInstaller: false,
   },
   {
@@ -50,19 +68,46 @@ const mockTeam = [
     name: "David Silva",
     initials: "DS",
     role: "Installer",
-    status: "inactive",
-    pin: "****",
+    status: TEAM_STATUSES.OFFLINE as TeamStatus,
+    pin: "5541",
+    email: "dsilva@realstone.com",
+    phone: "404-555-0155",
     isInstaller: true,
   },
 ];
+
+const TeamStatusBadge = ({ status }: { status: TeamStatus }) => {
+  const { language } = useUserStore();
+  const t = dict[language].admin;
+
+  const config = {
+    [TEAM_STATUSES.ACTIVE]: "bg-status-verified-bg/10 text-status-verified-text border-status-verified-bg/20",
+    [TEAM_STATUSES.ON_SITE]: "bg-status-active-bg/10 text-status-active-text border-status-active-bg/20",
+    [TEAM_STATUSES.OFFLINE]: "bg-muted text-muted-foreground border-border",
+  };
+
+  const labels = {
+    [TEAM_STATUSES.ACTIVE]: t.active,
+    [TEAM_STATUSES.ON_SITE]: t.onSite,
+    [TEAM_STATUSES.OFFLINE]: language === "es" ? "Desconectado" : "Offline",
+  };
+
+  return (
+    <div className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border rounded-none ${config[status]}`}>
+      {labels[status]}
+    </div>
+  );
+};
 
 export default function TeamPage() {
   const { language } = useUserStore();
   const t = dict[language].admin;
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<typeof mockTeam[0] | null>(null);
+  const [showPin, setShowPin] = useState(false);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 pb-4"> {/* TODO: remove pb when demo banner is removed */}
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
@@ -83,85 +128,207 @@ export default function TeamPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {mockTeam.map((member) => (
-          <div
-            key={member.id}
-            className={`relative bg-card border p-6 flex flex-col transition-all overflow-hidden ${
-              member.status === "on-site"
-                ? "border-primary/50 bg-gradient-to-br from-card to-primary/5"
-                : "border-border"
-            }`}
-          >
-            {member.status === "on-site" && (
-              <div className="absolute top-0 right-0 w-2 h-full bg-primary" />
-            )}
+      {mockTeam.length === 0 ? (
+        <EmptyState 
+          icon={Users}
+          headline={language === "es" ? "Sin miembros" : "No team members"}
+          subline={language === "es" ? "Invita a tu primer miembro para comenzar" : "Invite your first team member to get started"}
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {mockTeam.map((member) => (
+            <div
+              key={member.id}
+              onClick={() => setSelectedMember(member)}
+              tabIndex={0}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setSelectedMember(member)}
+              className={`relative bg-card border p-6 flex flex-col transition-all overflow-hidden cursor-pointer hover:border-primary/30 hover:bg-rsg-surface-2 group outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold focus-visible:ring-inset ${
+                member.status === TEAM_STATUSES.ON_SITE
+                  ? "border-primary/50 bg-gradient-to-br from-card to-primary/5"
+                  : "border-border"
+              }`}
+            >
+              {member.status === TEAM_STATUSES.ON_SITE && (
+                <div className="absolute top-0 right-0 w-2 h-full bg-primary" />
+              )}
 
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-12 h-12 border border-primary/20 bg-primary/10 text-primary flex items-center justify-center font-black text-lg">
-                {member.initials}
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-12 h-12 flex-shrink-0 border border-primary/20 bg-primary/10 text-primary flex items-center justify-center font-black text-lg">
+                  {member.initials}
+                </div>
+                <TeamStatusBadge status={member.status} />
               </div>
-              <div
-                className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${
-                  member.status === "on-site"
-                    ? "bg-primary/20 text-primary"
-                    : member.status === "active"
-                      ? "bg-green-500/10 text-green-500"
-                      : "bg-foreground/5 text-foreground/40"
-                }`}
-              >
-                {member.status === "on-site"
-                  ? t.onSite
-                  : member.status === "active"
-                    ? t.active
-                    : (language === "es" ? "Desconectado" : "Offline")}
-              </div>
-            </div>
 
-            <div>
-              <h3 className="font-bold text-xl">{member.name}</h3>
-              <div className="flex items-center gap-2 text-foreground/60 mt-1">
-                {member.isInstaller ? (
-                  <HardHat className="w-4 h-4" />
-                ) : (
-                  <Shield className="w-4 h-4" />
-                )}
-                <span className="text-sm">{member.role}</span>
-              </div>
-            </div>
-
-            {member.job_id && (
-              <div className="mt-4 p-3 bg-surface/50 border border-border">
-                <p className="text-[10px] font-mono text-foreground/40 uppercase mb-1">
-                  {language === "es" ? "Asignación Actual" : "Current Assignment"}
-                </p>
-                <div className="text-sm font-semibold">
-                  {t.legacyId} {member.job_id}
+              <div>
+                <h3 className="font-bold text-xl group-hover:text-primary transition-colors">{member.name}</h3>
+                <div className="flex items-center gap-2 text-foreground/60 mt-1">
+                  {member.isInstaller ? (
+                    <HardHat className="w-4 h-4" />
+                  ) : (
+                    <Shield className="w-4 h-4" />
+                  )}
+                  <span className="text-sm">{member.role}</span>
                 </div>
               </div>
-            )}
 
-            <div className="w-full mt-6 pt-5 border-t border-border flex justify-between items-center text-sm">
-              <div className="flex gap-3">
-                <button className="text-foreground/40 hover:text-primary transition-colors">
-                  <Phone className="w-4 h-4" />
-                </button>
-                <button className="text-foreground/40 hover:text-primary transition-colors">
-                  <Mail className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
-                  {t.pin}:
-                </span>
-                <span className="font-mono bg-surface border border-border px-2 py-0.5 text-foreground/80">
-                  {member.pin}
-                </span>
+              {member.job_id && (
+                <div className="mt-4 p-3 bg-surface/50 border border-border">
+                  <p className="text-[10px] font-mono text-foreground/40 uppercase mb-1">
+                    {language === "es" ? "Asignación:" : "Assignment:"}
+                  </p>
+                  <div className="text-sm font-bold font-mono text-primary">
+                    WO# {member.job_id.replace("WO-", "")}
+                  </div>
+                </div>
+              )}
+
+              <div className="w-full mt-6 pt-5 border-t border-border flex justify-between items-center text-sm">
+                <div className="flex gap-3">
+                  <div className="text-foreground/40">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <div className="text-foreground/40">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em]">
+                    {t.pin}:
+                  </span>
+                  <span className="font-mono bg-surface border border-border px-2 py-0.5 text-foreground/80 text-xs">
+                    ••••
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* Member Details Slide-over */}
+      <AnimatePresence>
+        {selectedMember && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => { setSelectedMember(null); setShowPin(false); }}
+              className="fixed inset-0 bg-background/40 backdrop-blur-sm z-[100]"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-card border-l border-border z-[110] flex flex-col"
+            >
+              <div className="p-6 border-b border-border flex justify-between items-center bg-surface/30">
+                <h2 className="text-xl font-black tracking-tight uppercase">
+                  {language === "es" ? "Detalles del Miembro" : "Member Details"}
+                </h2>
+                <button
+                  onClick={() => { setSelectedMember(null); setShowPin(false); }}
+                  className="p-2 hover:text-primary text-foreground/40 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 border-2 border-primary/20 bg-primary/10 text-primary flex items-center justify-center font-black text-2xl">
+                    {selectedMember.initials}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">{selectedMember.name}</h3>
+                    <div className="flex items-center gap-2 text-foreground/60">
+                      {selectedMember.isInstaller ? <HardHat className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+                      <span className="text-sm">{selectedMember.role}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-4 bg-surface/50 border border-border">
+                    <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-2">
+                      {language === "es" ? "Asignación Actual" : "Current Assignment"}
+                    </p>
+                    <div className="text-base font-bold flex items-center gap-2">
+                      {selectedMember.job_id ? (
+                        <>
+                          <span className="text-primary font-mono whitespace-nowrap">WO# {selectedMember.job_id.replace("WO-", "")}</span>
+                          <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 uppercase tracking-widest border border-primary/20">ON-SITE</span>
+                        </>
+                      ) : (
+                        <span className="text-foreground/40 uppercase italic text-sm">{language === "es" ? "Ninguna" : "None"}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-surface/50 border border-border">
+                    <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-2">
+                      {t.statusHeader}
+                    </p>
+                    <TeamStatusBadge status={selectedMember.status} />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Phone</span>
+                    <span className="text-sm font-medium">{selectedMember.phone}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">Email</span>
+                    <span className="text-sm font-medium">{selectedMember.email}</span>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-surface/50 border border-border relative group/pin">
+                  <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-2">
+                    {t.pin}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="font-mono text-lg tracking-[0.5em] bg-card border border-border px-3 py-1.5 rounded-none flex items-center min-w-[120px]">
+                      {showPin ? selectedMember.pin : "••••"}
+                    </div>
+                    <button 
+                      onClick={() => setShowPin(!showPin)}
+                      className="p-2 hover:text-primary transition-colors text-foreground/40"
+                    >
+                      {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  <div className="absolute top-0 right-0 p-2 opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none">
+                     <span className="text-[8px] bg-foreground text-background px-1.5 py-0.5 uppercase tracking-tight">Contact admin to reset PIN</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-3">
+                <button
+                  onClick={() => toast("Coming soon")}
+                  className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-4 font-black uppercase tracking-[0.2em] transition-opacity hover:opacity-90 active:scale-[0.98]"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  {language === "es" ? "Editar Miembro" : "Edit Member"}
+                </button>
+                <button
+                  onClick={() => {
+                    const confirmed = window.confirm(language === "es" ? "¿Eliminar este miembro?" : "Remove this member?");
+                    if (confirmed) toast.error("Member deletion is restricted in demo mode");
+                  }}
+                  className="w-full flex items-center justify-center gap-2 border border-destructive/20 text-destructive hover:bg-destructive/10 py-4 font-black uppercase tracking-[0.2em] transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {language === "es" ? "Eliminar Miembro" : "Remove Member"}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Invite Member Slide-over */}
       <AnimatePresence>
@@ -220,12 +387,17 @@ export default function TeamPage() {
                   <label className="block text-[10px] font-mono text-foreground/50 uppercase tracking-[0.2em] mb-2">
                     {t.userRole}
                   </label>
-                  <select className="w-full bg-surface/50 border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary appearance-none transition-colors">
-                    <option>{language === "es" ? "Instalador" : "Installer"}</option>
-                    <option>{language === "es" ? "Instalador Principal" : "Lead Installer"}</option>
-                    <option>{language === "es" ? "Admin de Oficina" : "Office Admin"}</option>
-                    <option>{language === "es" ? "Gerente de Operaciones" : "Operations Manager"}</option>
-                  </select>
+                  <Select defaultValue="installer">
+                    <SelectTrigger className="w-full bg-surface/50 border border-border h-12 text-sm focus:ring-1 focus:ring-primary rounded-none">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="installer">{language === "es" ? "Instalador" : "Installer"}</SelectItem>
+                      <SelectItem value="lead">{language === "es" ? "Instalador Principal" : "Lead Installer"}</SelectItem>
+                      <SelectItem value="admin">{language === "es" ? "Admin de Oficina" : "Office Admin"}</SelectItem>
+                      <SelectItem value="ops">{language === "es" ? "Gerente de Operaciones" : "Operations Manager"}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="p-4 bg-surface/50 border border-border mt-2">

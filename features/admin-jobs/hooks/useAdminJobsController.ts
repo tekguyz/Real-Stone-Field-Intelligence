@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useJobs, useUpdateJobInstaller, useUpdateJobStatus } from "../../../entities/job/api";
 import { Job } from "../../../entities/job/types";
-import { JOB_STATUSES } from "@/lib/constants/statuses";
+import { JOB_STATUSES, ARCHIVE_STATUS } from "@/lib/constants/statuses";
 import { useUserStore } from "../../../entities/user/store";
 
 import { toast } from "sonner";
@@ -11,6 +11,7 @@ export function useAdminJobsController() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<"active" | "archived">("active");
 
   const [preset, setPreset] = useState<string | null>(null); // "Today", "Unassigned", "Needs Review", "In Progress"
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
@@ -55,6 +56,13 @@ export function useAdminJobsController() {
     }
   };
 
+  const handleArchiveJob = async (jobId: string) => {
+    await updateStatus.mutateAsync({ jobId, status: ARCHIVE_STATUS });
+    if (selectedJob && selectedJob.id === jobId) {
+      setSelectedJob(null);
+    }
+  };
+
   const currentJobs = useMemo(() => jobs || [], [jobs]);
 
   const cities = useMemo(
@@ -84,6 +92,11 @@ export function useAdminJobsController() {
   const filteredJobs = useMemo(
     () => {
       const filtered = currentJobs.filter((job) => {
+        // Filter by View Mode (Active vs Archived)
+        const isArchived = job.status === ARCHIVE_STATUS;
+        if (viewMode === "active" && isArchived) return false;
+        if (viewMode === "archived" && !isArchived) return false;
+
         const matchesSearch =
           job.client_name.toLowerCase().includes(search.toLowerCase()) ||
           job.legacy_id.toLowerCase().includes(search.toLowerCase());
@@ -128,6 +141,7 @@ export function useAdminJobsController() {
       selectedCityFilters,
       selectedInstallerFilters,
       preset,
+      viewMode,
     ],
   );
 
@@ -147,6 +161,8 @@ export function useAdminJobsController() {
     setSelectedJob,
     search,
     setSearch,
+    viewMode,
+    setViewMode,
     preset,
     setPreset,
     selectedStatuses,
@@ -163,6 +179,7 @@ export function useAdminJobsController() {
     installers,
     handleUpdateInstaller,
     handleVerify,
+    handleArchiveJob,
     isVerifying: updateStatus.isPending,
     toggleFilter,
   };

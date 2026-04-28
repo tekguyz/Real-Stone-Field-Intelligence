@@ -3,6 +3,7 @@
 import { Job } from "../../../entities/job/types";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
+import { formatInstallerName } from "../../../shared/lib/utils";
 
 const formatHumanDateTime = (dateStr: string | number, language: string) => {
   if (!dateStr) return "N/A";
@@ -43,9 +44,7 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
               {language === "es" ? "Nombre Instalador" : "Installer Name"}
             </span>
             <span className="font-bold text-sm uppercase">
-              {job.installer_id
-                ? job.installer_id.replace("installer_", "")
-                : t.unassigned}
+              {formatInstallerName(job.installer_id)}
             </span>
           </div>
           <div>

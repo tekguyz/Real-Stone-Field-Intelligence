@@ -5,12 +5,33 @@ import {
   Loader2,
   AlertTriangle,
   ArrowUpDown,
+  MoreVertical,
+  Eye,
+  Edit2,
+  Archive,
+  FilterX,
+  ClipboardList,
 } from "lucide-react";
-import { summarizeJobScope } from "../../../shared/lib/utils";
+import { summarizeJobScope, formatInstallerName } from "../../../shared/lib/utils";
 import { useUserStore } from "../../../entities/user/store";
 import { useSortableTable } from "../../../shared/lib/useSortableTable";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
-import { JOB_STATUSES } from "@/lib/constants/statuses";
+import { EmptyState } from "../../../components/ui/EmptyState";
+import { JOB_STATUSES, ARCHIVE_STATUS } from "@/lib/constants/statuses";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
+import { toast } from "sonner";
 
 const SortIcon = ({ 
   columnKey, 
@@ -31,17 +52,33 @@ export function AdminJobsTable({
   error,
   onJobSelect,
   onUpdateInstaller,
+  onArchiveJob,
+  installers = ["installer_juan", "installer_carlos"],
 }: {
   jobs: Job[];
   isLoading: boolean;
   error: Error | null;
   onJobSelect: (job: Job) => void;
   onUpdateInstaller: (jobId: string, installerId: string) => void;
+  onArchiveJob?: (jobId: string) => void;
+  installers?: string[];
 }) {
-  const { language } = useUserStore();
+  const { language, activeRole } = useUserStore();
   const t = dict[language].admin;
 
   const { sortedData, sortConfig, handleSort } = useSortableTable(jobs, "adminJobs", { key: "scheduled_arrival", direction: "desc" });
+
+  const handleArchive = (job: Job) => {
+    if (onArchiveJob) {
+      onArchiveJob(job.id);
+      toast.success(`${language === "es" ? "Orden archivada" : "Job archived"}: ${job.legacy_id}`, {
+        action: {
+          label: language === "es" ? "Deshacer" : "Undo",
+          onClick: () => toast.info("Undo not implemented in demo")
+        }
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -69,11 +106,13 @@ export function AdminJobsTable({
       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden z-10" />
       <div className="overflow-auto max-h-[700px]">
         <table className="w-full text-left text-sm whitespace-nowrap relative border-separate border-spacing-0">
-          <thead className="bg-surface sticky top-0 z-20 shadow-sm border-b border-border">
+          <thead className="bg-surface sticky top-0 z-20 shadow-sm border-b border-border text-[10px]">
             <tr>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                tabIndex={0}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("legacy_id")}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("legacy_id")}
               >
                 <div className="flex items-center">
                   {t.legacyId}
@@ -81,8 +120,10 @@ export function AdminJobsTable({
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                tabIndex={0}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("client_name")}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("client_name")}
               >
                 <div className="flex items-center">
                   {t.client}
@@ -91,8 +132,10 @@ export function AdminJobsTable({
               </th>
               <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left border-b border-border">{t.scope}</th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                tabIndex={0}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("installer_id")}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("installer_id")}
               >
                 <div className="flex items-center">
                   {t.installer}
@@ -100,8 +143,10 @@ export function AdminJobsTable({
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                tabIndex={0}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("status")}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("status")}
               >
                 <div className="flex items-center">
                   {t.status}
@@ -109,14 +154,17 @@ export function AdminJobsTable({
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
+                tabIndex={0}
+                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("scheduled_arrival")}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("scheduled_arrival")}
               >
                 <div className="flex items-center">
                   {t.installDate}
                   <SortIcon columnKey="scheduled_arrival" sortConfig={sortConfig} />
                 </div>
               </th>
+              <th className="px-4 py-4 border-b border-border w-10"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border/50">
@@ -128,8 +176,10 @@ export function AdminJobsTable({
               return (
                 <tr
                   key={job.id}
-                  className="hover:bg-primary/5 transition-colors group cursor-pointer"
+                  tabIndex={0}
+                  className="hover:bg-rsg-surface-2 transition-colors group cursor-pointer outline-none focus:bg-rsg-surface-2"
                   onClick={() => onJobSelect(job)}
+                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onJobSelect(job)}
                 >
                   <td className="p-4 text-sm font-medium text-foreground">
                     {job.legacy_id}
@@ -158,17 +208,31 @@ export function AdminJobsTable({
                     </div>
                   </td>
                   <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                    <select
-                      className={`bg-transparent border border-transparent hover:border-border cursor-pointer text-sm font-medium text-foreground rounded-none px-0 py-0 uppercase focus:outline-none focus:border-primary/30 transition-colors appearance-none ${isAssignmentLocked ? "opacity-40 cursor-not-allowed" : ""}`}
-                      value={job.installer_id || "unassigned"}
-                      onChange={(e) => onUpdateInstaller(job.id, e.target.value)}
-                      disabled={isAssignmentLocked}
-                      style={{ WebkitAppearance: "none", MozAppearance: "none" }}
-                    >
-                      <option value="unassigned">{t.unassigned}</option>
-                      <option value="installer_juan">JUAN</option>
-                      <option value="installer_carlos">CARLOS</option>
-                    </select>
+                    <div className="relative">
+                      <Select
+                        disabled={isAssignmentLocked}
+                        value={job.installer_id || "unassigned"}
+                        onValueChange={(val) => onUpdateInstaller(job.id, val)}
+                      >
+                        <SelectTrigger className={`h-8 border-transparent hover:border-border bg-transparent rounded-none px-2 text-xs font-medium tracking-tight w-32 ${isAssignmentLocked ? "opacity-40" : ""}`}>
+                          <SelectValue>
+                            {formatInstallerName(job.installer_id)}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
+                          {installers.map((inst) => (
+                            <SelectItem 
+                              key={inst} 
+                              value={inst} 
+                              className="text-xs uppercase font-bold"
+                            >
+                              {formatInstallerName(inst)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </td>
                   <td className="p-4">
                     <StatusBadge status={job.status} />
@@ -204,16 +268,50 @@ export function AdminJobsTable({
                       </span>
                     )}
                   </td>
+                  <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="p-2 hover:bg-foreground/5 rounded-full transition-colors inline-flex items-center justify-center outline-none focus:bg-foreground/10">
+                        <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => onJobSelect(job)} className="text-[10px] font-black uppercase tracking-widest gap-2">
+                          <Eye className="w-3.5 h-3.5" />
+                          {language === "es" ? "Ver Detalles" : "View Details"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast.info("Coming soon")} className="text-[10px] font-black uppercase tracking-widest gap-2">
+                          <Edit2 className="w-3.5 h-3.5" />
+                          {language === "es" ? "Editar Orden" : "Edit Job"}
+                        </DropdownMenuItem>
+                        {activeRole === "admin" && (
+                          <DropdownMenuItem 
+                            onClick={() => handleArchive(job)}
+                            className="text-[10px] font-black uppercase tracking-widest gap-2 text-rsg-error focus:text-rsg-error focus:bg-rsg-error/10"
+                          >
+                            <Archive className="w-3.5 h-3.5" />
+                            {language === "es" ? "Archivar Orden" : "Archive Job"}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
                 </tr>
               );
             })}
           </tbody>
       </table>
-      {jobs.length === 0 && (
-        <div className="p-8 text-center text-foreground/50 text-sm">
-          {t.noMatchingJobs}
-        </div>
-      )}
+      {jobs.length === 0 ? (
+        <EmptyState 
+          icon={ClipboardList}
+          headline={language === "es" ? "Sin órdenes aún" : "No jobs yet"}
+          subline={language === "es" ? "Importa datos o crea tu primera orden de trabajo" : "Import data or create your first work order"}
+        />
+      ) : sortedData.length === 0 ? (
+        <EmptyState 
+          icon={FilterX}
+          headline={language === "es" ? "Ninguna orden coincide" : "No jobs match your filters"}
+          subline={language === "es" ? "Prueba ajustando o limpiando tus filtros" : "Try adjusting or clearing your active filters"}
+        />
+      ) : null}
       </div>
     </div>
   );

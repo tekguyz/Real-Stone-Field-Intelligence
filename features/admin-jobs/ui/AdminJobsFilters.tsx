@@ -4,6 +4,7 @@ import { useUserStore } from "../../../entities/user/store";
 import { JOB_STATUSES, STATUS_SORT_ORDER, JobStatus } from "@/lib/constants/statuses";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
 import { useState, useMemo } from "react";
+import { formatInstallerName } from "../../../shared/lib/utils";
 
 import { Job } from "../../../entities/job/types";
 
@@ -12,8 +13,10 @@ function FilterAccordion({ title, count, defaultOpen = false, children }: { titl
   return (
     <div className="border-b border-border/50  last:border-0 py-1">
       <button 
+        type="button"
         onClick={() => setIsOpen(!isOpen)} 
-        className="flex items-center justify-between w-full text-[11px] font-mono uppercase tracking-widest font-black text-foreground/70 hover:text-foreground transition-colors group"
+        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full text-[11px] font-mono uppercase tracking-widest font-black text-foreground/70 hover:text-foreground transition-colors group py-2 outline-none focus:text-primary"
       >
         <span>{title} {count !== undefined && count > 0 && `(${count})`}</span>
         <span className="text-foreground/30 group-hover:text-primary transition-colors">
@@ -249,7 +252,7 @@ export function AdminJobsFilters({
                     }}
                   />
                   <span className="text-xs text-foreground/70 group-hover:text-foreground transition-colors uppercase font-mono truncate">
-                    {inst!.replace("installer_", "")}
+                    {formatInstallerName(inst)}
                   </span>
                 </label>
               ))}

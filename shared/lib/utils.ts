@@ -15,3 +15,9 @@ export function summarizeJobScope(parts: JobScopePart[] | null): string {
   }
   return mainParts.join(", ");
 }
+
+export function formatInstallerName(id: string | null | undefined): string {
+  if (!id || id === "unassigned") return "UNASSIGNED";
+  // Logic to handle "installer_name" -> "NAME"
+  return id.replace(/installer_/i, "").replace(/_/g, " ").toUpperCase();
+}

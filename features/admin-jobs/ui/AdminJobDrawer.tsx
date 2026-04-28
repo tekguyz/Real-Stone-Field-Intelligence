@@ -1,11 +1,19 @@
 import { Job } from "../../../entities/job";
 import { dict } from "../../../entities/i18n/dict";
-import { X, MapPin, Loader2, ShieldCheck, Clock } from "lucide-react";
+import { X, MapPin, Loader2, ShieldCheck, Clock, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useUserStore } from "../../../entities/user/store";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { formatInstallerName } from "../../../shared/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
 
 import { JOB_STATUSES } from "../../../lib/constants/statuses";
 
@@ -15,12 +23,14 @@ export function AdminJobDrawer({
   onUpdateInstaller,
   onVerifyJob,
   isVerifying = false,
+  installers = ["installer_juan", "installer_carlos"],
 }: {
   selectedJob: Job | null;
   onClose: () => void;
   onUpdateInstaller: (jobId: string, installerId: string) => void;
   onVerifyJob?: (jobId: string) => void;
   isVerifying?: boolean;
+  installers?: string[];
 }) {
   const { language, isDevMode, activeRole } = useUserStore();
   const t = dict[language].admin;
@@ -155,35 +165,32 @@ export function AdminJobDrawer({
                     {t.installer}
                     {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
                   </span>
-                  <select
-                    className={`bg-card w-full border border-border px-3 py-2 text-xs font-black rounded-none focus:outline-none focus:border-rsg-gold font-mono uppercase text-foreground appearance-none h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
-                    value={selectedJob.installer_id || "unassigned"}
-                    onChange={(e) =>
-                      onUpdateInstaller(selectedJob.id, e.target.value)
-                    }
+                  <Select
                     disabled={isAssignmentLocked}
-                    style={{ WebkitAppearance: "none", MozAppearance: "none" }}
-                    title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
+                    value={selectedJob.installer_id || "unassigned"}
+                    onValueChange={(val) => onUpdateInstaller(selectedJob.id, val)}
                   >
-                    <option
-                      value="unassigned"
-                      className="bg-background text-foreground py-2"
+                    <SelectTrigger 
+                      className={`w-full bg-card border border-border px-3 py-2 text-xs font-black rounded-none focus:ring-1 focus:ring-rsg-gold font-mono uppercase text-foreground h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
+                      title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
                     >
-                      {t.unassigned}
-                    </option>
-                    <option
-                      value="installer_juan"
-                      className="bg-background text-foreground py-2"
-                    >
-                      JUAN
-                    </option>
-                    <option
-                      value="installer_carlos"
-                      className="bg-background text-foreground py-2"
-                    >
-                      CARLOS
-                    </option>
-                  </select>
+                      <SelectValue>
+                        {formatInstallerName(selectedJob.installer_id)}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
+                      {installers.map((inst) => (
+                        <SelectItem 
+                          key={inst} 
+                          value={inst} 
+                          className="text-xs uppercase font-bold"
+                        >
+                          {formatInstallerName(inst)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

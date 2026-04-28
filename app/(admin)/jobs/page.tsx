@@ -2,13 +2,14 @@
 
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
-import { Database, Plus, Search } from "lucide-react";
+import { Database, Plus, Search, Archive, CheckCircle2 } from "lucide-react";
 import { useAdminJobsController } from "../../../features/admin-jobs/hooks/useAdminJobsController";
 import { AdminJobsTable } from "../../../features/admin-jobs/ui/AdminJobsTable";
 import { AdminJobsFilters } from "../../../features/admin-jobs/ui/AdminJobsFilters";
 import { AdminJobDrawer } from "../../../features/admin-jobs/ui/AdminJobDrawer";
 import { ImportModal } from "../../../features/admin-import/ui/ImportModal";
 import { useState } from "react";
+import { Button } from "../../../components/ui/button";
 
 export default function JobsPage() {
   const { language } = useUserStore();
@@ -22,6 +23,8 @@ export default function JobsPage() {
     setSelectedJob,
     search,
     setSearch,
+    viewMode,
+    setViewMode,
     selectedStatuses,
     setSelectedStatuses,
     preset,
@@ -37,30 +40,45 @@ export default function JobsPage() {
     installers,
     handleUpdateInstaller,
     handleVerify,
+    handleArchiveJob,
     isVerifying,
     toggleFilter,
     allJobs
   } = useAdminJobsController();
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 pb-10">
       {/* Header */}
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             {t.workOrderManagement}
           </h1>
-          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none">
-            {t.allActiveAndPendingInstallations}
-          </p>
+          <div className="flex bg-muted/50 p-1 border border-border mt-3 w-fit">
+            <button
+              onClick={() => setViewMode("active")}
+              className={`text-[9px] font-black uppercase tracking-[0.2em] px-6 py-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold ${viewMode === "active" ? "bg-foreground text-background shadow-sm" : "text-foreground/40 hover:text-foreground/60"}`}
+            >
+              Active Jobs
+            </button>
+            <button
+              onClick={() => setViewMode("archived")}
+              className={`text-[9px] font-black uppercase tracking-[0.2em] px-6 py-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold ${viewMode === "archived" ? "bg-rsg-gold text-white shadow-sm" : "text-foreground/40 hover:text-foreground/60"}`}
+            >
+              Archived
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setIsImportOpen(true)}
-          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm print:hidden"
-        >
-          <Database className="w-4 h-4 text-rsg-gold" />
-          {t.importData}
-        </button>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setIsImportOpen(true)}
+            variant="outline"
+            className="h-12 px-6 font-black tracking-[0.2em] uppercase border-r-4 border-b-4 border-primary rounded-none"
+          >
+            <Database className="w-4 h-4 text-rsg-gold mr-2" />
+            {t.importData}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -73,7 +91,7 @@ export default function JobsPage() {
               placeholder={t.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-primary transition-colors"
+              className="w-full pl-9 pr-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-primary transition-colors h-12"
             />
           </div>
 
@@ -84,6 +102,8 @@ export default function JobsPage() {
               error={error}
               onJobSelect={setSelectedJob}
               onUpdateInstaller={handleUpdateInstaller}
+              onArchiveJob={handleArchiveJob}
+              installers={installers}
             />
           </div>
         </div>
@@ -119,6 +139,7 @@ export default function JobsPage() {
         onUpdateInstaller={handleUpdateInstaller}
         onVerifyJob={handleVerify}
         isVerifying={isVerifying}
+        installers={installers}
       />
     </div>
   );

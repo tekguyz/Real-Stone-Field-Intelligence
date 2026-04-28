@@ -33,9 +33,9 @@ export function AdminSidebar() {
       initial={false}
       animate={{ width: isSidebarOpen ? 256 : 80 }}
       transition={{ type: "spring", damping: 30, stiffness: 400, mass: 1.5 }}
-      className="border-r border-border bg-card flex flex-col hidden md:flex shrink-0 h-full relative print:hidden"
+      className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col hidden md:flex shrink-0 h-[100dvh] sticky top-0 overflow-y-auto overflow-x-hidden relative print:hidden"
     >
-      <div className="h-16 flex items-center px-6 border-b border-border overflow-hidden whitespace-nowrap">
+      <div className="h-16 flex items-center px-6 border-b border-sidebar-border overflow-hidden whitespace-nowrap shrink-0">
         <Mountain className="w-6 h-6 mr-3 text-primary shrink-0" />
         <AnimatePresence mode="wait">
           {isSidebarOpen && (
@@ -51,7 +51,7 @@ export function AdminSidebar() {
         </AnimatePresence>
       </div>
 
-      <nav className="flex-1 p-4 flex flex-col gap-1 overflow-hidden">
+      <nav className="flex-1 p-4 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
@@ -63,8 +63,8 @@ export function AdminSidebar() {
               title={!isSidebarOpen ? item.name : undefined}
               className={`flex items-center gap-3 px-3 py-3 transition-colors text-xs font-black tracking-widest uppercase whitespace-nowrap relative group border-l-4 rounded-none ${
                 isActive
-                  ? "bg-rsg-text/10 dark:bg-rsg-gold/10 border-rsg-text dark:border-rsg-gold text-rsg-text dark:text-rsg-gold"
-                  : "border-transparent text-rsg-text/50 hover:bg-rsg-surface hover:text-rsg-text"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-primary"
+                  : "border-transparent text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
               }`}
             >
               <Icon className="w-5 h-5 shrink-0" />
@@ -92,7 +92,7 @@ export function AdminSidebar() {
 
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-20 w-6 h-6 bg-card border border-border flex items-center justify-center text-foreground/50 hover:text-primary transition-colors z-[60]"
+        className="absolute -right-3 top-20 w-6 h-6 bg-sidebar border border-sidebar-border flex items-center justify-center text-sidebar-foreground/50 hover:text-sidebar-primary transition-colors z-[60]"
       >
         {isSidebarOpen ? (
           <ChevronLeft className="w-4 h-4" />
@@ -103,9 +103,9 @@ export function AdminSidebar() {
 
       <Link
         href="/settings"
-        className="p-4 border-t border-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-surface transition-colors"
+        className="p-4 border-t border-sidebar-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-sidebar-accent transition-colors shrink-0"
       >
-        <div className="w-8 h-8 border border-primary/20 bg-primary/10 flex items-center justify-center text-primary font-black text-xs uppercase shrink-0">
+        <div className="w-8 h-8 border border-sidebar-primary/20 bg-sidebar-primary/10 flex items-center justify-center text-sidebar-primary font-black text-xs uppercase shrink-0">
           AD
         </div>
         <AnimatePresence mode="wait">

@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./theme-provider";
 import { ReactQueryProvider } from "../shared/lib/providers/query-provider";
 import { DemoBanner } from "../features/demo-switcher/DemoBanner";
 import { IOSInstallBanner } from "../components/IOSInstallBanner";
 import { Toaster } from "sonner";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,14 +69,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="overscroll-none">
+    <html lang="en" suppressHydrationWarning className={cn("overscroll-none", "font-sans", geist.variable)}>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased text-foreground selection:bg-rsg-gold/30 overscroll-none`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ReactQueryProvider>
             <DemoBanner />
-            <div className="pt-10 print:pt-0 h-screen flex flex-col overscroll-none">
+            <div className="pt-10 print:pt-0 h-[100dvh] flex flex-col overflow-hidden overscroll-none">
               {children}
             </div>
             <IOSInstallBanner />

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
    REAL STONE GROUP — DESIGN TOKENS & GLOBAL STYLES
@@ -10,287 +13,279 @@
 
   /* ─────────────────────────────────────────────────────────────────
      LIGHT MODE
+     Single :root block. No second :root anywhere in this file.
+     Shadcn defaults are intentionally overridden here.
   ───────────────────────────────────────────────────────────────── */
   :root {
 
     /* ── Brand Primitives ─────────────────────────── */
-    /* Gold: hue 72 is warm amber-gold. Kept at 0.74 L in light mode
-       so it pops on the near-white background without blowing out. */
     --rsg-gold:        0.74 0.17 72;
+    --rsg-background:  0.975 0.006 75;
+    --rsg-surface:     1 0 0;
+    --rsg-surface-2:   0.955 0.007 75;
+    --rsg-text:        0.13 0.012 75;
+    --rsg-border:      0.88 0.014 75;
+    --rsg-error:       0.52 0.19 27;
 
-    /* Background hierarchy: 3 levels. bg-2 is new — used for hover
-       states, nested cards, and table row hover. Prevents bg / surface
-       from being the only two levels (which forces over-reliance on borders). */
-    --rsg-background:  0.975 0.006 75;   /* Page bg — warm near-white     */
-    --rsg-surface:     1     0     0;    /* Card bg — pure white           */
-    --rsg-surface-2:   0.955 0.007 75;   /* Hover / nested surface         */
-
-    /* Text: warm near-black. Slightly warmer than neutral (hue 75)
-       so it harmonizes with gold elements instead of fighting them. */
-    --rsg-text:        0.13  0.012 75;
-
-    /* Border: warm, subtle. Light enough to not be noisy on white cards. */
-    --rsg-border:      0.88  0.014 75;
-
-    /* Error / Destructive: deep red, not neon. */
-    --rsg-error:       0.52  0.19  27;
-
-    /* ── Status Colors — Light Mode ───────────────────
-       Strategy: high-lightness tinted bg + deep saturated text.
-       Each hue is perceptually distinct and none overlaps with
-       the brand gold (hue 72) to avoid badge/UI confusion.
-
-       Hue allocation:
-         Assigned → 265 (cool slate-gray, near-neutral, "quiet")
-         Pending  → 46  (orange — shifted away from gold's 72)
-         Active   → 238 (true electric blue)
-         Review   → 292 (indigo-violet)
-         Verified → 148 (emerald green)
+    /* ── Status Colors — Light Mode ─────────────────
+       Hue map: Assigned 265 · Pending 46 · Active 238
+                Review 292 · Verified 148
+       None overlap brand gold (72) — distinct at a glance.
     ─────────────────────────────────────────────────── */
+    --status-assigned-bg:   oklch(0.91 0.010 265);
+    --status-assigned-text: oklch(0.30 0.016 265);
 
-    /* Assigned — deliberately muted. Low chroma reads as "waiting,
-       no urgency." The hue 265 gives a cool slate tone that's
-       clearly gray yet not lifeless on a warm background. */
-    --status-assigned-bg:    oklch(0.91  0.010 265);
-    --status-assigned-text:  oklch(0.30  0.016 265);
+    --status-pending-bg:    oklch(0.93 0.080 46);
+    --status-pending-text:  oklch(0.38 0.19  44);
 
-    /* Pending — orange, but hue 46 not 72. This is critical:
-       the brand gold is hue 72. Pending at hue 46 reads as
-       true orange while gold reads as warm amber — distinct
-       at a glance even without checking the label. */
-    --status-pending-bg:     oklch(0.93  0.080 46);
-    --status-pending-text:   oklch(0.38  0.19  44);
+    --status-active-bg:     oklch(0.91 0.080 238);
+    --status-active-text:   oklch(0.27 0.19  238);
 
-    /* Active — electric blue. High chroma blue text on a
-       pale blue tint. Maximum "in motion" energy. */
-    --status-active-bg:      oklch(0.91  0.080 238);
-    --status-active-text:    oklch(0.27  0.19  238);
+    --status-review-bg:     oklch(0.91 0.080 292);
+    --status-review-text:   oklch(0.27 0.19  292);
 
-    /* Review — indigo/violet. Conveys "elevated, scrutiny needed."
-       Purple sits between blue and red on the spectrum — the color
-       of caution without alarm. */
-    --status-review-bg:      oklch(0.91  0.080 292);
-    --status-review-text:    oklch(0.27  0.19  292);
-
-    /* Verified — success green. WCAG-safe deep green text on
-       a light green tint. Unambiguously "done." */
-    --status-verified-bg:    oklch(0.91  0.075 148);
-    --status-verified-text:  oklch(0.26  0.17  148);
+    --status-verified-bg:   oklch(0.91 0.075 148);
+    --status-verified-text: oklch(0.26 0.17  148);
 
     /* ── Signature Pad ────────────────────────────── */
-    --sig-bg:   1     0    0;   /* White canvas */
-    --sig-pen:  0     0    0;   /* Black ink */
+    --sig-bg:  1 0 0;
+    --sig-pen: 0 0 0;
 
-    /* ── Semantic Tokens (shadcn / Radix compatible) ──
-       These are the tokens shadcn components look for.
-       Previously missing: popover, secondary, muted,
-       accent, destructive, input, ring.
-       Without these, Radix dropdowns fall back to
-       OS/browser defaults — white bg in dark mode. */
+    /* ── Semantic Tokens ──────────────────────────── */
+    /* Overrides the shadcn gray defaults imported above.
+       Every shadcn/Radix component reads these tokens. */
+    --background:             oklch(var(--rsg-background));
+    --foreground:             oklch(var(--rsg-text));
 
-    --background:               oklch(var(--rsg-background));
-    --foreground:               oklch(var(--rsg-text));
+    --card:                   oklch(var(--rsg-surface));
+    --card-foreground:        oklch(var(--rsg-text));
 
-    --card:                     oklch(var(--rsg-surface));
-    --card-foreground:          oklch(var(--rsg-text));
+    --popover:                oklch(var(--rsg-surface));
+    --popover-foreground:     oklch(var(--rsg-text));
 
-    /* Popover: same as surface. Radix popovers (Select, Combobox,
-       Tooltip, etc.) inherit this. Defining it explicitly prevents
-       the dark-mode white-dropdown bug. */
-    --popover:                  oklch(var(--rsg-surface));
-    --popover-foreground:       oklch(var(--rsg-text));
+    --primary:                oklch(var(--rsg-gold));
+    --primary-foreground:     oklch(0.12 0.01 75);
 
-    --primary:                  oklch(var(--rsg-gold));
-    --primary-foreground:       oklch(0.12  0.01  75);
+    --secondary:              oklch(var(--rsg-surface-2));
+    --secondary-foreground:   oklch(var(--rsg-text));
 
-    /* Secondary: the surface-2 level — used for secondary buttons,
-       selected states in filter panels, table row hover. */
-    --secondary:                oklch(var(--rsg-surface-2));
-    --secondary-foreground:     oklch(var(--rsg-text));
+    --muted:                  oklch(0.94 0.006 75);
+    --muted-foreground:       oklch(0.50 0.016 75);
 
-    /* Muted: slightly more tinted than surface-2.
-       Used for disabled states, placeholder text backgrounds. */
-    --muted:                    oklch(0.94  0.006 75);
-    --muted-foreground:         oklch(0.50  0.016 75);
+    --accent:                 oklch(0.94 0.010 75);
+    --accent-foreground:      oklch(var(--rsg-text));
 
-    /* Accent: same as secondary for this design — a warm off-white
-       tint used on hover states and icon button backgrounds. */
-    --accent:                   oklch(0.94  0.010 75);
-    --accent-foreground:        oklch(var(--rsg-text));
+    --destructive:            oklch(var(--rsg-error));
+    --destructive-foreground: oklch(0.98 0 0);
 
-    --destructive:              oklch(var(--rsg-error));
-    --destructive-foreground:   oklch(0.98  0     0);
+    --border:                 oklch(var(--rsg-border));
+    --input:                  oklch(var(--rsg-border));
+    --ring:                   oklch(var(--rsg-gold));
 
-    /* Border / Input: same value — consistent edge styling
-       on both containers and form fields. */
-    --border:                   oklch(var(--rsg-border));
-    --input:                    oklch(var(--rsg-border));
-
-    /* Ring: gold focus ring — brand-consistent keyboard navigation. */
-    --ring:                     oklch(var(--rsg-gold));
-
-    /* Radius: base border-radius used by shadcn components.
-       0.5rem = 8px. Adjust if you want a rounder or sharper UI. */
+    /* ── Radius ───────────────────────────────────── */
     --radius: 0.5rem;
+
+    /* ── Sidebar (uses brand surface hierarchy) ───── */
+    --sidebar:                    oklch(var(--rsg-surface));
+    --sidebar-foreground:         oklch(var(--rsg-text));
+    --sidebar-primary:            oklch(var(--rsg-gold));
+    --sidebar-primary-foreground: oklch(0.12 0.01 75);
+    --sidebar-accent:             oklch(var(--rsg-surface-2));
+    --sidebar-accent-foreground:  oklch(var(--rsg-text));
+    --sidebar-border:             oklch(var(--rsg-border));
+    --sidebar-ring:               oklch(var(--rsg-gold));
+
+    /* ── Chart Colors (gold-family scale) ─────────── */
+    --chart-1: oklch(0.74 0.17 72);
+    --chart-2: oklch(0.65 0.14 72);
+    --chart-3: oklch(0.55 0.11 72);
+    --chart-4: oklch(0.44 0.08 72);
+    --chart-5: oklch(0.33 0.05 72);
   }
 
 
   /* ─────────────────────────────────────────────────────────────────
      DARK MODE
+     Single .dark block. No second .dark anywhere in this file.
   ───────────────────────────────────────────────────────────────── */
   .dark {
 
     /* ── Brand Primitives ─────────────────────────── */
-    /* Gold: slightly richer chroma in dark mode (0.18 vs 0.17)
-       because dark backgrounds absorb saturation perceptually.
-       Same hue — consistent brand identity across modes. */
-    --rsg-gold:        0.73  0.18  72;
+    --rsg-gold:        0.73 0.18 72;
+    --rsg-background:  0.13 0.009 75;
+    --rsg-surface:     0.18 0.010 75;
+    --rsg-surface-2:   0.23 0.010 75;
+    --rsg-text:        0.97 0.005 75;
+    --rsg-border:      0.28 0.012 75;
+    --rsg-error:       0.65 0.21 27;
 
-    /* Background hierarchy in dark mode: 3 distinct levels.
-       The step between each is ~0.05L — enough to see the
-       elevation without being garish. */
-    --rsg-background:  0.13  0.009 75;   /* Page bg — warm near-black      */
-    --rsg-surface:     0.18  0.010 75;   /* Card bg — elevated surface      */
-    --rsg-surface-2:   0.23  0.010 75;   /* Hover / nested / active surface */
-
-    --rsg-text:        0.97  0.005 75;   /* Near-white, barely warm         */
-    --rsg-border:      0.28  0.012 75;   /* Subtle warm border              */
-    --rsg-error:       0.65  0.21  27;
-
-    /* ── Status Colors — Dark Mode ───────────────────
-       Strategy: medium-depth tinted bg (visibly above surface,
-       not bright enough to blind) + high-lightness text.
-       The bg L values (0.30–0.36) are deliberately above the
-       card surface (0.18) so badges read as "floating."
-
-       Critical for Pending: text hue is 50 (orange), which is
-       warmer than gold (72). In practice gold is amber-warm,
-       pending text is cooler orange — distinct enough. The bg
-       tint at 0.33L also grounds the badge so it doesn't float
-       as a raw orange chip competing with gold UI elements.
+    /* ── Status Colors — Dark Mode ──────────────────
+       Deep tinted bg (L 0.30-0.33, visibly above surface 0.18)
+       + high-lightness text. Badges "float" on dark cards.
     ─────────────────────────────────────────────────── */
+    --status-assigned-bg:   oklch(0.30 0.016 265);
+    --status-assigned-text: oklch(0.82 0.014 265);
 
-    /* Assigned — gray-slate, clearly quiet. Low chroma so the
-       brain immediately reads "inactive" before reading the label. */
-    --status-assigned-bg:    oklch(0.30  0.016 265);
-    --status-assigned-text:  oklch(0.82  0.014 265);
+    --status-pending-bg:    oklch(0.33 0.13  46);
+    --status-pending-text:  oklch(0.88 0.17  50);
 
-    /* Pending — orange. Bg is a dark burnt-orange tint.
-       Text is light warm-orange — readable, warm, urgent. */
-    --status-pending-bg:     oklch(0.33  0.13  46);
-    --status-pending-text:   oklch(0.88  0.17  50);
+    --status-active-bg:     oklch(0.30 0.13  238);
+    --status-active-text:   oklch(0.86 0.15  238);
 
-    /* Active — blue. Deep teal-blue bg, bright sky-blue text. */
-    --status-active-bg:      oklch(0.30  0.13  238);
-    --status-active-text:    oklch(0.86  0.15  238);
+    --status-review-bg:     oklch(0.30 0.13  292);
+    --status-review-text:   oklch(0.86 0.15  292);
 
-    /* Review — violet. Deep purple bg, bright lavender text. */
-    --status-review-bg:      oklch(0.30  0.13  292);
-    --status-review-text:    oklch(0.86  0.15  292);
+    --status-verified-bg:   oklch(0.30 0.13  148);
+    --status-verified-text: oklch(0.86 0.15  148);
 
-    /* Verified — green. Deep forest bg, bright mint text. */
-    --status-verified-bg:    oklch(0.30  0.13  148);
-    --status-verified-text:  oklch(0.86  0.15  148);
-
-    /* ── Signature Pad — Dark ──────────────────────── */
-    --sig-bg:   0.20  0.01  75;   /* Dark warm canvas    */
-    --sig-pen:  0.73  0.18  72;   /* Gold ink — on-brand */
+    /* ── Signature Pad — Dark ────────────────────── */
+    --sig-bg:  0.20 0.01 75;
+    --sig-pen: 0.73 0.18 72;
 
     /* ── Semantic Tokens ──────────────────────────── */
-    --background:               oklch(var(--rsg-background));
-    --foreground:               oklch(var(--rsg-text));
+    --background:             oklch(var(--rsg-background));
+    --foreground:             oklch(var(--rsg-text));
 
-    --card:                     oklch(var(--rsg-surface));
-    --card-foreground:          oklch(var(--rsg-text));
+    --card:                   oklch(var(--rsg-surface));
+    --card-foreground:        oklch(var(--rsg-text));
 
-    --popover:                  oklch(var(--rsg-surface));
-    --popover-foreground:       oklch(var(--rsg-text));
+    --popover:                oklch(var(--rsg-surface));
+    --popover-foreground:     oklch(var(--rsg-text));
 
-    --primary:                  oklch(var(--rsg-gold));
-    --primary-foreground:       oklch(0.13  0.009 75);
+    --primary:                oklch(var(--rsg-gold));
+    --primary-foreground:     oklch(0.13 0.009 75);
 
-    --secondary:                oklch(var(--rsg-surface-2));
-    --secondary-foreground:     oklch(var(--rsg-text));
+    --secondary:              oklch(var(--rsg-surface-2));
+    --secondary-foreground:   oklch(var(--rsg-text));
 
-    --muted:                    oklch(0.22  0.010 75);
-    --muted-foreground:         oklch(0.62  0.016 75);
+    --muted:                  oklch(0.22 0.010 75);
+    --muted-foreground:       oklch(0.62 0.016 75);
 
-    --accent:                   oklch(0.24  0.012 75);
-    --accent-foreground:        oklch(var(--rsg-text));
+    --accent:                 oklch(0.24 0.012 75);
+    --accent-foreground:      oklch(var(--rsg-text));
 
-    --destructive:              oklch(var(--rsg-error));
-    --destructive-foreground:   oklch(0.98  0     0);
+    --destructive:            oklch(var(--rsg-error));
+    --destructive-foreground: oklch(0.98 0 0);
 
-    --border:                   oklch(var(--rsg-border));
-    --input:                    oklch(var(--rsg-border));
-
-    --ring:                     oklch(var(--rsg-gold));
+    --border:                 oklch(var(--rsg-border));
+    --input:                  oklch(var(--rsg-border));
+    --ring:                   oklch(var(--rsg-gold));
 
     --radius: 0.5rem;
+
+    /* ── Sidebar ──────────────────────────────────── */
+    --sidebar:                    oklch(var(--rsg-surface));
+    --sidebar-foreground:         oklch(var(--rsg-text));
+    --sidebar-primary:            oklch(var(--rsg-gold));
+    --sidebar-primary-foreground: oklch(0.13 0.009 75);
+    --sidebar-accent:             oklch(var(--rsg-surface-2));
+    --sidebar-accent-foreground:  oklch(var(--rsg-text));
+    --sidebar-border:             oklch(var(--rsg-border));
+    --sidebar-ring:               oklch(var(--rsg-gold));
+
+    /* ── Chart Colors ─────────────────────────────── */
+    --chart-1: oklch(0.73 0.18 72);
+    --chart-2: oklch(0.63 0.15 72);
+    --chart-3: oklch(0.53 0.12 72);
+    --chart-4: oklch(0.43 0.09 72);
+    --chart-5: oklch(0.33 0.06 72);
+  }
+
+  /* ── Shared base resets (shadcn pattern) ──────── */
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
 
 /* ═══════════════════════════════════════════════════════════════════
    TAILWIND THEME MAPPING
-   Exposes all tokens as Tailwind color utilities:
-   bg-rsg-gold, text-status-pending-text, border-border, etc.
    ═══════════════════════════════════════════════════════════════════ */
 
-@theme {
+@theme inline {
 
-  /* ── Brand ──────────────────────────────────────── */
-  --color-rsg-gold:           oklch(var(--rsg-gold));
-  --color-rsg-background:     oklch(var(--rsg-background));
-  --color-rsg-surface:        oklch(var(--rsg-surface));
-  --color-rsg-surface-2:      oklch(var(--rsg-surface-2));
-  --color-rsg-text:           oklch(var(--rsg-text));
-  --color-rsg-border:         oklch(var(--rsg-border));
-  --color-rsg-error:          oklch(var(--rsg-error));
+  /* ── Radius scale ───────────────────────────────── */
+  --radius-sm:  calc(var(--radius) * 0.6);
+  --radius-md:  calc(var(--radius) * 0.8);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ── Status Badges ─────────────────────────────── */
-  --color-status-assigned-bg:    var(--status-assigned-bg);
-  --color-status-assigned-text:  var(--status-assigned-text);
-  --color-status-pending-bg:     var(--status-pending-bg);
-  --color-status-pending-text:   var(--status-pending-text);
-  --color-status-active-bg:      var(--status-active-bg);
-  --color-status-active-text:    var(--status-active-text);
-  --color-status-review-bg:      var(--status-review-bg);
-  --color-status-review-text:    var(--status-review-text);
-  --color-status-verified-bg:    var(--status-verified-bg);
-  --color-status-verified-text:  var(--status-verified-text);
+  /* ── Brand colors ───────────────────────────────── */
+  --color-rsg-gold:       oklch(var(--rsg-gold));
+  --color-rsg-background: oklch(var(--rsg-background));
+  --color-rsg-surface:    oklch(var(--rsg-surface));
+  --color-rsg-surface-2:  oklch(var(--rsg-surface-2));
+  --color-rsg-text:       oklch(var(--rsg-text));
+  --color-rsg-border:     oklch(var(--rsg-border));
+  --color-rsg-error:      oklch(var(--rsg-error));
 
-  /* ── Signature Pad ─────────────────────────────── */
-  --color-sig-bg:             oklch(var(--sig-bg));
-  --color-sig-pen:            oklch(var(--sig-pen));
+  /* ── Status badge colors ────────────────────────── */
+  --color-status-assigned-bg:   var(--status-assigned-bg);
+  --color-status-assigned-text: var(--status-assigned-text);
+  --color-status-pending-bg:    var(--status-pending-bg);
+  --color-status-pending-text:  var(--status-pending-text);
+  --color-status-active-bg:     var(--status-active-bg);
+  --color-status-active-text:   var(--status-active-text);
+  --color-status-review-bg:     var(--status-review-bg);
+  --color-status-review-text:   var(--status-review-text);
+  --color-status-verified-bg:   var(--status-verified-bg);
+  --color-status-verified-text: var(--status-verified-text);
+
+  /* ── Signature pad ──────────────────────────────── */
+  --color-sig-bg:  oklch(var(--sig-bg));
+  --color-sig-pen: oklch(var(--sig-pen));
 
   /* ── Semantic (shadcn-compatible) ──────────────── */
-  --color-background:          var(--background);
-  --color-foreground:          var(--foreground);
-  --color-card:                var(--card);
-  --color-card-foreground:     var(--card-foreground);
-  --color-popover:             var(--popover);
-  --color-popover-foreground:  var(--popover-foreground);
-  --color-primary:             var(--primary);
-  --color-primary-foreground:  var(--primary-foreground);
-  --color-secondary:           var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted:               var(--muted);
-  --color-muted-foreground:    var(--muted-foreground);
-  --color-accent:              var(--accent);
-  --color-accent-foreground:   var(--accent-foreground);
-  --color-destructive:         var(--destructive);
+  --color-background:             var(--background);
+  --color-foreground:             var(--foreground);
+  --color-card:                   var(--card);
+  --color-card-foreground:        var(--card-foreground);
+  --color-popover:                var(--popover);
+  --color-popover-foreground:     var(--popover-foreground);
+  --color-primary:                var(--primary);
+  --color-primary-foreground:     var(--primary-foreground);
+  --color-secondary:              var(--secondary);
+  --color-secondary-foreground:   var(--secondary-foreground);
+  --color-muted:                  var(--muted);
+  --color-muted-foreground:       var(--muted-foreground);
+  --color-accent:                 var(--accent);
+  --color-accent-foreground:      var(--accent-foreground);
+  --color-destructive:            var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-border:              var(--border);
-  --color-input:               var(--input);
-  --color-ring:                var(--ring);
+  --color-border:                 var(--border);
+  --color-input:                  var(--input);
+  --color-ring:                   var(--ring);
 
-  /* ── Typography ────────────────────────────────── */
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
+  /* ── Sidebar ────────────────────────────────────── */
+  --color-sidebar:                    var(--sidebar);
+  --color-sidebar-foreground:         var(--sidebar-foreground);
+  --color-sidebar-primary:            var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent:             var(--sidebar-accent);
+  --color-sidebar-accent-foreground:  var(--sidebar-accent-foreground);
+  --color-sidebar-border:             var(--sidebar-border);
+  --color-sidebar-ring:               var(--sidebar-ring);
 
-  /* ── Spacing / Shape ───────────────────────────── */
-  --radius: 0.5rem;
+  /* ── Charts ─────────────────────────────────────── */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ── Typography ─────────────────────────────────── */
+  --font-heading: var(--font-sans);
+  --font-sans:    var(--font-inter);
+  --font-mono:    var(--font-jetbrains-mono);
 }
 
 
@@ -300,70 +295,39 @@
 
 @layer base {
 
-  /* ── Box Model & Border Default ─────────────────── */
-  *, *::before, *::after {
-    box-sizing: border-box;
-    /* All borders default to the theme border color,
-       so you only need `border` class, not `border border-border`. */
-    border-color: var(--color-border);
-  }
-
-  /* ── HTML Root ──────────────────────────────────── */
   html {
-    /* Prevent iOS from inflating text on rotation */
     -webkit-text-size-adjust: 100%;
-    /* Smooth anchor scrolling (not used for routing, but for
-       in-page hash links like #section-id in reports) */
     scroll-behavior: smooth;
-    /* Color scheme hint: tells browser chrome (scrollbars,
-       form inputs, date pickers) which mode to render in.
-       Without this, Chrome DevTools dark mode overrides can
-       show white native inputs on dark backgrounds. */
     color-scheme: light;
   }
 
-  .dark html {
+  /* color-scheme must be on <html> itself — .dark is applied there.
+     The old ".dark html" selector never matched anything. */
+  html.dark {
     color-scheme: dark;
   }
 
-  /* ── Body & PWA Safe Areas ─────────────────────── */
   html, body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    /* 100dvh = dynamic viewport height — accounts for
-       collapsing mobile browser chrome. Prevents content
-       being cut off by address bar on iOS Safari PWA. */
     min-height: 100dvh;
-    /* PWA notch / home indicator insets.
-       These push body content inside the safe area so the
-       background color paints edge-to-edge under the notch. */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* ── Font Rendering ─────────────────────────────── */
   body {
-    /* Enables contextual ligatures and kerning pairs in Inter.
-       rlig = required ligatures, calt = contextual alternates. */
     font-feature-settings: "rlig" 1, "calt" 1;
-    /* Subpixel antialiasing on macOS/iOS — makes Inter look
-       crisper at small sizes. On OLED screens this also
-       reduces color fringing on light text. */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
   }
 
-  /* ── Headings ───────────────────────────────────── */
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 1.2;
-    /* Negative tracking tightens large display text.
-       At body sizes (14–16px) this has no visible effect. */
     letter-spacing: -0.02em;
   }
 
-  /* ── Links ──────────────────────────────────────── */
   a {
     color: var(--color-rsg-gold);
     text-decoration: none;
@@ -373,10 +337,7 @@
     text-underline-offset: 3px;
   }
 
-  /* ── Focus Rings ────────────────────────────────── */
-  /* Double ring: inner bg-colored gap creates an offset effect
-     without relying on `outline-offset` (inconsistent in some
-     browsers). Gold outer ring = brand-consistent keyboard nav. */
+  /* Gold double-ring focus — brand-consistent keyboard nav */
   *:focus-visible {
     outline: none;
     box-shadow:
@@ -384,27 +345,16 @@
       0 0 0 4px var(--color-rsg-gold);
   }
 
-  /* ── Text Selection ─────────────────────────────── */
-  /* Gold selection tint — subtle (25% alpha) so selected text
-     remains readable. Applies in report views and text inputs. */
+  /* Gold selection tint */
   ::selection {
     background-color: oklch(var(--rsg-gold) / 0.22);
     color: var(--color-foreground);
   }
 
-  /* ── Custom Scrollbars (WebKit) ─────────────────── */
-  /* Thin 6px track. Transparent track so the page bg shows through.
-     Thumb is the border color at rest, gold tint on hover.
-     This eliminates the "three scrollbars" visual issue by making
-     all scrollbars slim and unobtrusive. */
-  ::-webkit-scrollbar {
-    width:  6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
+  /* ── Slim custom scrollbars ─────────────────────── */
+  ::-webkit-scrollbar        { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  {
     background: var(--color-border);
     border-radius: 3px;
     transition: background 0.15s ease;
@@ -412,16 +362,11 @@
   ::-webkit-scrollbar-thumb:hover {
     background: oklch(var(--rsg-gold) / 0.55);
   }
-  /* Firefox */
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
 
-  /* ── Table Base ─────────────────────────────────── */
-  /* Prevents table cells from growing the table container
-     past its declared width. Required for sticky columns
-     and fixed-layout tables. */
   table {
     border-collapse: collapse;
     width: 100%;
@@ -431,20 +376,15 @@
 
 /* ═══════════════════════════════════════════════════════════════════
    PRINT STYLES
-   All @media print rules live here. Components use Tailwind's
-   print: utility classes for element-level overrides, but global
-   resets (page margins, color stripping) belong here.
    ═══════════════════════════════════════════════════════════════════ */
 
 @media print {
 
-  /* ── Page Setup ─────────────────────────────────── */
   @page {
     margin: 0.65in 0.75in;
     size: letter portrait;
   }
 
-  /* ── Color & Background Reset ───────────────────── */
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
@@ -453,16 +393,11 @@
     line-height: 1.4;
   }
 
-  /* Strip decorative styles globally, but preserve
-     intentional colors on elements that opt-in below. */
   * {
     box-shadow: none !important;
     text-shadow: none !important;
   }
 
-  /* ── Hide UI Chrome ─────────────────────────────── */
-  /* These selectors catch both the Tailwind print:hidden
-     utility and any component using data attributes. */
   nav,
   aside,
   [data-sidebar],
@@ -473,52 +408,35 @@
     display: none !important;
   }
 
-  /* ── Report Container ───────────────────────────── */
-  /* Flush title to page top — removes the gap that was
-     caused by nav/sidebar margin offsets. */
   [data-report-container],
   .print\:p-0 {
     padding: 0 !important;
     margin: 0 !important;
   }
 
-  /* ── Page Break Rules ───────────────────────────── */
-  /* Signature block and photo grids must not split
-     across physical pages. Applied via data attr so
-     both CSS and Tailwind classes trigger the same rule. */
   [data-print-no-break],
   .print\:break-inside-avoid {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* Headings should stay with their following content. */
   h1, h2, h3 {
     break-after: avoid;
     page-break-after: avoid;
   }
 
-  /* ── Images ─────────────────────────────────────── */
   img {
     max-width: 100% !important;
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* ── Status Badges in Print ─────────────────────── */
-  /* Force color printing for status badges so the
-     physical document retains status meaning visually.
-     Requires -webkit-print-color-adjust on Chrome. */
   [data-status-badge] {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    /* Fallback border in case color printing is disabled:
-       status is still readable from the label text. */
     border: 1.5px solid currentColor !important;
   }
 
-  /* ── Links ──────────────────────────────────────── */
-  /* Show href after link text so printed docs are useful. */
   a[href]:not([href^="#"])::after {
     content: " (" attr(href) ")";
     font-size: 9pt;

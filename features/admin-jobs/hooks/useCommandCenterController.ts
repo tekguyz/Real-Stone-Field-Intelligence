@@ -54,6 +54,18 @@ export function useCommandCenterController() {
     [currentJobs],
   );
 
+  const installers = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          currentJobs
+            .map((j) => j.installer_id)
+            .filter((id): id is string => Boolean(id)),
+        ),
+      ),
+    [currentJobs],
+  );
+
   return {
     selectedJob,
     setSelectedJob,
@@ -64,5 +76,6 @@ export function useCommandCenterController() {
     handleUpdateInstaller,
     isVerifying: updateStatus.isPending,
     stats,
+    installers,
   };
 }
