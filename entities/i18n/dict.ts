@@ -154,6 +154,7 @@ export const dict = {
       verifiedProofEmail: "Verified Proof Emails",
       jobCompleteSms: "Job Complete SMS",
       masterPin: "Office Master PIN",
+      preferencesSaved: "Preferences Saved",
     },
     field: {
       myAssignments: "My Assignments",
@@ -353,6 +354,7 @@ export const dict = {
       verifiedProofEmail: "Correos de Prueba Verificada",
       jobCompleteSms: "SMS de Trabajo Completado",
       masterPin: "PIN Maestro de Oficina",
+      preferencesSaved: "Preferencias Guardadas",
     },
     field: {
       myAssignments: "Mis Asignaciones",

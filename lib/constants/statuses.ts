@@ -4,6 +4,7 @@ export const JOB_STATUSES = {
   ACTIVE:   'Active',
   REVIEW:   'Review',
   VERIFIED: 'Verified',
+  ARCHIVED: 'Archived',
 } as const;
 
 export type JobStatus = typeof JOB_STATUSES[keyof typeof JOB_STATUSES];
@@ -16,7 +17,7 @@ export const TEAM_STATUSES = {
 
 export type TeamStatus = typeof TEAM_STATUSES[keyof typeof TEAM_STATUSES];
 
-export const ARCHIVE_STATUS = 'Archived' as const;
+export const ARCHIVE_STATUS = JOB_STATUSES.ARCHIVED;
 
 // Workflow sort order (used for Status column sorting)
 export const STATUS_SORT_ORDER: Record<JobStatus, number> = {
@@ -25,4 +26,5 @@ export const STATUS_SORT_ORDER: Record<JobStatus, number> = {
   Active:   3,
   Review:   4,
   Verified: 5,
+  Archived: 6,
 };

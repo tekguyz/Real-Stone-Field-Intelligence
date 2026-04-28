@@ -83,8 +83,6 @@ export function AdminJobDrawer({
     : "WO-" + displayId;
 
   const isAssignmentLocked =
-    selectedJob?.status === JOB_STATUSES.ACTIVE ||
-    selectedJob?.status === JOB_STATUSES.REVIEW ||
     selectedJob?.status === JOB_STATUSES.VERIFIED;
 
   return (
@@ -160,38 +158,36 @@ export function AdminJobDrawer({
                     </span>
                   </div>
                 </div>
-                  <div className="flex flex-col gap-2 relative group mt-auto">
-                    <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
-                      {t.installer}
-                      {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
-                    </span>
-                    <Select
-                      disabled={isAssignmentLocked}
-                      value={selectedJob.installer_id || "unassigned"}
-                      onValueChange={(val) => onUpdateInstaller(selectedJob.id, val)}
+                <div className="flex flex-col gap-2 relative group-tooltip">
+                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
+                    {t.installer}
+                    {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
+                  </span>
+                  <Select
+                    disabled={isAssignmentLocked}
+                    value={selectedJob.installer_id || "unassigned"}
+                    onValueChange={(val) => onUpdateInstaller(selectedJob.id, val as string)}
+                  >
+                    <SelectTrigger 
+                      className={`w-full bg-rsg-surface/50 border border-border px-3 py-2 text-xs font-black rounded-none focus:ring-1 focus:ring-rsg-gold font-mono uppercase text-foreground h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
+                      title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
                     >
-                      <SelectTrigger 
-                        className={`w-full bg-surface/50 border border-border px-3 py-2 text-xs font-black rounded-none focus:ring-1 focus:ring-rsg-gold font-mono uppercase text-foreground h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
-                        title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
-                      >
-                        <SelectValue>
-                          {formatInstallerName(selectedJob.installer_id)}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
-                        {installers.map((inst) => (
-                          <SelectItem 
-                            key={inst} 
-                            value={inst} 
-                            className="text-xs uppercase font-bold"
-                          >
-                            {formatInstallerName(inst)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <SelectValue placeholder={t.unassigned} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
+                      {installers.map((inst) => (
+                        <SelectItem 
+                          key={inst} 
+                          value={inst} 
+                          className="text-xs uppercase font-bold"
+                        >
+                          {formatInstallerName(inst)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Site info */}

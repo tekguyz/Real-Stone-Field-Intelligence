@@ -151,11 +151,13 @@ export default function SettingsPage() {
             </div>
             <div className="md:col-span-2">
               <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="text-xs font-black uppercase tracking-widest h-10 outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold">
-                    {language === "es" ? "Cambiar Contraseña" : "Change Password"}
-                  </Button>
-                </DialogTrigger>
+                <DialogTrigger
+                  render={
+                    <Button variant="outline" className="text-xs font-black uppercase tracking-widest h-10 outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold">
+                      {language === "es" ? "Cambiar Contraseña" : "Change Password"}
+                    </Button>
+                  }
+                />
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>{language === "es" ? "Cambiar Contraseña" : "Change Password"}</DialogTitle>
@@ -178,7 +180,7 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{t.languagePref}</Label>
-              <Select value={language} onValueChange={(val: "en" | "es") => setLanguage(val)}>
+              <Select value={language} onValueChange={(val: any) => setLanguage(val)}>
                 <SelectTrigger className="w-full bg-surface h-10 outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold">
                   <SelectValue />
                 </SelectTrigger>
@@ -269,7 +271,7 @@ export default function SettingsPage() {
                 </Label>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="w-3 h-3 text-muted-foreground" title="Coming soon" />
+                <Lock className="w-3 h-3 text-muted-foreground" />
                 <Switch disabled />
               </div>
             </div>
@@ -280,7 +282,7 @@ export default function SettingsPage() {
                 </Label>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="w-3 h-3 text-muted-foreground" title="Coming soon" />
+                <Lock className="w-3 h-3 text-muted-foreground" />
                 <Switch disabled />
               </div>
             </div>
@@ -309,11 +311,13 @@ export default function SettingsPage() {
 
             <div>
               <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-[10px] font-black uppercase tracking-widest border-rsg-error/20 text-rsg-error hover:bg-rsg-error hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-rsg-error">
-                    Clear Offline Cache
-                  </Button>
-                </DialogTrigger>
+                <DialogTrigger
+                  render={
+                    <Button variant="outline" size="sm" className="text-[10px] font-black uppercase tracking-widest border-rsg-error/20 text-rsg-error hover:bg-rsg-error hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-rsg-error">
+                      Clear Offline Cache
+                    </Button>
+                  }
+                />
                 <DialogContent className="max-w-[400px]">
                   <DialogHeader>
                     <DialogTitle>Clear Offline Data?</DialogTitle>

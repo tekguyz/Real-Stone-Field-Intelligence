@@ -228,6 +228,10 @@
   --color-rsg-border:     oklch(var(--rsg-border));
   --color-rsg-error:      oklch(var(--rsg-error));
 
+  /* Map shorthands for existing styles */
+  --color-surface:        var(--color-rsg-surface);
+  --color-surface-2:      var(--color-rsg-surface-2);
+
   /* ── Status badge colors ────────────────────────── */
   --color-status-assigned-bg:   var(--status-assigned-bg);
   --color-status-assigned-text: var(--status-assigned-text);

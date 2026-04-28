@@ -212,7 +212,7 @@ export function AdminJobsTable({
                       <Select
                         disabled={isAssignmentLocked}
                         value={job.installer_id || "unassigned"}
-                        onValueChange={(val) => onUpdateInstaller(job.id, val)}
+                        onValueChange={(val) => onUpdateInstaller(job.id, val as string)}
                       >
                         <SelectTrigger className={`h-8 border-transparent hover:border-border bg-transparent rounded-none px-2 text-xs font-medium tracking-tight w-32 ${isAssignmentLocked ? "opacity-40" : ""}`}>
                           <SelectValue>
