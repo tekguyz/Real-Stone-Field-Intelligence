@@ -3,9 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useUserStore, Role } from "../../entities/user/store";
 import { dict } from "../../entities/i18n/dict";
-import { useEffect, useState, useRef } from "react";
-import { Languages, UserCircle, Sun, Moon, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Languages, UserCircle, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { formatInstallerName } from "../../shared/lib/utils";
 import {
   Select,
   SelectContent,
@@ -28,7 +29,6 @@ export function DemoBanner() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-  const selectRef = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -39,7 +39,6 @@ export function DemoBanner() {
       }
     });
 
-    // Listen for storage changes in other tabs
     const handleStorage = (e: StorageEvent) => {
       if (e.key === "demo_mode") {
         setShowBanner(e.newValue === "true");
@@ -47,7 +46,6 @@ export function DemoBanner() {
     };
     window.addEventListener("storage", handleStorage);
 
-    // Custom event for same-tab updates
     const handleDemoToggle = () => {
       const demoMode = localStorage.getItem("demo_mode");
       setShowBanner(demoMode === "true");
@@ -84,34 +82,21 @@ export function DemoBanner() {
     setManualThemeOverride(true);
   };
 
-  const handleAvatarClick = () => {
-    if (selectRef.current) {
-      // Use showPicker if available (modern browsers)
-      if ("showPicker" in HTMLSelectElement.prototype) {
-        try {
-          (selectRef.current as any).showPicker();
-        } catch (e) {
-          selectRef.current.focus();
-        }
-      } else {
-        selectRef.current.focus();
-      }
-    }
-  };
-
   return (
-    <div className="fixed top-0 left-0 right-0 h-10 bg-rsg-gold text-black flex items-center justify-between px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md print:hidden">
+    <div className="w-full h-10 bg-rsg-gold text-black flex items-center justify-between px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md print:hidden">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 group">
           <UserCircle className="w-5 h-5 opacity-80" />
           <Select value={activeRole} onValueChange={(val) => handleRoleChange(val as Role)}>
             <SelectTrigger className="bg-transparent border-none h-8 text-black font-bold uppercase p-0 focus:ring-0 focus:ring-offset-0">
-              <SelectValue />
+              <SelectValue>
+                {formatInstallerName(activeRole)}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="admin" className="text-xs font-bold uppercase">{t.admin}</SelectItem>
-              <SelectItem value="installer_juan" className="text-xs font-bold uppercase">{t.installer_juan}</SelectItem>
-              <SelectItem value="installer_carlos" className="text-xs font-bold uppercase">{t.installer_carlos}</SelectItem>
+              <SelectItem value="admin" className="text-xs font-bold uppercase">ADMIN</SelectItem>
+              <SelectItem value="installer_juan" className="text-xs font-bold uppercase">JUAN</SelectItem>
+              <SelectItem value="installer_carlos" className="text-xs font-bold uppercase">CARLOS</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -105,7 +105,7 @@ export function AdminJobDrawer({
             transition={{ type: "spring", damping: 30, stiffness: 400, mass: 1.5 }}
             className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border z-[110] flex flex-col"
           >
-            <div className="p-4 md:p-6 border-b border-border flex justify-between items-start bg-surface/30 pb-4">
+            <div className="p-4 md:p-6 border-b border-border flex justify-between items-start bg-rsg-surface/30 pb-4">
               <div className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] text-foreground/40 block uppercase tracking-[0.2em]">
                   {headerWoId}
@@ -136,7 +136,7 @@ export function AdminJobDrawer({
                   <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
                     {t.arrivalTime}
                   </span>
-                  <div className="bg-surface/50 px-3 py-2 border border-border flex items-center justify-between h-[42px]">
+                  <div className="bg-rsg-surface/50 px-3 py-2 border border-border flex items-center justify-between h-[42px]">
                     <span className="text-xs font-black text-foreground/90 uppercase tracking-tight truncate">
                       {selectedJob.scheduled_arrival ||
                       selectedJob.scheduled_date
@@ -160,38 +160,38 @@ export function AdminJobDrawer({
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 relative group-tooltip">
-                  <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
-                    {t.installer}
-                    {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
-                  </span>
-                  <Select
-                    disabled={isAssignmentLocked}
-                    value={selectedJob.installer_id || "unassigned"}
-                    onValueChange={(val) => onUpdateInstaller(selectedJob.id, val)}
-                  >
-                    <SelectTrigger 
-                      className={`w-full bg-card border border-border px-3 py-2 text-xs font-black rounded-none focus:ring-1 focus:ring-rsg-gold font-mono uppercase text-foreground h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
-                      title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
+                  <div className="flex flex-col gap-2 relative group mt-auto">
+                    <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
+                      {t.installer}
+                      {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
+                    </span>
+                    <Select
+                      disabled={isAssignmentLocked}
+                      value={selectedJob.installer_id || "unassigned"}
+                      onValueChange={(val) => onUpdateInstaller(selectedJob.id, val)}
                     >
-                      <SelectValue>
-                        {formatInstallerName(selectedJob.installer_id)}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
-                      {installers.map((inst) => (
-                        <SelectItem 
-                          key={inst} 
-                          value={inst} 
-                          className="text-xs uppercase font-bold"
-                        >
-                          {formatInstallerName(inst)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                      <SelectTrigger 
+                        className={`w-full bg-surface/50 border border-border px-3 py-2 text-xs font-black rounded-none focus:ring-1 focus:ring-rsg-gold font-mono uppercase text-foreground h-[42px] ${isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""}`}
+                        title={isAssignmentLocked ? t.assignmentLockedTooltip : ""}
+                      >
+                        <SelectValue>
+                          {formatInstallerName(selectedJob.installer_id)}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
+                        {installers.map((inst) => (
+                          <SelectItem 
+                            key={inst} 
+                            value={inst} 
+                            className="text-xs uppercase font-bold"
+                          >
+                            {formatInstallerName(inst)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
               </div>
 
               {/* Site info */}
@@ -199,7 +199,7 @@ export function AdminJobDrawer({
                 <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
                   {t.siteInformation}
                 </span>
-                <div className="bg-surface/50 p-4 border border-border">
+                <div className="bg-rsg-surface/50 p-4 border border-border">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div>
@@ -220,7 +220,7 @@ export function AdminJobDrawer({
                   {selectedJob.stoneapp_parts?.map((part, i) => (
                     <div
                       key={i}
-                      className="border border-border p-4 bg-surface/20 flex flex-col gap-2 border-l-4 border-l-primary"
+                      className="border border-border p-4 bg-rsg-surface/20 flex flex-col gap-2 border-l-4 border-l-primary"
                     >
                       <div className="flex justify-between items-center pr-2">
                         <span className="text-xs font-black uppercase text-foreground">
@@ -355,7 +355,7 @@ export function AdminJobDrawer({
               )}
             </div>
 
-            <div className="p-6 border-t border-border bg-surface/30 flex flex-col gap-6">
+            <div className="p-6 border-t border-border bg-rsg-surface/30 flex flex-col gap-6">
               {onVerifyJob && activeRole === "admin" && selectedJob.status === JOB_STATUSES.REVIEW && (
                 <button
                   onClick={() => onVerifyJob(selectedJob.id)}

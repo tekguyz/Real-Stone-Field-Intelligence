@@ -33,7 +33,7 @@ export function AdminSidebar() {
       initial={false}
       animate={{ width: isSidebarOpen ? 256 : 80 }}
       transition={{ type: "spring", damping: 30, stiffness: 400, mass: 1.5 }}
-      className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col hidden md:flex shrink-0 h-[100dvh] sticky top-0 overflow-y-auto overflow-x-hidden relative print:hidden"
+      className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col hidden md:flex shrink-0 h-full sticky top-0 overflow-y-auto overflow-x-hidden relative print:hidden"
     >
       <div className="h-16 flex items-center px-6 border-b border-sidebar-border overflow-hidden whitespace-nowrap shrink-0">
         <Mountain className="w-6 h-6 mr-3 text-primary shrink-0" />

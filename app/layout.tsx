@@ -75,9 +75,11 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ReactQueryProvider>
-            <DemoBanner />
-            <div className="pt-10 print:pt-0 h-[100dvh] flex flex-col overflow-hidden overscroll-none">
-              {children}
+            <div className="h-[100dvh] flex flex-col overflow-hidden overscroll-none">
+              <DemoBanner />
+              <div className="flex-1 overflow-hidden relative overscroll-none">
+                {children}
+              </div>
             </div>
             <IOSInstallBanner />
             <Toaster position="top-right" expand={true} richColors theme="system" />
