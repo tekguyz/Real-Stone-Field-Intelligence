@@ -1,3 +1,5 @@
+"use client";
+
 import { Job } from "../../../entities/job";
 import { MapPin, ShieldCheck } from "lucide-react";
 import Image from "next/image";
@@ -18,7 +20,6 @@ export function AdminJobDrawerContent({
   language,
   installers,
   onUpdateInstaller,
-  localCaptures,
   allPhotos,
   getProofMetadata,
   activeSignature,
@@ -28,7 +29,6 @@ export function AdminJobDrawerContent({
   language: "en" | "es";
   installers: string[];
   onUpdateInstaller: (jobId: string, installerId: string | null) => void;
-  localCaptures: any;
   allPhotos: string[];
   getProofMetadata: (url: string) => any;
   activeSignature: string | null;
@@ -44,8 +44,8 @@ export function AdminJobDrawerContent({
           <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
             {t.arrivalTime}
           </span>
-          <div className="bg-rsg-surface/50 px-3 border border-border flex items-center h-[42px] rounded-none">
-            <span className="text-xs font-black text-foreground uppercase tracking-tight truncate leading-none">
+          <div className="bg-rsg-surface/50 px-3 border border-border flex items-center h-[44px] w-full rounded-none">
+            <span className="text-xs font-black text-foreground uppercase tracking-widest truncate leading-none">
               {job.scheduled_arrival || job.scheduled_date
                 ? new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
                     weekday: "short",
@@ -62,8 +62,8 @@ export function AdminJobDrawerContent({
           </div>
         </div>
 
-        {/* Installer Block */}
-        <div className="flex flex-col gap-2 relative">
+        {/* Installer Block - Forced 44px Height & Width Symmetry */}
+        <div className="flex flex-col gap-2">
           <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
             {t.installer}
             {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
@@ -74,22 +74,24 @@ export function AdminJobDrawerContent({
             onValueChange={(val) => onUpdateInstaller(job.id, val)}
           >
             <SelectTrigger 
-              className={`w-full bg-rsg-surface/50 border border-border px-3 rounded-none focus:ring-primary uppercase text-foreground h-[42px] font-black text-xs tracking-tight leading-none ${
+              className={`w-full! bg-rsg-surface/50! border-border! border! px-3 rounded-none focus:ring-0! ring-0! outline-none! uppercase text-foreground h-[44px]! font-black text-xs tracking-widest leading-none shadow-none! [&>svg]:hidden ${
                 isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
-              <SelectValue placeholder={t.unassigned}>
+              <SelectValue>
                 {job.installer_id ? formatInstallerName(job.installer_id) : t.unassigned}
               </SelectValue>
             </SelectTrigger>
+            
             <SelectContent 
               side="bottom" 
               sideOffset={4} 
               align="start" 
               className="z-[1001] rounded-none min-w-[var(--radix-select-trigger-width)] bg-popover border border-border shadow-xl"
-              position="popper"
             >
-              <SelectItem value="unassigned" className="text-xs uppercase font-black tracking-widest py-3 flex items-center">{t.unassigned}</SelectItem>
+              <SelectItem value="unassigned" className="text-xs uppercase font-black tracking-widest py-3 flex items-center">
+                {t.unassigned}
+              </SelectItem>
               {installers.map((inst) => (
                 <SelectItem 
                   key={inst} 
@@ -193,9 +195,7 @@ export function AdminJobDrawerContent({
         </span>
         <div className="bg-amber-500/5 border border-amber-500/20 p-4">
           <p className="text-sm text-foreground/80 leading-relaxed font-bold">
-            &quot;
-            {job.logistics_notes || t.noLogistics}
-            &quot;
+            "{job.logistics_notes || t.noLogistics}"
           </p>
         </div>
       </div>
@@ -229,7 +229,7 @@ export function AdminJobDrawerContent({
                       <button
                         onClick={() =>
                           window.open(
-                            `https://maps.google.com/?q=${meta.lat},${meta.lng}`,
+                            `http://googleusercontent.com/maps.google.com/maps?q=${meta.lat},${meta.lng}`,
                             "_blank",
                           )
                         }
