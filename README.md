@@ -14,7 +14,7 @@ An industrial-grade, mobile-first job management and verification system designe
 * **Command Center:** High-density Admin dashboard with a 5-tier status matrix and real-time activity feed.
 * **Mobile Field Terminal:** Optimized PWA interface for installers with "Safe Area" edge-to-edge rendering and large tactile touch targets.
 * **GPS Evidence Ledger:** Automated capture of high-accuracy geolocation metadata and 12-hour timestamps for all job site photos.
-* **Master Job Reports:** Industrial PDF/Print-ready verification records with strict `@media print` layout hardening.
+* **Master Job Reports:** Industrial Print-ready/PDF verification records with strict `@media print` layout hardening.
 * **Executive Auth:** Role-based permission system allowing Admins to verify and close work orders from any interface.
 
 ## 🎨 Semantic Status Matrix
