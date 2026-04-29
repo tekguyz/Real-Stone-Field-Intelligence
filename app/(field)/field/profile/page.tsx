@@ -4,8 +4,6 @@ import { LogOut } from "lucide-react";
 import { useProfileController } from "../../../../features/field-profile/hooks/useProfileController";
 import { ProfileInfo } from "../../../../features/field-profile/ui/ProfileInfo";
 import { ProfilePreferences } from "../../../../features/field-profile/ui/ProfilePreferences";
-import { ProfileAppControls } from "../../../../features/field-profile/ui/ProfileAppControls";
-import { ProfileSupport } from "../../../../features/field-profile/ui/ProfileSupport";
 
 export default function FieldProfilePage() {
   const {
@@ -26,23 +24,25 @@ export default function FieldProfilePage() {
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in slide-in-from-bottom-4 duration-500">
-      {/* Neo-Brutalist Strict Header - Exactly h-14 */}
-      <div className="h-14 px-4 bg-surface border-b border-border flex justify-between items-center shrink-0">
+      {/* Neo-Brutalist Strict Header - Exactly h-16 */}
+      <div className="sticky top-0 z-50 h-16 px-4 bg-background flex justify-between items-center shrink-0 w-full">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-primary">
-            {initials}
-          </span>
-          <span className="text-border">/</span>
-          <h1 className="text-sm font-black tracking-widest text-foreground uppercase">
+          <div className="w-10 h-10 bg-rsg-gold text-black flex items-center justify-center border-2 border-foreground shadow-[var(--rugged-shadow-sm)] shrink-0">
+            <span className="font-black text-sm uppercase tracking-widest">
+              {initials}
+            </span>
+          </div>
+          <span className="text-border mx-1">/</span>
+          <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase">
             {t.profile}
           </h1>
         </div>
-        <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest border border-primary/20">
+        <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest border-2 border-primary/20">
           {language === "es" ? "Principal" : "Lead"}
         </span>
       </div>
 
-      <div className="p-4 flex flex-col gap-6 pt-6">
+      <div className="p-3 flex flex-col gap-3 pt-4">
         {/* Profile Info - Dense Text */}
         <ProfileInfo 
           fullName={fullName} 
@@ -58,18 +58,6 @@ export default function FieldProfilePage() {
           theme={theme} 
           handleLanguageToggle={handleLanguageToggle} 
           handleThemeChange={handleThemeChange} 
-        />
-
-        {/* Combined System & Apps - Neo-Brutalist Grid */}
-        <ProfileAppControls language={language} />
-
-        {/* Support & Reporting - High Density */}
-        <ProfileSupport 
-          language={language}
-          showReportForm={showReportForm}
-          setShowReportForm={setShowReportForm}
-          activeRole={activeRole}
-          fullName={fullName}
         />
 
         {/* System Footer */}

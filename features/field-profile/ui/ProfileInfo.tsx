@@ -15,18 +15,18 @@ export function ProfileInfo({ fullName, initials, showPin, setShowPin, language 
         </span>
       </div>
 
-      <section className="bg-surface border border-border p-4 relative group">
-        <div className="absolute top-0 left-0 w-1 h-full bg-foreground/30 group-hover:bg-primary transition-colors" />
+      <section className="rugged-card relative group p-4!">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-rsg-gold" />
         <div className="flex justify-between items-center mb-3 pl-3">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-foreground/40" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">
+            <span className="text-[10px] font-black uppercase tracking-widest text-foreground/60">
               {t.accessPin}
             </span>
           </div>
           <button
             onClick={() => setShowPin(!showPin)}
-            className="p-2 text-foreground/40 hover:text-primary transition-colors"
+            className="p-1 px-3 bg-foreground/5 hover:bg-foreground/10 text-foreground transition-colors"
           >
             {showPin ? (
               <EyeOff className="w-4 h-4" />
@@ -35,9 +35,9 @@ export function ProfileInfo({ fullName, initials, showPin, setShowPin, language 
             )}
           </button>
         </div>
-        <div className="bg-foreground/[0.02] border border-border p-3 flex items-center justify-center ml-3 group-hover:bg-primary/[0.02] transition-colors">
+        <div className="bg-foreground/5 p-3 flex items-center justify-center ml-3">
           <span
-            className={`font-mono text-lg tracking-[0.5em] font-black ${showPin ? "text-primary" : "text-foreground/20"}`}
+            className={`font-mono text-xl tracking-[0.5em] font-black ${showPin ? "text-rsg-gold" : "text-foreground/20"}`}
           >
             {showPin ? "4 4 5 2" : "• • • •"}
           </span>

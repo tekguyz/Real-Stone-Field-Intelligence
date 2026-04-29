@@ -42,7 +42,7 @@ const SortIcon = ({
 }) => {
   const isActive = sortConfig.key === columnKey;
   return (
-    <ArrowUpDown className={`w-3 h-3 ml-2 transition-colors ${isActive && sortConfig.direction ? "text-rsg-gold" : "text-foreground/10"}`} />
+    <ArrowUpDown className={`w-3 h-3 ml-2 transition-colors ${isActive && sortConfig.direction ? "text-rsg-gold" : "text-muted-foreground/30"}`} />
   );
 };
 
@@ -110,7 +110,7 @@ export function AdminJobsTable({
             <tr>
               <th 
                 tabIndex={0}
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("legacy_id")}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("legacy_id")}
               >
@@ -121,7 +121,7 @@ export function AdminJobsTable({
               </th>
               <th 
                 tabIndex={0}
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("client_name")}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("client_name")}
               >
@@ -130,10 +130,10 @@ export function AdminJobsTable({
                   <SortIcon columnKey="client_name" sortConfig={sortConfig} />
                 </div>
               </th>
-              <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left border-b border-border">{t.scope}</th>
+              <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left border-b border-border">{t.scope}</th>
               <th 
                 tabIndex={0}
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("installer_id")}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("installer_id")}
               >
@@ -144,7 +144,7 @@ export function AdminJobsTable({
               </th>
               <th 
                 tabIndex={0}
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("status")}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("status")}
               >
@@ -155,7 +155,7 @@ export function AdminJobsTable({
               </th>
               <th 
                 tabIndex={0}
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border outline-none focus:bg-primary/5"
                 onClick={() => handleSort("scheduled_arrival")}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleSort("scheduled_arrival")}
               >
@@ -164,10 +164,10 @@ export function AdminJobsTable({
                   <SortIcon columnKey="scheduled_arrival" sortConfig={sortConfig} />
                 </div>
               </th>
-              <th className="px-4 py-4 border-b border-border w-10"></th>
+              <th className="px-4 py-2.5 border-b border-border w-10"></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border/50">
+        <tbody className="divide-y divide-border">
             {sortedData.map((job) => {
               const isAssignmentLocked =
                 job.status === JOB_STATUSES.ACTIVE ||
@@ -177,14 +177,14 @@ export function AdminJobsTable({
                 <tr
                   key={job.id}
                   tabIndex={0}
-                  className="hover:bg-rsg-surface-2 transition-colors group cursor-pointer outline-none focus:bg-rsg-surface-2"
+                  className="hover:bg-rsg-surface-2 transition-colors group cursor-pointer outline-none focus:bg-rsg-surface-2 border-b border-border"
                   onClick={() => onJobSelect(job)}
                   onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onJobSelect(job)}
                 >
-                  <td className="p-4 text-sm font-medium text-foreground">
+                  <td className="px-4 py-2.5 font-mono text-sm text-foreground">
                     {job.legacy_id}
                   </td>
-                  <td className="p-4">
+                  <td className="px-4 py-2.5">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-foreground">
                         {job.client_name}
@@ -197,7 +197,7 @@ export function AdminJobsTable({
                       </div>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="px-4 py-2.5">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-foreground">
                         {summarizeJobScope(job.stoneapp_parts)}
@@ -207,25 +207,25 @@ export function AdminJobsTable({
                       </span>
                     </div>
                   </td>
-                  <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                  <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
                     <div className="relative">
                       <Select
                         disabled={isAssignmentLocked}
                         value={job.installer_id || "unassigned"}
                         onValueChange={(val) => onUpdateInstaller(job.id, val)}
                       >
-                        <SelectTrigger className={`h-8 border-transparent hover:border-border bg-transparent rounded-none px-2 text-xs font-medium tracking-tight w-32 ${isAssignmentLocked ? "opacity-40" : ""}`}>
+                        <SelectTrigger className={`h-8 border-transparent hover:border-border bg-transparent rounded-md px-2 text-xs font-semibold tracking-tight w-32 ${isAssignmentLocked ? "opacity-40" : ""}`}>
                           <SelectValue>
                             {formatInstallerName(job.installer_id)}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="unassigned" className="text-xs uppercase font-bold">{t.unassigned}</SelectItem>
+                          <SelectItem value="unassigned" className="text-xs uppercase font-semibold">{t.unassigned}</SelectItem>
                           {installers.map((inst) => (
                             <SelectItem 
                               key={inst} 
                               value={inst} 
-                              className="text-xs uppercase font-bold"
+                              className="text-xs uppercase font-semibold"
                             >
                               {formatInstallerName(inst)}
                             </SelectItem>
@@ -234,10 +234,10 @@ export function AdminJobsTable({
                       </Select>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="px-4 py-2.5">
                     <StatusBadge status={job.status} />
                   </td>
-                  <td className="p-4">
+                  <td className="px-4 py-2.5">
                     {job.scheduled_arrival || job.scheduled_date ? (
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-foreground">
@@ -250,7 +250,7 @@ export function AdminJobsTable({
                             ),
                           )}
                         </span>
-                        <span className="text-xs text-muted-foreground uppercase">
+                        <span className="font-mono text-sm text-muted-foreground">
                           {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
                             hour: "numeric",
                             minute: "2-digit",
@@ -268,24 +268,24 @@ export function AdminJobsTable({
                       </span>
                     )}
                   </td>
-                  <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                  <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="p-2 hover:bg-foreground/5 rounded-full transition-colors inline-flex items-center justify-center outline-none focus:bg-foreground/10">
+                      <DropdownMenuTrigger className="p-2 hover:bg-foreground/5 rounded-md transition-colors inline-flex items-center justify-center outline-none focus:bg-foreground/10">
                         <MoreVertical className="w-4 h-4 text-muted-foreground" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => onJobSelect(job)} className="text-[10px] font-black uppercase tracking-widest gap-2">
+                        <DropdownMenuItem onClick={() => onJobSelect(job)} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
                           <Eye className="w-3.5 h-3.5" />
                           {language === "es" ? "Ver Detalles" : "View Details"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toast.info("Coming soon")} className="text-[10px] font-black uppercase tracking-widest gap-2">
+                        <DropdownMenuItem onClick={() => toast.info("Coming soon")} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
                           <Edit2 className="w-3.5 h-3.5" />
                           {language === "es" ? "Editar Orden" : "Edit Job"}
                         </DropdownMenuItem>
                         {activeRole === "admin" && (
                           <DropdownMenuItem 
                             onClick={() => handleArchive(job)}
-                            className="text-[10px] font-black uppercase tracking-widest gap-2 text-rsg-error focus:text-rsg-error focus:bg-rsg-error/10"
+                            className="text-xs font-semibold uppercase tracking-widest gap-2 text-rsg-error focus:text-rsg-error focus:bg-rsg-error/10 py-2"
                           >
                             <Archive className="w-3.5 h-3.5" />
                             {language === "es" ? "Archivar Orden" : "Archive Job"}

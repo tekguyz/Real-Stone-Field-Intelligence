@@ -213,12 +213,12 @@ export function DocumentationCapture({
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 bg-card border border-border p-4">
+      <div className="rugged-card flex flex-col gap-4 w-full max-w-full overflow-hidden">
         {permissionStatus === "denied" ? (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 border-4 border-amber-500 bg-amber-500/5 flex flex-col gap-5"
+            className="p-4 border-2 border-amber-500 bg-amber-500/5 flex flex-col gap-4 shadow-[var(--rugged-shadow-sm)]"
           >
             <div className="flex items-center gap-3 text-amber-600">
               <AlertOctagon className="w-8 h-8" />
@@ -261,27 +261,23 @@ export function DocumentationCapture({
             <div className="flex flex-col gap-2 pt-2">
               <button
                 onClick={() => window.location.reload()}
-                className="w-full h-12 bg-amber-500 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-amber-600 transition-colors"
+                className="rugged-button-boss w-full h-12 bg-amber-500 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
                 Retry Permissions
               </button>
-              <button className="flex items-center justify-center gap-2 text-[10px] font-mono text-foreground/40 uppercase font-bold py-2">
-                <LifeBuoy className="w-3.5 h-3.5" />
-                Contact Dispatch
-              </button>
             </div>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex gap-3">
             <button
               onClick={async () => {
                 const granted = await checkPermissions("camera");
                 if (granted) document.getElementById("camera-input")?.click();
               }}
-              className="flex flex-col items-center justify-center h-16 bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold uppercase tracking-[0.2em] cursor-pointer hover:bg-primary/20 active:scale-[0.98] transition-all"
+              className="rugged-button-boss flex-1 h-20 bg-rsg-gold text-black flex flex-col items-center justify-center text-[10px] font-black uppercase tracking-widest border-2 border-foreground"
             >
-              <Camera className="w-5 h-5 mb-1" />
+              <Camera className="w-6 h-6 mb-1" />
               Capture
             </button>
             <input
@@ -298,9 +294,9 @@ export function DocumentationCapture({
                 const granted = await checkPermissions("gallery");
                 if (granted) document.getElementById("gallery-input")?.click();
               }}
-              className="flex flex-col items-center justify-center h-16 bg-surface border border-border text-[10px] font-bold uppercase tracking-[0.2em] cursor-pointer hover:bg-foreground/5 text-foreground/60 active:scale-[0.98] transition-all"
+              className="rugged-button-boss flex-1 h-20 bg-rsg-gold text-black flex flex-col items-center justify-center text-[10px] font-black uppercase tracking-widest border-2 border-foreground"
             >
-              <ImagePlus className="w-5 h-5 mb-1" />
+              <ImagePlus className="w-6 h-6 mb-1" />
               Gallery
             </button>
             <input
@@ -407,8 +403,8 @@ export function DocumentationCapture({
         )}
       </div>
 
-      <div className="bg-card border border-border p-4 flex flex-col gap-4">
-        <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-1">
+      <div className="rugged-card flex flex-col gap-4 w-full">
+        <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mb-1">
           Authorization (Optional)
         </h3>
         <SignaturePad
@@ -471,7 +467,7 @@ export function JobActionFooter({
   return (
     <section className="pt-4 border-t border-border">
       {isSubmitted ? (
-        <div className="bg-primary/5 border-l-4 border-primary border-y border-r border-primary/20 p-6 flex flex-col items-center text-center gap-3">
+        <div className="bg-primary/5 border-2 border-foreground shadow-[var(--rugged-shadow-sm)] p-4 flex flex-col items-center text-center gap-3">
           <CheckCircle2 className="w-10 h-10 text-primary opacity-80" />
           <div className="font-black text-primary uppercase tracking-widest text-sm">
             Office Verification
@@ -487,10 +483,10 @@ export function JobActionFooter({
           <button
             onClick={handleSubmitReview}
             disabled={isSubmitting || !isFormValid}
-            className={`w-full h-14 font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+            className={`w-full h-16 font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all border-2 border-foreground shadow-[var(--rugged-shadow-md)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${
               isFormValid
-                ? "bg-rsg-gold text-rsg-background hover:opacity-90"
-                : "bg-surface border border-border text-foreground/30 cursor-not-allowed"
+                ? "bg-rsg-gold text-black"
+                : "bg-surface text-foreground/30 border-dashed cursor-not-allowed shadow-none active:translate-x-0 active:translate-y-0"
             }`}
           >
             {isSubmitting ? (

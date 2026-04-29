@@ -31,8 +31,8 @@ export function FileDropzone({
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       onClick={() => fileInputRef.current?.click()}
-      className={`h-64 border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all cursor-pointer bg-rsg-background
-        ${isDragging ? "border-rsg-gold bg-rsg-gold/5" : "border-rsg-border hover:border-rsg-gold/50"}`}
+      className={`h-64 border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all cursor-pointer bg-background rounded-md
+        ${isDragging ? "border-rsg-gold bg-rsg-gold/5" : "border-border hover:border-rsg-gold/50"}`}
     >
       <input
         type="file"
@@ -41,21 +41,21 @@ export function FileDropzone({
         className="hidden"
         accept=".csv"
       />
-      <div className="w-16 h-16 bg-rsg-surface border border-rsg-border flex items-center justify-center rounded-none">
-        <Upload className="w-8 h-8 text-rsg-gold font-bold" />
+      <div className="w-16 h-16 bg-surface border border-border flex items-center justify-center rounded-md">
+        <Upload className="w-8 h-8 text-rsg-gold" />
       </div>
       <div className="text-center">
-        <p className="font-black uppercase tracking-widest text-sm text-rsg-text opacity-100">
+        <p className="font-semibold uppercase tracking-widest text-sm text-foreground">
           {t.dragStoneAppCsv}
         </p>
-        <p className="text-[10px] uppercase font-mono text-rsg-text mt-1 tracking-widest opacity-100">
+        <p className="text-xs font-medium uppercase text-muted-foreground mt-1 tracking-widest">
           {t.clickToBrowse}
         </p>
       </div>
       {isParsing && (
-        <div className="flex items-center gap-2 text-rsg-gold font-bold animate-pulse">
+        <div className="flex items-center gap-2 text-rsg-gold font-semibold animate-pulse mt-2">
           <Loader2 className="w-4 h-4 animate-spin text-rsg-gold" />
-          <span className="text-[10px] uppercase tracking-widest text-rsg-gold">
+          <span className="text-xs uppercase tracking-widest text-rsg-gold">
             {t.parsingEngineActive}
           </span>
         </div>

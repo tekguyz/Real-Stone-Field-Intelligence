@@ -32,30 +32,26 @@ export function ReportHeader({ job, headerWoId }: ReportHeaderProps) {
   const t = dict[language];
 
   return (
-    <div className="border-b-4 border-foreground print:border-black p-6 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+    <div className="border-b border-border print:border-black p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden bg-surface print:bg-white">
       <div className="flex flex-col z-10">
-        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-foreground print:text-black break-words">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground print:text-black break-words leading-none uppercase">
           {job.client_name}
         </h1>
-        <div className="mt-2 font-mono text-rsg-gold font-bold text-lg tracking-widest">
+        <div className="mt-2 font-mono text-muted-foreground print:text-foreground text-sm tracking-widest uppercase">
           {headerWoId}
         </div>
       </div>
 
-      <div className="z-10 flex flex-col items-end text-right">
-        <div className="flex items-center gap-2 bg-status-verified-bg text-status-verified-text print:bg-black print:text-white px-4 py-2 border-2 border-status-verified-bg print:border-black">
-          <CheckCircle2 className="w-5 h-5 text-status-verified-text print:text-white" />
-          <span className="font-black uppercase tracking-[0.2em] text-sm">
+      <div className="z-10 flex flex-col items-start md:items-end text-left md:text-right">
+        <div className="flex items-center gap-2 bg-status-verified-bg/10 text-status-verified-text print:bg-transparent print:text-black px-3 py-1.5 border border-status-verified-bg/20 print:border-black rounded-md">
+          <CheckCircle2 className="w-4 h-4 text-status-verified-text print:text-black" />
+          <span className="font-semibold uppercase tracking-widest text-xs">
             {t.status.verified}
           </span>
         </div>
-        <span className="text-[10px] font-mono mt-2 text-foreground/60 print:text-black/60 uppercase">
+        <span className="text-xs font-medium mt-2 text-muted-foreground print:text-foreground uppercase tracking-widest">
           {job.updated_at ? formatHumanDateTime(job.updated_at, language) : "N/A"}
         </span>
-      </div>
-
-      <div className="absolute -right-8 -top-8 text-foreground/5 print:text-black/5 rotate-12 pointer-events-none select-none">
-        <CheckCircle2 className="w-64 h-64" />
       </div>
     </div>
   );

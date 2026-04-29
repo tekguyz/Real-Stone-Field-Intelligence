@@ -19,7 +19,7 @@
   :root {
 
     /* ── Brand Primitives ─────────────────────────── */
-    --rsg-gold:        0.74 0.17 72;
+    --rsg-gold:        0.775 0.145 78;
     --rsg-background:  0.975 0.006 75;
     --rsg-surface:     1 0 0;
     --rsg-surface-2:   0.955 0.007 75;
@@ -38,8 +38,11 @@
     --status-pending-bg:    oklch(0.93 0.080 46);
     --status-pending-text:  oklch(0.38 0.19  44);
 
-    --status-active-bg:     oklch(0.91 0.080 238);
-    --status-active-text:   oklch(0.27 0.19  238);
+    --status-active-bg:     oklch(0.91 0.08 215);
+    --status-active-text:   oklch(0.35 0.08 215);
+
+    --status-urgent-bg:     oklch(0.93 0.12 46);
+    --status-urgent-text:   oklch(0.38 0.19 44);
 
     --status-review-bg:     oklch(0.91 0.080 292);
     --status-review-text:   oklch(0.27 0.19  292);
@@ -96,7 +99,7 @@
     --sidebar-ring:               oklch(var(--rsg-gold));
 
     /* ── Chart Colors (gold-family scale) ─────────── */
-    --chart-1: oklch(0.74 0.17 72);
+    --chart-1: oklch(77.5% 0.145 78);
     --chart-2: oklch(0.65 0.14 72);
     --chart-3: oklch(0.55 0.11 72);
     --chart-4: oklch(0.44 0.08 72);
@@ -111,7 +114,7 @@
   .dark {
 
     /* ── Brand Primitives ─────────────────────────── */
-    --rsg-gold:        0.73 0.18 72;
+    --rsg-gold:        0.775 0.145 78;
     --rsg-background:  0.13 0.009 75;
     --rsg-surface:     0.18 0.010 75;
     --rsg-surface-2:   0.23 0.010 75;
@@ -129,8 +132,11 @@
     --status-pending-bg:    oklch(0.33 0.13  46);
     --status-pending-text:  oklch(0.88 0.17  50);
 
-    --status-active-bg:     oklch(0.30 0.13  238);
-    --status-active-text:   oklch(0.86 0.15  238);
+    --status-active-bg:     oklch(0.30 0.10 215);
+    --status-active-text:   oklch(0.86 0.12 215);
+
+    --status-urgent-bg:     oklch(0.33 0.15 46);
+    --status-urgent-text:   oklch(0.88 0.17 50);
 
     --status-review-bg:     oklch(0.30 0.13  292);
     --status-review-text:   oklch(0.86 0.15  292);
@@ -184,7 +190,7 @@
     --sidebar-ring:               oklch(var(--rsg-gold));
 
     /* ── Chart Colors ─────────────────────────────── */
-    --chart-1: oklch(0.73 0.18 72);
+    --chart-1: oklch(77.5% 0.145 78);
     --chart-2: oklch(0.63 0.15 72);
     --chart-3: oklch(0.53 0.12 72);
     --chart-4: oklch(0.43 0.09 72);
@@ -239,6 +245,8 @@
   --color-status-pending-text:  var(--status-pending-text);
   --color-status-active-bg:     var(--status-active-bg);
   --color-status-active-text:   var(--status-active-text);
+  --color-status-urgent-bg:     var(--status-urgent-bg);
+  --color-status-urgent-text:   var(--status-urgent-text);
   --color-status-review-bg:     var(--status-review-bg);
   --color-status-review-text:   var(--status-review-text);
   --color-status-verified-bg:   var(--status-verified-bg);
@@ -322,6 +330,51 @@
   }
   .mb-safe {
     margin-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* ── FIELD RUGGED OVERHAUL ──────────────────────── */
+  .field-rugged {
+    /* Rugged standard 2px */
+    --rugged-shadow-sm: 2px 2px 0px 0px oklch(var(--rsg-text));
+    /* Rugged boss 4px */
+    --rugged-shadow-md: 4px 4px 0px 0px oklch(var(--rsg-text));
+
+    & .rugged-card {
+      border: 2px solid oklch(var(--rsg-text));
+      box-shadow: var(--rugged-shadow-sm);
+      padding: 1rem; /* p-4 */
+      background: oklch(var(--rsg-background));
+    }
+
+    & .rugged-button-boss {
+      height: 4rem; /* h-16 */
+      border: 2px solid oklch(var(--rsg-text));
+      box-shadow: var(--rugged-shadow-md);
+      font-weight: 900; /* font-black */
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.1s ease;
+      
+      &:hover:not(:disabled) {
+        opacity: 0.9;
+      }
+
+      &:active:not(:disabled) {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+    }
+
+    & .rugged-button-sm {
+      border: 2px solid oklch(var(--rsg-text));
+      box-shadow: var(--rugged-shadow-sm);
+      transition: all 0.1s ease;
+      
+      &:active:not(:disabled) {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+    }
   }
 
   body {

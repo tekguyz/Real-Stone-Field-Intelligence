@@ -47,12 +47,12 @@ export function ImportPreviewTable({
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-end">
         <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-mono text-rsg-gold uppercase tracking-widest font-black">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
             {t.dataHydrationReady}
           </span>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-green-500" />
-            <span className="text-xl font-black uppercase tracking-tight text-rsg-text">
+            <span className="text-xl font-bold tracking-tight text-foreground">
               {parsedData.length} {t.jobsDetected}
             </span>
           </div>
@@ -62,25 +62,25 @@ export function ImportPreviewTable({
             clearData();
             setSelectedWoNumbers(new Set());
           }}
-          className="text-[10px] font-black uppercase tracking-widest text-rsg-text/60 hover:text-red-500 underline underline-offset-4"
+          className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-red-500 underline underline-offset-4"
         >
           {t.discardReset}
         </button>
       </div>
 
-      <div className="border border-rsg-border overflow-x-auto bg-rsg-surface rounded-none">
+      <div className="border border-border overflow-x-auto bg-surface rounded-md">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-surface sticky top-0 z-10 border-b border-border">
-              <th className="px-4 py-4 w-10 cursor-pointer group" onClick={toggleSelectAll}>
-                <div className="w-4 h-4 border-2 border-border bg-card flex items-center justify-center transition-colors group-hover:border-primary rounded-none">
+              <th className="px-4 py-2.5 w-10 cursor-pointer group border-b border-border" onClick={toggleSelectAll}>
+                <div className="w-4 h-4 border border-border bg-card flex items-center justify-center transition-colors group-hover:border-primary rounded-sm">
                   {selectedWoNumbers.size === parsedData.length && (
-                    <div className="w-2 h-2 bg-primary" />
+                    <div className="w-2 h-2 bg-primary rounded-sm" />
                   )}
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
                 onClick={() => handleSort("status")}
               >
                 <div className="flex items-center">
@@ -89,7 +89,7 @@ export function ImportPreviewTable({
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border w-24"
                 onClick={() => handleSort("wo_number")}
               >
                 <div className="flex items-center">
@@ -98,7 +98,7 @@ export function ImportPreviewTable({
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
                 onClick={() => handleSort("client_name")}
               >
                 <div className="flex items-center">
@@ -107,7 +107,7 @@ export function ImportPreviewTable({
                 </div>
               </th>
               <th 
-                className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors"
+                className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left cursor-pointer hover:text-foreground transition-colors border-b border-border"
                 onClick={() => handleSort("community_name")}
               >
                 <div className="flex items-center">
@@ -116,13 +116,13 @@ export function ImportPreviewTable({
                 </div>
               </th>
               {hasErrorsInSet && (
-                <th className="px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left">
+                <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground text-left border-b border-border">
                   {t.errorsHeader}
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-rsg-border">
+          <tbody className="divide-y divide-border">
             {(sortedData as any[]).map((job, idx) => {
               const hasError = !job.wo_number || !job.address;
               const isSelected = selectedWoNumbers.has(job.wo_number!);
@@ -131,44 +131,44 @@ export function ImportPreviewTable({
               return (
                 <tr
                   key={idx}
-                  className={`transition-colors hover:bg-primary/5 group
+                  className={`transition-colors hover:bg-surface-2 group border-b border-border
                     ${hasError ? "bg-red-500/5" : ""} 
-                    ${isSelected ? "bg-primary/10" : ""} 
+                    ${isSelected ? "bg-primary/5" : ""} 
                     ${isConflict ? "bg-amber-500/5" : ""}
-                    ${isSelected ? "border-l-2 border-l-primary" : "border-l-2 border-l-transparent"}`}
+                    ${isSelected ? "border-l border-l-primary" : "border-l border-l-transparent"}`}
                 >
-                  <td className="px-4 py-4 cursor-pointer" onClick={() => toggleJob(job.wo_number!)}>
-                    <div className="w-4 h-4 border-2 border-border bg-card flex items-center justify-center transition-colors group-hover:border-primary rounded-none">
+                  <td className="px-4 py-2.5 cursor-pointer" onClick={() => toggleJob(job.wo_number!)}>
+                    <div className="w-4 h-4 border border-border bg-card flex items-center justify-center transition-colors group-hover:border-primary rounded-sm">
                       {isSelected && (
-                        <div className="w-2 h-2 bg-primary rounded-none" />
+                        <div className="w-2 h-2 bg-primary rounded-sm" />
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-4 flex items-center gap-2">
+                  <td className="px-4 py-2.5 flex items-center gap-2">
                     <StatusBadge status={job.status as JobStatus} className="scale-90 origin-left" />
                     {isConflict && (
                       <div className="group/info relative flex items-center">
-                        <span className="px-1.5 py-0.5 bg-muted text-muted-foreground font-black text-[8px] uppercase tracking-widest border border-border rounded-none ml-1">
+                        <span className="px-1.5 py-0.5 bg-muted text-muted-foreground font-semibold text-[10px] uppercase tracking-widest border border-border rounded-md ml-1">
                           {t.existingStatus}
                         </span>
                         <Info className="w-3 h-3 text-muted-foreground cursor-help ml-1" />
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-48 p-2 bg-card border border-border shadow-xl opacity-0 group-hover/info:opacity-100 transition-opacity z-[60] pointer-events-none text-[9px] leading-tight font-medium uppercase tracking-wider text-foreground rounded-none">
+                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-48 p-2 bg-card border border-border shadow-md opacity-0 group-hover/info:opacity-100 transition-opacity z-[60] pointer-events-none text-[10px] leading-tight font-medium text-foreground rounded-md">
                           {t.workOrderExistsTooltip}
                         </div>
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-4 text-sm font-medium text-foreground">
+                  <td className="px-4 py-2.5 font-mono text-sm text-foreground">
                     {job.wo_number}
                   </td>
-                  <td className="px-4 py-4 text-sm font-medium text-foreground uppercase">
+                  <td className="px-4 py-2.5 text-sm font-medium text-foreground">
                     {job.client_name}
                   </td>
-                  <td className="px-4 py-4 text-xs text-muted-foreground uppercase">
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground transition-colors">
                     {job.community_name || "N/A"}
                   </td>
                   {hasErrorsInSet && (
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-2.5">
                       {hasError && (
                         <div className="flex items-center gap-1 text-red-500 font-black uppercase text-[10px] tracking-widest">
                           <AlertTriangle className="w-3 h-3" />

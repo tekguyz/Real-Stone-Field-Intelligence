@@ -31,21 +31,22 @@ export default function CommandCenterPage() {
   } = useCommandCenterController();
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex justify-between items-end">
+    <div className="flex flex-col gap-8 pb-10">
+      {/* Header */}
+      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-6 mb-2">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
             {t.commandCenter}
           </h1>
-          <p className="text-foreground/50 mt-1 font-mono text-sm leading-none uppercase">
+          <p className="text-muted-foreground mt-2 font-mono text-xs leading-none uppercase tracking-widest">
             {t.livePipeline}
           </p>
         </div>
         <button
           onClick={() => setIsImportOpen(true)}
-          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm print:hidden"
+          className="flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 font-semibold tracking-widest uppercase transition-opacity hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 print:hidden h-10"
         >
-          <Database className="w-4 h-4 text-rsg-gold" />
+          <Database className="w-4 h-4" />
           {t.importData}
         </button>
       </div>

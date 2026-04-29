@@ -17,8 +17,8 @@ export default function FieldLayout({
   }
 
   return (
-    <div className="flex flex-1 overflow-hidden bg-background justify-center pt-safe">
-      <div className="w-full max-w-md bg-background border-x border-border/10 flex flex-col relative h-[100dvh]">
+    <div className="field-rugged flex flex-1 overflow-hidden bg-background justify-center pt-safe">
+      <div className="w-full max-w-md bg-background flex flex-col relative h-[100dvh]">
         <main className="flex-1 overflow-y-auto pb-24 px-1">{children}</main>
         <BottomNav />
       </div>

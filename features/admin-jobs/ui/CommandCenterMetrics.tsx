@@ -35,46 +35,46 @@ export function CommandCenterMetrics({ stats, verifiedCount, isLoading }: Comman
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-medium tracking-tight tracking-tighter uppercase font-mono text-[10px] text-foreground/40">{t.metrics}</h2>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {[
           {
             label: t.backlog,
             value: stats.pending,
-            color: "border-zinc-500",
+            color: "border-l-zinc-500",
             sub: t.pendingCount,
           },
           {
             label: t.inField,
             value: stats.active,
-            color: "border-rsg-gold",
+            color: "border-l-rsg-gold",
             sub: t.activeCount,
           },
           {
             label: t.actionReq,
             value: stats.review,
-            color: "border-rsg-warning",
+            color: "border-l-rsg-warning",
             sub: t.reviewCount,
           },
           {
             label: t.verifiedShort,
             value: verifiedCount,
-            color: "border-rsg-success",
+            color: "border-l-rsg-success",
             sub: t.completed,
           },
         ].map((stat) => (
           <div
             key={stat.label}
-            className={`bg-card p-3 border- border-border transition-colors hover:bg-surface/50 border-l-4 ${stat.color} flex flex-col justify-between`}
+            className={`bg-card p-4 border border-border transition-colors hover:bg-surface/50 border-l-2 ${stat.color} flex flex-col justify-between rounded-md`}
           >
-            <p className="text-[9px] font-mono text-foreground/40 uppercase tracking-widest leading-none">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest leading-none">
               {stat.label}
             </p>
             <div className="flex items-baseline gap-1 mt-2">
-              <span className="text-2xl font-black text-foreground leading-none">
+              <span className="text-2xl font-black tracking-tight text-foreground leading-none">
                 {stat.value}
               </span>
             </div>
-            <p className="text-[8px] font-mono text-foreground/30 uppercase mt-1 truncate">
+            <p className="text-[10px] font-medium text-muted-foreground/80 uppercase mt-1 truncate">
               {stat.sub}
             </p>
           </div>

@@ -5,31 +5,31 @@ export function FieldJobDetailVerified({ language, status }: { language: string;
   const isReview = status === JOB_STATUSES.REVIEW;
 
   return (
-    <div className={`${isReview ? "bg-rsg-gold" : "bg-rsg-success"} text-rsg-surface px-6 py-5 flex flex-col items-center justify-center text-center gap-3 mt-4 border-2 border-rsg-border relative overflow-hidden`}>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-rsg-border text-rsg-surface px-3 py-0.5 text-[8px] font-black uppercase tracking-[0.4em]">
-        {language === "es" ? "Bloqueo de Seguridad" : "Security Lock"}
+    <div className={`${isReview ? "bg-rsg-gold text-[oklch(var(--rsg-background))]" : "bg-rsg-success text-[oklch(var(--rsg-background))]"} px-6 py-8 flex flex-col items-center justify-center text-center gap-3 mt-4 border-2 border-foreground shadow-[var(--rugged-shadow-md)] relative overflow-hidden`}>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-foreground text-background px-4 py-0.5 text-[8px] font-black uppercase tracking-[0.4em] whitespace-nowrap">
+        {language === "es" ? "BLOQUEO DE SEGURIDAD" : "SECURITY LOCK"}
       </div>
       {isReview ? (
-        <Clock className="w-10 h-10 text-rsg-surface mt-2" />
+        <Clock className="w-12 h-12 mt-2 opacity-80" />
       ) : (
-        <CheckCircle2 className="w-10 h-10 text-rsg-surface mt-2" />
+        <CheckCircle2 className="w-12 h-12 mt-2 opacity-80" />
       )}
-      <div className="font-black uppercase tracking-[0.3em] text-lg leading-none">
+      <div className="font-black uppercase tracking-[0.35em] text-xl leading-none">
         {isReview 
-          ? (language === "es" ? "PENDIENTE DE REVISIÓN" : "PENDING REVIEW")
+          ? (language === "es" ? "PENDIENTE REVISIÓN" : "PENDING REVIEW")
           : (language === "es" ? "TRABAJO VERIFICADO" : "JOB VERIFIED")
         }
       </div>
-      <div className="w-16 h-0.5 bg-rsg-surface/30 my-1" />
-      <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-rsg-surface/80 leading-relaxed">
+      <div className="w-16 h-1 bg-current opacity-20 my-1" />
+      <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed max-w-[280px]">
         {language === "es" ? (
           isReview 
-            ? <>Documentación en revisión por la oficina.<br />El acceso de edición ha sido revocado.</>
-            : <>Documentación finalizada vía HQ.<br />El registro del sitio es inmutable.</>
+            ? <>DOCUMENTACIÓN EN REVISIÓN.<br />ACCESO DE EDICIÓN REVOCADO.</>
+            : <>DOCUMENTACIÓN FINALIZADA.<br />SITIO INMUTABLE.</>
         ) : (
           isReview
-            ? <>Documentation is pending office review.<br />Editing access has been revoked.</>
-            : <>DOCUMENTATION FINALIZED via HQ.<br />Site record is immutable.</>
+            ? <>DOCUMENTATION PENDING REVIEW.<br />EDITING ACCESS REVOKED.</>
+            : <>DOCUMENTATION FINALIZED.<br />SITE RECORD IS IMMUTABLE.</>
         )}
       </p>
     </div>

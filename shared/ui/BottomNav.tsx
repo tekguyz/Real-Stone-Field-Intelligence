@@ -50,29 +50,29 @@ export function BottomNav() {
   if (isKeyboardVisible) return null;
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background border-t border-border px-6 pb-safe z-50 print:hidden pointer-events-auto">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background px-4 pb-safe z-50 print:hidden pointer-events-auto">
       <div className="flex justify-around items-center h-16">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`relative flex flex-col items-center justify-center gap-1 w-20 h-full transition-all active:scale-95 rounded-none ${
+            className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:translate-y-[1px] rounded-none ${
               item.isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "text-rsg-text/40 hover:text-rsg-text/60"
+                ? "bg-foreground/10 text-foreground"
+                : "text-foreground/40 hover:text-foreground/60"
             }`}
           >
             {item.isActive && (
               <motion.div
                 layoutId="field-active-indicator"
-                className="absolute top-0 left-0 right-0 h-1 bg-rsg-gold z-10"
+                className="absolute top-0 left-0 right-0 h-1 bg-rsg-gold z-10 shadow-[0_2px_4px_rgba(255,215,0,0.3)]"
               />
             )}
             <item.icon
               className="w-5 h-5"
-              strokeWidth={item.isActive ? 2.5 : 2}
+              strokeWidth={item.isActive ? 3 : 2}
             />
-            <span className={`text-[9px] font-black uppercase ${item.isActive ? 'tracking-[0.2em]' : 'tracking-widest'}`}>
+            <span className={`text-[8px] font-black uppercase tracking-[0.3em] ${item.isActive ? 'text-foreground' : 'text-inherit opacity-60'}`}>
               {item.label}
             </span>
           </Link>

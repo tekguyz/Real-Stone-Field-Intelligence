@@ -50,7 +50,31 @@ export default function FieldPage() {
   }
 
   // Filter jobs for this specific installer
-  const myJobs = jobs?.filter((j) => j.installer_id?.toLowerCase() === activeRole?.toLowerCase()) || [];
+  const myJobs = (jobs || [])
+    .filter((j) => {
+      const isAssigned = j.installer_id?.toLowerCase() === activeRole?.toLowerCase();
+      // EXACT FILTER: Remove all VERIFIED jobs from installer view
+      const isNotVerified = j.status?.toUpperCase() !== "VERIFIED";
+      return isAssigned && isNotVerified;
+    })
+    .sort((a, b) => {
+      // 1st Priority: Urgency
+      const aUrgent = a.is_urgent ? 1 : 0;
+      const bUrgent = b.is_urgent ? 1 : 0;
+      if (aUrgent !== bUrgent) return bUrgent - aUrgent;
+
+      // 2nd Priority: Status (ACTIVE > ASSIGNED > PENDING)
+      const statusMap: Record<string, number> = { "ACTIVE": 3, "ASSIGNED": 2, "PENDING": 1 };
+      const aStatus = statusMap[a.status?.toUpperCase() || ""] || 0;
+      const bStatus = statusMap[b.status?.toUpperCase() || ""] || 0;
+      if (aStatus !== bStatus) return bStatus - aStatus;
+
+      // 3rd Priority: Time (Soonest first)
+      const aTime = new Date(a.scheduled_arrival || a.scheduled_date || 0).getTime();
+      const bTime = new Date(b.scheduled_arrival || b.scheduled_date || 0).getTime();
+      return aTime - bTime;
+    });
+
   const activeCount = myJobs.filter((j) => {
     const s = j.status?.toLowerCase();
     return (
@@ -64,10 +88,12 @@ export default function FieldPage() {
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">
       {/* Neo-Brutalist Strict Header - Exactly h-16 */}
-      <div className="sticky top-0 z-50 h-16 px-4 bg-background border-b border-border flex justify-between items-center shrink-0 w-full">
+      <div className="sticky top-0 z-50 h-16 px-4 bg-background flex justify-between items-center shrink-0 w-full">
         <div className="flex items-center gap-2 max-w-[40%]">
-          <div className="w-8 h-8 bg-primary/10 flex items-center justify-center shrink-0">
-            <Mountain className="w-5 h-5 text-primary" />
+          <div className="w-10 h-10 bg-rsg-gold text-black flex items-center justify-center border-2 border-foreground shadow-[var(--rugged-shadow-sm)] shrink-0">
+            <span className="font-black text-sm uppercase tracking-widest">
+              {formatInstallerName(activeRole).slice(0, 2)}
+            </span>
           </div>
           <div className="flex flex-col truncate">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-rsg-gold truncate hidden sm:inline-block">
@@ -79,7 +105,6 @@ export default function FieldPage() {
           </div>
         </div>
         <div className="flex items-center gap-3 max-w-[60%] justify-end overflow-hidden">
-          <SyncIndicator />
           <div className="flex flex-col text-right truncate">
             <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase truncate">
               {t.todaysWork}
@@ -92,7 +117,7 @@ export default function FieldPage() {
       </div>
 
       {/* Assignment List */}
-      <div className="p-4 flex flex-col gap-4">
+      <div className="p-3 flex flex-col gap-3">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center p-20 gap-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -105,10 +130,12 @@ export default function FieldPage() {
             {language === "es" ? "Error al sincronizar órdenes. Por favor revise su conexión." : "Failed to sync work orders. Please check connection."}
           </div>
         ) : myJobs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-border bg-foreground/[0.02]">
-            <ClipboardList className="w-8 h-8 text-foreground/20 mb-3" />
-            <span className="text-foreground/40 font-bold uppercase tracking-[0.2em] text-[10px]">
-              {t.myAssignments} (0)
+          <div className="flex flex-col items-center justify-center py-32 px-4 text-center border-2 border-dashed border-foreground/20 bg-foreground/[0.02]">
+            <span className="text-foreground font-black uppercase tracking-[0.3em] text-xl">
+              BOARD CLEAR
+            </span>
+            <span className="text-foreground/40 font-bold uppercase tracking-[0.2em] text-[10px] mt-2">
+              STANDBY FOR DISPATCH
             </span>
           </div>
         ) : (

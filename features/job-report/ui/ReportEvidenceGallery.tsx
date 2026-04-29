@@ -21,24 +21,24 @@ export function ReportEvidenceGallery({
   const t = dict[language];
 
   return (
-    <div className="p-6 md:p-10 border-b-4 border-foreground print:border-black">
-      <h3 className="font-black uppercase tracking-[0.2em] text-lg mb-6 flex items-center gap-2">
+    <div className="p-6 md:p-10 border-b border-border print:border-black">
+      <h3 className="font-semibold uppercase tracking-widest text-lg mb-6 flex items-center gap-3">
         {t.admin.fieldEvidence}
-        <span className="bg-status-verified-bg text-status-verified-text px-2 py-0.5 text-xs">
+        <span className="bg-status-verified-bg/10 text-status-verified-text border border-status-verified-bg/20 rounded-md px-2 py-0.5 text-xs">
           {t.status.verified}
         </span>
       </h3>
 
       {allPhotos.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 print:grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-3 print:gap-2">
           {allPhotos.map((url, i) => {
             const meta = getProofMetadata(url);
             return (
               <div
                 key={i}
-                className="flex flex-col border-2 border-foreground print:border-black bg-surface print:bg-white print:break-inside-avoid"
+                className="flex flex-col border border-border print:border-black bg-surface print:bg-white print:break-inside-avoid rounded-md overflow-hidden shadow-sm"
               >
-                <div className="aspect-video w-full relative bg-foreground/5 print:bg-black/5">
+                <div className="aspect-square w-full relative bg-foreground/5 print:bg-black/5">
                   <Image
                     src={url}
                     alt={`Evidence ${i + 1}`}
@@ -48,23 +48,20 @@ export function ReportEvidenceGallery({
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <div className="p-3 border-t-2 border-foreground print:border-black flex flex-col gap-2 bg-foreground text-background print:bg-white print:text-black h-full">
+                <div className="p-3 border-t border-border print:border-black flex flex-col gap-2 bg-card print:bg-white h-full">
                   {meta ? (
                     <>
-                      <div className="flex justify-between items-center text-[10px] font-mono uppercase border-b border-background/20 print:border-black/20 pb-1">
+                      <div className="flex justify-between items-center text-[10px] font-mono text-muted-foreground print:text-foreground uppercase border-b border-border pb-1">
                         <span>IMG_REF_{i + 1}</span>
                         <span>{formatTime(meta.timestamp)}</span>
                       </div>
                       {meta.lat && meta.lng ? (
-                        <div className="flex flex-col gap-1">
-                          <span className="text-xs font-black uppercase text-rsg-gold print:text-black flex items-center gap-1.5 px-2 py-0.5 bg-foreground/10 print:bg-transparent border border-rsg-gold/30 print:border-black">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {t.status.verified || "Verified Location"}
-                          </span>
-                          <span className="text-[10px] font-mono text-background/80 print:text-black mt-1">
+                        <div className="flex flex-col gap-1 mt-1">
+                          <span className="text-sm font-mono text-foreground flex items-center gap-1.5 leading-none mt-1">
+                            <MapPin className="w-3.5 h-3.5 text-rsg-gold print:text-black" />
                             {meta.lat.toFixed(6)}, {meta.lng.toFixed(6)}
                           </span>
-                          <span className="text-[9px] font-mono text-background/60 print:text-black/60">
+                          <span className="text-[10px] text-muted-foreground print:text-foreground">
                             {t.admin.accuracyLabel}:{" "}
                             {meta.accuracy
                               ? meta.accuracy.toFixed(1) + "M"
@@ -72,14 +69,14 @@ export function ReportEvidenceGallery({
                           </span>
                         </div>
                       ) : (
-                        <div className="flex flex-col gap-1">
-                           <div className="flex items-center gap-2 bg-foreground/20 text-background print:bg-white print:text-black print:border-2 print:border-black px-2 py-1">
-                            <span className="text-[10px] font-mono font-black tracking-widest uppercase text-background/60 print:text-black">
+                        <div className="flex flex-col gap-1 mt-1">
+                           <div className="flex items-center">
+                            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase text-muted-foreground print:text-foreground">
                               GPS NOT AVAILABLE
                             </span>
                           </div>
                           {meta.location_status === "gallery" && (
-                             <span className="text-[9px] font-mono text-background/40 uppercase italic mt-1">
+                             <span className="text-[9px] font-mono text-muted-foreground print:text-foreground uppercase italic mt-1">
                               MANUAL UPLOAD (NO EXIF)
                             </span>
                           )}
@@ -88,7 +85,7 @@ export function ReportEvidenceGallery({
                     </>
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <span className="text-[10px] font-mono text-background/40 print:text-black/40 uppercase">
+                      <span className="text-[10px] font-mono text-muted-foreground print:text-foreground uppercase">
                         {t.admin.noMetadataVerified}
                       </span>
                     </div>
@@ -99,8 +96,8 @@ export function ReportEvidenceGallery({
           })}
         </div>
       ) : (
-        <div className="w-full py-12 border-2 border-dashed border-border bg-foreground/5 print:bg-black/5 flex flex-col items-center justify-center gap-2">
-          <span className="text-sm font-bold uppercase tracking-widest text-foreground/40">
+        <div className="w-full py-12 border border-dashed border-border bg-foreground/5 print:bg-black/5 flex flex-col items-center justify-center gap-2 rounded-md">
+          <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground print:text-foreground">
             {t.admin.noPhotoEvidence}
           </span>
         </div>

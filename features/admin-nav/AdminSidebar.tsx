@@ -10,7 +10,6 @@ import {
   Mountain,
   ChevronLeft,
   ChevronRight,
-  BookOpen,
 } from "lucide-react";
 import { useUserStore } from "../../entities/user/store";
 import { dict } from "../../entities/i18n/dict";
@@ -26,10 +25,6 @@ export function AdminSidebar() {
     { name: t.jobs, href: "/jobs", icon: Briefcase },
     { name: t.team, href: "/team", icon: Users },
     { name: t.inventory, href: "/inventory", icon: Package },
-  ];
-
-  const bottomNavItems = [
-    { name: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
   ];
 
   return (
@@ -67,18 +62,12 @@ export function AdminSidebar() {
               key={item.href}
               href={item.href}
               title={!isSidebarOpen ? item.name : undefined}
-              className={`flex items-center gap-3 px-3 py-3 transition-colors text-xs font-black tracking-widest uppercase whitespace-nowrap relative group border-l-4 rounded-none ${
+              className={`flex items-center gap-3 px-3 py-2 transition-colors text-sm font-medium whitespace-nowrap relative group rounded-md ${
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-primary"
-                  : "border-transparent text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                  ? "bg-rsg-gold text-black font-semibold shadow-sm"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
               }`}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="admin-active-indicator"
-                  className="absolute left-[-4px] top-0 bottom-0 w-1 bg-primary z-10"
-                />
-              )}
               <Icon className="w-5 h-5 shrink-0" />
               <AnimatePresence mode="wait">
                 {isSidebarOpen && (
@@ -94,7 +83,7 @@ export function AdminSidebar() {
 
               {/* Tooltip for collapsed state */}
               {!isSidebarOpen && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap border border-foreground">
+                <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-[10px] font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap rounded-sm shadow-md">
                   {item.name}
                 </div>
               )}
@@ -103,38 +92,10 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      {/* Bottom Nav */}
-      <div className="px-4 py-2 flex flex-col gap-1 border-t border-sidebar-border/50">
-        {bottomNavItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={!isSidebarOpen ? item.name : undefined}
-              className={`flex items-center gap-3 px-3 py-3 transition-colors text-xs font-black tracking-widest uppercase whitespace-nowrap relative group border-l-4 rounded-none ${
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-primary"
-                  : "border-transparent text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-              }`}
-            >
-              <Icon className="w-5 h-5 shrink-0" />
-              {isSidebarOpen && <span>{item.name}</span>}
-              {!isSidebarOpen && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap border border-foreground">
-                  {item.name}
-                </div>
-              )}
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Industrial Square Toggle Button */}
+      {/* Industrial Sleek Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-20 w-6 h-6 bg-sidebar border border-sidebar-border flex items-center justify-center text-sidebar-foreground/50 hover:text-sidebar-primary hover:border-sidebar-primary transition-all z-[70] shadow-[2px_2px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]"
+        className="absolute -right-3 top-20 w-6 h-6 bg-sidebar border border-sidebar-border rounded-md flex items-center justify-center text-sidebar-foreground/50 hover:text-sidebar-primary hover:border-sidebar-primary transition-all z-[70] shadow-sm active:translate-x-[1px] active:translate-y-[1px]"
       >
         {isSidebarOpen ? (
           <ChevronLeft className="w-4 h-4" />
@@ -146,9 +107,9 @@ export function AdminSidebar() {
       {/* Profile Footer */}
       <Link
         href="/settings"
-        className="p-4 border-t border-sidebar-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-sidebar-accent transition-colors shrink-0 mb-4"
+        className="p-4 border-t border-sidebar-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-sidebar-accent transition-colors shrink-0 mb-4 rounded-md mx-2"
       >
-        <div className="w-8 h-8 border border-sidebar-primary/20 bg-sidebar-primary/10 flex items-center justify-center text-sidebar-primary font-black text-xs uppercase shrink-0">
+        <div className="w-8 h-8 rounded-md border border-sidebar-primary/20 bg-sidebar-primary/10 flex items-center justify-center text-sidebar-primary font-bold text-xs uppercase shrink-0">
           AD
         </div>
         <AnimatePresence mode="wait">

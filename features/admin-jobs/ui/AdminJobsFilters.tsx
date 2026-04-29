@@ -11,20 +11,20 @@ import { Job } from "../../../entities/job/types";
 function FilterAccordion({ title, count, defaultOpen = false, children }: { title: string, count?: number, defaultOpen?: boolean, children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-border/50  last:border-0 py-1">
+    <div className="border-b border-border/50 last:border-0 py-1">
       <button 
         type="button"
         onClick={() => setIsOpen(!isOpen)} 
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full text-[11px] font-mono uppercase tracking-widest font-black text-foreground/70 hover:text-foreground transition-colors group py-2 outline-none focus:text-primary"
+        className="flex items-center justify-between w-full text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group py-3 outline-none"
       >
         <span>{title} {count !== undefined && count > 0 && `(${count})`}</span>
-        <span className="text-foreground/30 group-hover:text-primary transition-colors">
-          {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+        <span className="text-muted-foreground/30 group-hover:text-primary transition-colors">
+          {isOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </span>
       </button>
       {isOpen && (
-        <div className="pt-2 pb-1 flex flex-col gap-1.5">
+        <div className="pb-3 flex flex-col gap-2">
           {children}
         </div>
       )}
@@ -115,30 +115,30 @@ export function AdminJobsFilters({
         {activeFiltersCount > 0 && (
           <button
             onClick={clearAll}
-            className="text-[9px] font-mono text-foreground/40 hover:text-rsg-gold transition-colors font-black tracking-widest uppercase flex items-center gap-1"
+            className="text-xs font-semibold text-muted-foreground hover:text-rsg-gold transition-colors tracking-widest uppercase flex items-center gap-1.5"
           >
-            <X className="w-3 h-3" />
+            <X className="w-3.5 h-3.5" />
             {t.clearAll}
           </button>
         )}
       </div>
 
-      <div className="bg-card border border-border p-3 flex flex-col gap-0">
+      <div className="bg-card border border-border p-4 flex flex-col gap-0 rounded-md shadow-sm">
         
         <FilterAccordion title={t.smartPresets} defaultOpen={true}>
-           <div className="grid grid-cols-1 gap-1.5">
+           <div className="grid grid-cols-1 gap-2">
               {[
-                { label: "In Progress", value: "In Progress", count: counts.inProgress, color: "border-status-active-bg bg-status-active-bg/5 text-status-active-text hover:bg-status-active-bg/15" },
-                { label: "Needs Review", value: "Needs Review", count: counts.needsReview, color: "border-status-review-bg bg-status-review-bg/5 text-status-review-text hover:bg-status-review-bg/15" },
-                { label: "Unassigned", value: "Unassigned", count: counts.unassigned, color: "border-border/50 bg-surface text-foreground/60 hover:bg-surface/80" },
-                { label: "Today", value: "Today", count: counts.today, color: "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" }
+                { label: "In Progress", value: "In Progress", count: counts.inProgress, color: "border-status-active-bg/20 bg-status-active-bg/5 text-status-active-text hover:bg-status-active-bg/10" },
+                { label: "Needs Review", value: "Needs Review", count: counts.needsReview, color: "border-status-review-bg/20 bg-status-review-bg/5 text-status-review-text hover:bg-status-review-bg/10" },
+                { label: "Unassigned", value: "Unassigned", count: counts.unassigned, color: "border-border/50 bg-background text-muted-foreground hover:bg-accent" },
+                { label: "Today", value: "Today", count: counts.today, color: "border-primary/20 bg-primary/5 text-primary hover:bg-primary/10" }
               ].map(p => (
                 <button
                   key={p.value}
                   onClick={() => handlePreset(p.value)}
-                  className={`px-3 py-2 text-[10px] font-black uppercase tracking-widest border text-left transition-colors flex items-center justify-between ${preset === p.value ? "ring-1 ring-primary " + p.color : "border-border/30 bg-surface/30 text-foreground/50 hover:bg-surface"}`}
+                  className={`px-3 py-2 text-xs font-semibold uppercase tracking-widest border text-left transition-colors flex items-center justify-between rounded-md ${preset === p.value ? "ring-1 ring-primary " + p.color : "border-border bg-background text-muted-foreground hover:bg-accent"}`}
                 >
-                  <span>{p.label} <span className="ml-1 opacity-40">({p.count})</span></span>
+                  <span>{p.label} <span className="ml-1 opacity-60 text-[10px]">({p.count})</span></span>
                   {preset === p.value && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
                 </button>
               ))}
@@ -149,21 +149,21 @@ export function AdminJobsFilters({
             {statusOptions.map((statusKey) => (
               <label
                 key={statusKey}
-                className="flex items-center gap-3 cursor-pointer group py-1"
+                className="flex items-center gap-3 cursor-pointer group py-1.5"
               >
                 <div className="relative flex items-center shrink-0">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent peer transition-all"
+                    className="w-4 h-4 rounded-md border-border text-primary focus:ring-primary/20 bg-transparent peer transition-all cursor-pointer"
                     checked={selectedStatuses.includes(statusKey)}
                     onChange={() => {
                        setPreset(null);
                        toggleFilter(setSelectedStatuses, statusKey);
                     }}
                   />
-                  <div className="absolute inset-0 scale-75 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none bg-primary" />
+                  <div className="absolute inset-0 scale-75 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none bg-primary rounded-sm" />
                 </div>
-                <StatusBadge status={statusKey as JobStatus} className="scale-[0.8] origin-left" />
+                <StatusBadge status={statusKey as JobStatus} className="scale-[0.85] origin-left" />
               </label>
             ))}
         </FilterAccordion>
@@ -171,7 +171,7 @@ export function AdminJobsFilters({
         <FilterAccordion title={t.city} count={selectedCityFilters.length}>
           {isLoading ? (
             <div className="flex gap-2 flex-col">
-              <div className="h-3 bg-rsg-gold/5 animate-pulse w-1/2" />
+              <div className="h-3 bg-rsg-gold/5 animate-pulse w-1/2 rounded" />
             </div>
           ) : (
             <>
@@ -182,17 +182,17 @@ export function AdminJobsFilters({
                 >
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0"
+                    className="w-4 h-4 rounded-md border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0 cursor-pointer"
                     checked={selectedCityFilters.includes(city!)}
                     onChange={() => { setPreset(null); toggleFilter(setSelectedCityFilters, city!); }}
                   />
-                  <span className="text-xs text-foreground/70 group-hover:text-foreground transition-colors uppercase font-mono truncate">
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors uppercase font-mono truncate">
                     {city}
                   </span>
                 </label>
               ))}
               {cities.length === 0 && (
-                <span className="text-[10px] text-foreground/30 italic font-mono uppercase">
+                <span className="text-xs text-muted-foreground/50 italic font-mono uppercase">
                   {t.noCities}
                 </span>
               )}
@@ -203,19 +203,19 @@ export function AdminJobsFilters({
         <FilterAccordion title={t.installer} count={selectedInstallerFilters.length}>
           {isLoading ? (
             <div className="flex gap-2 flex-col">
-              <div className="h-3 bg-rsg-gold/5 animate-pulse w-3/4" />
+              <div className="h-3 bg-rsg-gold/5 animate-pulse w-3/4 rounded" />
             </div>
           ) : (
             <>
               {installers.length > 6 && (
-                <div className="relative mb-2">
-                   <Search className="w-3 h-3 absolute left-2 top-1/2 -translate-y-1/2 text-foreground/40" />
+                <div className="relative mb-3">
+                   <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
                    <input 
                       type="text" 
                       placeholder="Search..."
                       value={installerSearch}
                       onChange={e => setInstallerSearch(e.target.value)}
-                      className="w-full bg-background border border-border pl-7 pr-2 py-1 text-[10px] font-mono focus:outline-none focus:border-primary"
+                      className="w-full bg-background border border-border pl-9 pr-3 py-2 text-xs font-mono focus:outline-none focus:border-primary rounded-md"
                    />
                 </div>
               )}
@@ -224,14 +224,14 @@ export function AdminJobsFilters({
                 <label className="flex items-center gap-3 cursor-pointer group py-1">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0"
+                    className="w-4 h-4 rounded-md border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0 cursor-pointer"
                     checked={selectedInstallerFilters.includes("unassigned")}
                     onChange={() => {
                       setPreset(null);
                       toggleFilter(setSelectedInstallerFilters, "unassigned");
                     }}
                   />
-                  <span className="text-xs text-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono italic">
+                  <span className="text-xs text-muted-foreground/60 group-hover:text-foreground transition-colors uppercase font-mono italic">
                     {t.unassigned}
                   </span>
                 </label>
@@ -244,20 +244,20 @@ export function AdminJobsFilters({
                 >
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded-none border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0"
+                    className="w-4 h-4 rounded-md border-border text-primary focus:ring-primary/20 bg-transparent transition-all shrink-0 cursor-pointer"
                     checked={selectedInstallerFilters.includes(inst!)}
                     onChange={() => {
                       setPreset(null);
                       toggleFilter(setSelectedInstallerFilters, inst!);
                     }}
                   />
-                  <span className="text-xs text-foreground/70 group-hover:text-foreground transition-colors uppercase font-mono truncate">
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors uppercase font-mono truncate">
                     {formatInstallerName(inst)}
                   </span>
                 </label>
               ))}
               {installers.length === 0 && (
-                <span className="text-[10px] text-foreground/30 italic font-mono uppercase">
+                <span className="text-xs text-muted-foreground/50 italic font-mono uppercase">
                   {t.noInstallers}
                 </span>
               )}

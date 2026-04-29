@@ -49,35 +49,42 @@ export default function JobsPage() {
   return (
     <div className="flex flex-col gap-8 pb-10">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-6 mb-2">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
             {t.workOrderManagement}
           </h1>
-          <div className="flex bg-muted/50 p-1 border border-border mt-3 w-fit">
+          <div className="flex bg-muted/50 p-1 border border-border mt-4 w-fit rounded-md">
             <button
               onClick={() => setViewMode("active")}
-              className={`text-[9px] font-black uppercase tracking-[0.2em] px-6 py-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold ${viewMode === "active" ? "bg-foreground text-background shadow-sm" : "text-foreground/40 hover:text-foreground/60"}`}
+              className={`text-xs font-semibold uppercase tracking-widest px-6 py-1.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold rounded-md ${
+                viewMode === "active" 
+                  ? "bg-foreground text-background shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               Active Jobs
             </button>
             <button
               onClick={() => setViewMode("archived")}
-              className={`text-[9px] font-black uppercase tracking-[0.2em] px-6 py-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold ${viewMode === "archived" ? "bg-rsg-gold text-white shadow-sm" : "text-foreground/40 hover:text-foreground/60"}`}
+              className={`text-xs font-semibold uppercase tracking-widest px-6 py-1.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold rounded-md ${
+                viewMode === "archived" 
+                  ? "bg-rsg-gold text-black shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               Archived
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsImportOpen(true)}
-            className="flex items-center gap-2 bg-foreground text-background px-5 py-3 font-black tracking-[0.2em] uppercase transition-opacity hover:opacity-90 active:scale-[0.98] border border-primary border-r-4 border-b-4 shadow-sm print:hidden"
-          >
-            <Database className="w-4 h-4 text-rsg-gold" />
-            {t.importData}
-          </button>
-        </div>
+
+        <button
+          onClick={() => setIsImportOpen(true)}
+          className="flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 font-semibold tracking-widest uppercase transition-opacity hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 print:hidden h-10"
+        >
+          <Database className="w-4 h-4" />
+          {t.importData}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

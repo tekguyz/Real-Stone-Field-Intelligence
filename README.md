@@ -1,6 +1,6 @@
 # 🏗️ Field Ops Terminal | Real Stone & Granite
 
-An industrial-grade, mobile-first job management and verification system designed for high-glare field environments. Built with a **Neo-Brutalist** aesthetic and a **"Granite"** texture system to match the stone fabrication industry.
+An industrial-grade, mobile-first job management and verification system designed for high-glare field environments. Built with a **Neo-Brutalist** aesthetic and a texture system to match the stone fabrication industry.
 
 ## ⚡ The Stack
 * **Framework:** Next.js 15 (App Router)

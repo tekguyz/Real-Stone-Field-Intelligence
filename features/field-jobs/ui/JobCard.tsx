@@ -52,20 +52,25 @@ export function JobCard({ job, language, index }: JobCardProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className={`relative group bg-card transition-all active:scale-[0.98] border border-border rounded-none overflow-hidden mb-3`}
+      className={`relative group bg-card transition-all border-2 border-foreground shadow-[var(--rugged-shadow-sm)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none overflow-hidden`}
     >
-      <Link href={`/field/job/${job.id}`} className="block">
-        <div className="p-3 sm:p-4 pb-3 flex items-center">
+      <Link href={`/field/job/${job.id}`} className="block block-action">
+        <div className="p-3 flex items-center">
           <div className="flex-1 min-w-0">
             {/* Header Row: Client Name & Status Pill */}
             <div className="flex justify-between items-start gap-4 mb-0.5">
               <h3 className="text-lg font-bold text-foreground uppercase tracking-tight leading-tight truncate">
                 {job.client_name}
               </h3>
-              <StatusBadge
-                status={job.status}
-                className="shrink-0 scale-75 origin-top-right"
-              />
+              <div className="flex items-center gap-2 shrink-0 scale-75 origin-top-right">
+                {job.is_urgent && (
+                  <StatusBadge status="Urgent" variant="rugged" />
+                )}
+                <StatusBadge
+                  status={job.status}
+                  variant="rugged"
+                />
+              </div>
             </div>
 
             {/* WO-ID */}
@@ -83,20 +88,20 @@ export function JobCard({ job, language, index }: JobCardProps) {
             </div>
 
             {/* Meta Lines: Geography & Time */}
-            <div className="flex flex-col gap-1 mt-3 pt-3 border-t border-border/30 text-[10px]">
-              <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider w-full">
-                <MapPin className="w-3 h-3 shrink-0" />
+            <div className="flex flex-col gap-1 mt-3 pt-3 border-t-2 border-foreground/10 text-[10px] font-bold">
+              <div className="flex items-center gap-1.5 text-foreground/50 tracking-widest w-full truncate">
+                <MapPin className="w-3 h-3 shrink-0 text-rsg-gold" />
                 <span className="truncate">{getLocationText()}</span>
               </div>
-              <div className="flex items-center gap-1.5 text-foreground/50 tracking-wider">
-                <Clock className="w-3 h-3 shrink-0" />
+              <div className="flex items-center gap-1.5 text-foreground/50 tracking-widest leading-none mt-1">
+                <Clock className="w-3 h-3 shrink-0 text-foreground/30" />
                 <span>
                   {formatScheduledTime(job.scheduled_arrival || job.scheduled_date)}
                 </span>
               </div>
             </div>
           </div>
-          <ChevronRight className="ml-auto shrink-0 text-muted-foreground" strokeWidth={2} />
+          <ChevronRight className="ml-2 shrink-0 text-foreground/20" strokeWidth={3} />
         </div>
       </Link>
     </motion.div>

@@ -36,16 +36,16 @@ export function AdminJobDrawerContent({
   const isAssignmentLocked = job.status === JOB_STATUSES.VERIFIED;
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-8">
+    <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
       {/* Logistics Grid */}
       <div className="grid grid-cols-2 gap-4">
         {/* Arrival Time Block */}
         <div className="flex flex-col gap-2">
-          <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
             {t.arrivalTime}
           </span>
-          <div className="bg-rsg-surface/50 px-3 border border-border flex items-center h-[44px] w-full rounded-none">
-            <span className="text-xs font-black text-foreground uppercase tracking-widest truncate leading-none">
+          <div className="bg-surface p-3 border border-border flex items-center h-[44px] w-full rounded-md">
+            <span className="font-mono text-sm text-foreground truncate">
               {job.scheduled_arrival || job.scheduled_date
                 ? new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
                     weekday: "short",
@@ -64,7 +64,7 @@ export function AdminJobDrawerContent({
 
         {/* Installer Block - Forced 44px Height & Width Symmetry */}
         <div className="flex flex-col gap-2">
-          <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest flex items-center gap-1">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             {t.installer}
             {isAssignmentLocked && <ShieldCheck className="w-2.5 h-2.5 text-rsg-gold" />}
           </span>
@@ -74,7 +74,7 @@ export function AdminJobDrawerContent({
             onValueChange={(val) => onUpdateInstaller(job.id, val)}
           >
             <SelectTrigger 
-              className={`w-full! bg-rsg-surface/50! border-border! border! px-3 rounded-none focus:ring-0! ring-0! outline-none! uppercase text-foreground h-[44px]! font-black text-xs tracking-widest leading-none shadow-none! [&>svg]:hidden ${
+              className={`w-full! bg-surface! border-border! border! px-3 rounded-md focus:ring-2 focus:ring-rsg-gold focus:ring-offset-1 outline-none! uppercase text-foreground h-[44px]! tracking-widest leading-none shadow-none! [&>svg]:hidden ${
                 isAssignmentLocked ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
@@ -87,16 +87,16 @@ export function AdminJobDrawerContent({
               side="bottom" 
               sideOffset={4} 
               align="start" 
-              className="z-[1001] rounded-none min-w-[var(--radix-select-trigger-width)] bg-popover border border-border shadow-xl"
+              className="z-[1001] rounded-md min-w-[var(--radix-select-trigger-width)] bg-popover border border-border shadow-md"
             >
-              <SelectItem value="unassigned" className="text-xs uppercase font-black tracking-widest py-3 flex items-center">
+              <SelectItem value="unassigned" className="text-sm uppercase font-medium py-2 flex items-center">
                 {t.unassigned}
               </SelectItem>
               {installers.map((inst) => (
                 <SelectItem 
                   key={inst} 
                   value={inst} 
-                  className="text-xs uppercase font-black tracking-widest py-3 flex items-center cursor-pointer"
+                  className="text-sm uppercase font-medium py-2 flex items-center cursor-pointer"
                 >
                   {formatInstallerName(inst)}
                 </SelectItem>
@@ -108,10 +108,10 @@ export function AdminJobDrawerContent({
 
       {/* Site info */}
       <div className="flex flex-col gap-2">
-        <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           {t.siteInformation}
         </span>
-        <div className="bg-rsg-surface/50 p-4 border border-border">
+        <div className="bg-surface p-4 border border-border rounded-md">
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <div>
@@ -125,14 +125,14 @@ export function AdminJobDrawerContent({
 
       {/* Install Scope */}
       <div className="flex flex-col gap-4">
-        <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           {t.scope}
         </span>
         <div className="flex flex-col gap-3">
           {job.stoneapp_parts?.map((part, i) => (
             <div
               key={i}
-              className="border border-border p-4 bg-rsg-surface/20 flex flex-col gap-2 border-l-4 border-l-primary"
+              className="border border-border p-4 bg-surface flex flex-col gap-2 border-l-2 border-l-primary rounded-md"
             >
               <div className="flex justify-between items-center pr-2">
                 <span className="text-xs font-black uppercase text-foreground">
@@ -189,12 +189,12 @@ export function AdminJobDrawerContent({
       </div>
 
       {/* Logistics Notes */}
-      <div className="flex flex-col gap-2">
-        <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-3">
+      <div className="flex flex-col gap-2 relative">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">
           {t.logistics}
         </span>
-        <div className="bg-amber-500/5 border border-amber-500/20 p-4">
-          <p className="text-sm text-foreground/80 leading-relaxed font-bold">
+        <div className="bg-accent/50 border border-border p-4 rounded-md">
+          <p className="text-sm text-foreground/80 leading-relaxed font-medium">
             &quot;{job.logistics_notes || t.noLogistics}&quot;
           </p>
         </div>
@@ -203,7 +203,7 @@ export function AdminJobDrawerContent({
       {/* Verified Proofs */}
       {allPhotos.length > 0 && (
         <div className="flex flex-col gap-4">
-          <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
             {t.fieldDocumentation} ({allPhotos.length})
           </span>
           <div className="grid grid-cols-2 gap-3">
@@ -212,7 +212,7 @@ export function AdminJobDrawerContent({
               return (
                 <div
                   key={i}
-                  className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden"
+                  className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden rounded-md"
                 >
                   <Image
                     src={url}
@@ -233,7 +233,7 @@ export function AdminJobDrawerContent({
                             "_blank",
                           )
                         }
-                        className="bg-rsg-gold text-background p-1.5 hover:opacity-80 transition-opacity z-10 border border-transparent"
+                        className="bg-rsg-gold text-black p-1.5 hover:bg-rsg-gold/80 transition-colors z-10 border border-transparent rounded-md shadow-sm"
                         title="Open GPS Coordinate in Maps"
                       >
                         <MapPin className="w-3 h-3" />
@@ -246,10 +246,10 @@ export function AdminJobDrawerContent({
           </div>
           {activeSignature && (
             <div className="flex flex-col gap-2 mt-4">
-              <span className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
                 {t.clientSignature}
               </span>
-              <div className="bg-[#f0f0f0] p-4 border border-border h-32 flex items-center justify-center relative rounded-none">
+              <div className="bg-[#f0f0f0] p-4 border border-border h-32 flex items-center justify-center relative rounded-md">
                 <Image
                   src={activeSignature}
                   alt="Signature"

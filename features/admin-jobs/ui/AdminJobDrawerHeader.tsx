@@ -15,24 +15,24 @@ export function AdminJobDrawerHeader({
   const headerWoId = displayId.startsWith("WO-") ? displayId : "WO-" + displayId;
 
   return (
-    <div className="p-4 md:p-6 border-b border-border flex justify-between items-start bg-rsg-surface/30 pb-4 shrink-0">
+    <div className="p-5 border-b border-border flex justify-between items-start bg-surface shrink-0">
       <div className="flex flex-col gap-1">
-        <span className="font-mono text-[10px] text-foreground/40 block uppercase tracking-[0.2em]">
+        <span className="font-mono text-xs text-muted-foreground block uppercase tracking-widest">
           {headerWoId}
         </span>
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-black tracking-tight uppercase leading-none">
+        <div className="flex items-center gap-3 mt-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground uppercase leading-none">
             {job.client_name}
           </h2>
           <StatusBadge
             status={job.status}
-            className="w-fit scale-90 origin-left"
+            className="w-fit"
           />
         </div>
       </div>
       <button
         onClick={onClose}
-        className="min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-foreground/5 text-foreground/40 hover:text-foreground transition-colors"
+        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
         title={t.close}
       >
         <X className="w-5 h-5" />

@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
+import { formatInstallerName } from "../../../shared/lib/utils";
 
 export function useProfileController() {
   const { activeRole, language, setLanguage, setManualThemeOverride } = useUserStore();
@@ -26,11 +27,9 @@ export function useProfileController() {
     router.push("/login");
   };
 
-  const fullName =
-    activeRole.split("_")[1]?.charAt(0).toUpperCase() +
-      activeRole.split("_")[1]?.slice(1) || "Installer";
-  const initials =
-    activeRole.split("_")[1]?.substring(0, 2).toUpperCase() || "IN";
+  const formattedName = formatInstallerName(activeRole);
+  const fullName = formattedName;
+  const initials = formattedName.substring(0, 2).toUpperCase() || "IN";
 
   return {
     t,

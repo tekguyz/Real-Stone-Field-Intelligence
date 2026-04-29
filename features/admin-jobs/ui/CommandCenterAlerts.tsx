@@ -40,18 +40,18 @@ export function CommandCenterAlerts({ currentJobs, stats, isLoading, onJobSelect
               <div
                 key={`alert-${job.id}`}
                 onClick={() => onJobSelect(job)}
-                className="bg-primary/5 border border-primary/20 p-3 border-l-4 border-l-rsg-warning cursor-pointer hover:bg-primary/10 transition-colors group relative"
+                className="bg-card border border-border p-4 border-l-2 border-l-rsg-warning cursor-pointer hover:bg-surface transition-colors group relative rounded-md shadow-sm"
               >
                 <div className="flex items-center gap-2 text-rsg-warning mb-1">
-                  <AlertTriangle className="w-3 h-3" />
-                  <span className="text-[9px] font-black uppercase tracking-widest">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest leading-none">
                     {t.systemAlert}
                   </span>
                 </div>
-                <p className="text-sm font-bold group-hover:text-primary leading-tight">
+                <p className="text-sm font-semibold group-hover:text-primary transition-colors leading-tight">
                   {job.client_name}
                 </p>
-                <p className="text-[10px] font-mono text-foreground/40 mt-1 uppercase leading-snug truncate">
+                <p className="text-xs font-mono text-muted-foreground mt-1 uppercase leading-snug truncate">
                   {job.legacy_id} •{" "}
                   {summarizeJobScope(job.stoneapp_parts)}
                 </p>

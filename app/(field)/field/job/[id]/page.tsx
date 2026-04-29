@@ -70,15 +70,15 @@ export default function FieldJobDetail({
     <div className="flex flex-col min-h-full bg-background pb-12">
       <FieldJobDetailHeader language={language} handleBackNavigation={handleBackNavigation} />
 
-      <div className="p-4 sm:p-6 flex flex-col gap-6">
+      <div className="p-3 flex flex-col gap-3">
         <section className="flex justify-between items-start">
           <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-tight pr-4">
             {job.client_name}
           </h1>
-          <StatusBadge status={job.status} />
+          <StatusBadge status={job.status} variant="rugged" />
         </section>
 
-        <div className="flex flex-col gap-6 bg-card border border-border p-3 sm:p-4">
+        <div className="flex flex-col gap-4 bg-card border-2 border-foreground p-3 shadow-[var(--rugged-shadow-sm)]">
           <JobBlockScope job={job} language={language} />
           <JobBlockSite job={job} language={language} />
           <JobBlockArrival scheduledDate={job.scheduled_arrival || job.scheduled_date} language={language} />

@@ -94,7 +94,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -102,24 +102,24 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-4xl bg-rsg-surface border-2 border-rsg-border shadow-[10px_10px_0px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[90vh] rounded-none"
+        className="relative w-full max-w-4xl bg-surface border border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh] rounded-md"
       >
-        <div className="h-14 border-b border-rsg-border px-6 flex items-center justify-between bg-rsg-surface">
+        <div className="h-14 border-b border-border px-6 flex items-center justify-between bg-surface">
           <div className="flex items-center gap-3">
             <Upload className="w-5 h-5 text-rsg-gold" />
-            <h2 className="font-black uppercase tracking-[0.2em] text-rsg-text">
+            <h2 className="font-semibold uppercase tracking-widest text-foreground text-sm">
               {t.importStoneAppData}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-rsg-background transition-colors text-rsg-text/60 hover:text-rsg-text"
+            className="p-2 hover:bg-accent transition-colors text-muted-foreground hover:text-foreground rounded-md"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-rsg-background">
+        <div className="flex-1 overflow-y-auto p-5 bg-background">
           {!hasParsed ? (
             <FileDropzone
               isDragging={isDragging}
@@ -134,17 +134,17 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
               onFileSelect={handleFile}
             />
           ) : parsedData.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center border-2 border-dashed border-rsg-border bg-rsg-surface">
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-border bg-surface rounded-md">
               <AlertTriangle className="w-12 h-12 text-rsg-gold mb-4 opacity-50" />
-              <p className="text-sm font-black uppercase tracking-widest text-rsg-text">
+              <p className="text-sm font-semibold uppercase tracking-widest text-foreground">
                 No unimported records found
               </p>
-              <p className="text-[10px] uppercase font-mono text-rsg-text/60 mt-2">
+              <p className="text-xs uppercase font-medium text-muted-foreground mt-2">
                 All records in this file might have errors or are empty.
               </p>
               <button 
                 onClick={clearData}
-                className="mt-6 px-4 py-2 border border-rsg-border bg-rsg-background hover:bg-rsg-border/20 text-[10px] font-black uppercase tracking-wider transition-colors"
+                className="mt-6 px-4 py-2 border border-border bg-background hover:bg-accent text-xs font-semibold uppercase tracking-widest transition-colors rounded-md"
                >
                  Try Another File
               </button>
@@ -161,31 +161,31 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
           )}
 
           {error && (
-            <div className="mt-4 p-4 border border-red-500/50 bg-red-500/10 flex items-center gap-3 text-red-500 rounded-none">
+            <div className="mt-4 p-4 border border-red-500/50 bg-red-500/10 flex items-center gap-3 text-red-500 rounded-md">
               <AlertTriangle className="w-5 h-5" />
-              <p className="text-[10px] font-black uppercase tracking-widest">
+              <p className="text-xs font-semibold uppercase tracking-widest">
                 {error}
               </p>
             </div>
           )}
         </div>
 
-        <div className="p-6 border-t border-rsg-border bg-rsg-surface flex justify-end gap-4 rounded-none">
+        <div className="p-5 border-t border-border bg-surface flex justify-end gap-3 rounded-b-md">
           <button
             onClick={onClose}
-            className="px-6 py-3 border border-rsg-border font-black uppercase tracking-widest text-[10px] text-rsg-text hover:bg-rsg-background transition-colors rounded-none"
+            className="px-6 py-2 border border-border font-semibold uppercase tracking-widest text-xs text-foreground hover:bg-accent transition-colors rounded-md"
           >
             {t.cancel}
           </button>
           <button
             disabled={selectedWoNumbers.size === 0 || isImporting}
             onClick={onFinalize}
-            className={`px-8 py-3 bg-rsg-gold text-rsg-background font-black uppercase tracking-[0.2em] text-[10px] shadow-[4px_4px_0px_rgba(0,0,0,0.2)] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2 rounded-none
-              ${selectedWoNumbers.size === 0 || isImporting ? "opacity-50 cursor-not-allowed grayscale" : "hover:scale-[1.02]"}`}
+            className={`px-6 py-2 bg-rsg-gold text-black font-semibold uppercase tracking-widest text-xs shadow-sm transition-all flex items-center gap-2 rounded-md
+              ${selectedWoNumbers.size === 0 || isImporting ? "opacity-50 cursor-not-allowed grayscale" : "hover:bg-rsg-gold/90"}`}
           >
             {isImporting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-rsg-background" />
+                <Loader2 className="w-4 h-4 animate-spin text-black" />
                 {t.processingHydration}
               </>
             ) : (
