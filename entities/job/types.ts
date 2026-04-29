@@ -37,6 +37,7 @@ export interface Job {
   community_name?: string | null;
   installer_id: string | null;
   logistics_notes: string | null;
+  is_urgent?: boolean;
   photos?: string[];
   captured_proof?: CapturedProof[];
   signature_url?: string | null;
