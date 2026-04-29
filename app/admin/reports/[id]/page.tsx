@@ -129,8 +129,9 @@ export default function MasterJobReport({
   const showCompletionData = !isPendingExecution;
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-background print:bg-white print:p-0 print:m-0 min-h-screen">
-      <div className="flex justify-between items-center mb-8 print:hidden">
+    <div className="w-full bg-background print:bg-white min-h-[100dvh] flex flex-col md:h-screen overflow-hidden">
+      {/* Top Bar - Hidden on Print */}
+      <div className="w-full max-w-5xl mx-auto p-4 md:px-8 md:pt-8 md:pb-4 flex justify-between items-center print:hidden shrink-0">
         <button
           onClick={() => {
             if (window.history.length > 1) {
@@ -146,43 +147,54 @@ export default function MasterJobReport({
         </button>
         <button
           onClick={handlePrint}
-          className="btn-brutal px-6 py-2 flex items-center gap-2 uppercase hover:opacity-90 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] print:hidden bg-rsg-gold text-rsg-background font-semibold"
+          className="btn-brutal px-6 py-2 flex items-center gap-2 uppercase hover:opacity-90 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] bg-rsg-gold text-rsg-background font-semibold"
         >
           <Printer className="w-4 h-4" />
           {t.printReport}
         </button>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full border-4 border-foreground print:border-black bg-card print:bg-white flex flex-col rounded-none"
-      >
-        <ReportHeader job={job} headerWoId={headerWoId} />
-        
-        {isPendingExecution && (
-          <div className="bg-[#ff5f00] text-white p-4 text-center font-black uppercase tracking-[0.3em] border-b-4 border-foreground print:border-black">
-            {t.awaitingFieldExecution}
+      {/* Main Content Area - Scrollable on Web, Static on Print */}
+      <div className="flex-1 overflow-y-auto print:overflow-visible p-4 md:px-8 md:pb-12 custom-scrollbar print:p-0">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-5xl mx-auto border-4 border-foreground print:border-black bg-card print:bg-white flex flex-col rounded-none shadow-[8px_8px_0px_rgba(0,0,0,0.1)] print:shadow-none print-certificate-border"
+        >
+          <div className="print-no-break">
+            <ReportHeader job={job} headerWoId={headerWoId} />
           </div>
-        )}
+          
+          {isPendingExecution && (
+            <div className="bg-[#ff5f00] text-white p-4 text-center font-black uppercase tracking-[0.3em] border-b-4 border-foreground print:border-black print-no-break">
+              {t.awaitingFieldExecution}
+            </div>
+          )}
 
-        <ReportStatsGrid job={job} avgAccuracy={avgAccuracy} />
-        
-        {showCompletionData && (
-          <>
-            <ReportEvidenceGallery
-              allPhotos={allPhotos}
-              getProofMetadata={getProofMetadata}
-              formatTime={(dateStr) => formatTime(dateStr, language)}
-            />
-            <ReportSignatureSection
-              signatureUrl={signatureUrl}
-              jobId={job.id}
-              updatedAt={job.updated_at}
-            />
-          </>
-        )}
-      </motion.div>
+          <div className="print-no-break">
+            <ReportStatsGrid job={job} avgAccuracy={avgAccuracy} />
+          </div>
+          
+          {showCompletionData && (
+            <div className="flex flex-col">
+              <div className="print-no-break">
+                <ReportEvidenceGallery
+                  allPhotos={allPhotos}
+                  getProofMetadata={getProofMetadata}
+                  formatTime={(dateStr) => formatTime(dateStr, language)}
+                />
+              </div>
+              <div className="print-no-break">
+                <ReportSignatureSection
+                  signatureUrl={signatureUrl}
+                  jobId={job.id}
+                  updatedAt={job.updated_at}
+                />
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 }

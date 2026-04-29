@@ -34,11 +34,11 @@ export function AccountSettings() {
         </div>
         <div className="md:col-span-2">
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger render={
               <Button variant="outline" className="text-xs font-black uppercase tracking-widest h-10 outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold">
                 {language === "es" ? "Cambiar Contraseña" : "Change Password"}
               </Button>
-            </DialogTrigger>
+            } />
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{language === "es" ? "Cambiar Contraseña" : "Change Password"}</DialogTitle>

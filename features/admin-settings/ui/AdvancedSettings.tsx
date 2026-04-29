@@ -37,11 +37,11 @@ export function AdvancedSettings() {
 
         <div>
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger render={
               <Button variant="outline" size="sm" className="text-[10px] font-black uppercase tracking-widest border-rsg-error/20 text-rsg-error hover:bg-rsg-error hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-rsg-error">
                 Clear Offline Cache
               </Button>
-            </DialogTrigger>
+            } />
             <DialogContent className="max-w-[400px]">
               <DialogHeader>
                 <DialogTitle>Clear Offline Data?</DialogTitle>

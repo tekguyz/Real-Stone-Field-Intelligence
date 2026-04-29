@@ -10,6 +10,7 @@ import {
   Mountain,
   ChevronLeft,
   ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import { useUserStore } from "../../entities/user/store";
 import { dict } from "../../entities/i18n/dict";
@@ -25,6 +26,10 @@ export function AdminSidebar() {
     { name: t.jobs, href: "/jobs", icon: Briefcase },
     { name: t.team, href: "/team", icon: Users },
     { name: t.inventory, href: "/inventory", icon: Package },
+  ];
+
+  const bottomNavItems = [
+    { name: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
   ];
 
   return (
@@ -97,6 +102,34 @@ export function AdminSidebar() {
           );
         })}
       </nav>
+
+      {/* Bottom Nav */}
+      <div className="px-4 py-2 flex flex-col gap-1 border-t border-sidebar-border/50">
+        {bottomNavItems.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={!isSidebarOpen ? item.name : undefined}
+              className={`flex items-center gap-3 px-3 py-3 transition-colors text-xs font-black tracking-widest uppercase whitespace-nowrap relative group border-l-4 rounded-none ${
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-primary"
+                  : "border-transparent text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+              }`}
+            >
+              <Icon className="w-5 h-5 shrink-0" />
+              {isSidebarOpen && <span>{item.name}</span>}
+              {!isSidebarOpen && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap border border-foreground">
+                  {item.name}
+                </div>
+              )}
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Industrial Square Toggle Button */}
       <button

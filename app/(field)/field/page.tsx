@@ -19,6 +19,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { JobCard } from "../../../features/field-jobs/ui/JobCard";
 import { SyncIndicator } from "../../../shared/ui/SyncIndicator";
+import { formatInstallerName } from "../../../shared/lib/utils";
 
 export default function FieldPage() {
   const { activeRole, language, _hasHydrated } = useUserStore();
@@ -48,7 +49,7 @@ export default function FieldPage() {
     );
   }
 
-  // Filter jobs for this specific installer - exact case-insensitive match
+  // Filter jobs for this specific installer
   const myJobs = jobs?.filter((j) => j.installer_id?.toLowerCase() === activeRole?.toLowerCase()) || [];
   const activeCount = myJobs.filter((j) => {
     const s = j.status?.toLowerCase();
@@ -69,8 +70,8 @@ export default function FieldPage() {
             <Mountain className="w-5 h-5 text-primary" />
           </div>
           <div className="flex flex-col truncate">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-primary truncate hidden sm:inline-block">
-              {activeRole.split("_")[1]?.toUpperCase()}
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-rsg-gold truncate hidden sm:inline-block">
+              {formatInstallerName(activeRole)}
             </span>
             <span className="font-mono text-[10px] uppercase font-bold text-foreground/50 hidden sm:inline-block">
               {activeCount} {language === "es" ? "ACTIVOS" : "ACTIVE"}

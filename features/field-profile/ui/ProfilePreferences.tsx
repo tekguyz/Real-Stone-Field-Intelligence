@@ -1,9 +1,11 @@
 import { motion } from "motion/react";
-import { Sun, Moon, Laptop } from "lucide-react";
+import { Sun, Moon, Laptop, Bell, BellOff, Loader2 } from "lucide-react";
 import { dict } from "../../../entities/i18n/dict";
+import { usePushNotifications } from "../../notifications/hooks/usePushNotifications";
 
 export function ProfilePreferences({ language, theme, handleLanguageToggle, handleThemeChange }: { language: "en" | "es", theme: string | undefined, handleLanguageToggle: any, handleThemeChange: any }) {
   const t = dict[language].field;
+  const { isSubscribed, isSupported, subscribeUser, unsubscribeUser, loading } = usePushNotifications();
 
   return (
     <>
@@ -65,6 +67,49 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
               <span>{item.label}</span>
             </button>
           ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
+          {language === "es" ? "Notificaciones" : "Notifications"}
+        </h3>
+        <div className="bg-surface border-2 border-foreground p-4 flex items-center justify-between shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center gap-3">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isSubscribed ? "bg-rsg-gold/20 text-rsg-gold" : "bg-foreground/5 text-foreground/40"}`}>
+              {isSubscribed ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-black uppercase tracking-widest text-foreground">
+                {language === "es" ? "Alertas Push" : "Push Alerts"}
+              </span>
+              <span className="text-[9px] font-bold text-foreground/40 uppercase tracking-widest">
+                {!isSupported 
+                  ? (language === "es" ? "No Soportado" : "Not Supported")
+                  : isSubscribed 
+                    ? (language === "es" ? "Activado" : "Enabled")
+                    : (language === "es" ? "Desactivado" : "Disabled")}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => isSubscribed ? unsubscribeUser() : subscribeUser()}
+            disabled={!isSupported || loading}
+            className={`h-10 px-4 flex items-center justify-center font-black text-[10px] uppercase tracking-widest border-2 border-foreground transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
+              isSubscribed 
+                ? "bg-foreground text-background shadow-[2px_2px_0px_rgba(0,0,0,0.1)]" 
+                : "bg-rsg-gold text-foreground shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+            } disabled:opacity-30 disabled:grayscale`}
+          >
+            {loading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : isSubscribed ? (
+              language === "es" ? "DESACTIVAR" : "DISABLE"
+            ) : (
+              language === "es" ? "ACTIVAR" : "ENABLE"
+            )}
+          </button>
         </div>
       </section>
     </>

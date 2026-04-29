@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 import { Job } from "@/entities/job/types";
 
+import { formatInstallerName } from "../lib/utils";
+
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
@@ -22,7 +24,7 @@ export async function sendVerificationNotification(
           <p style="margin: 0 0 10px 0;"><strong>Client:</strong> ${job.client_name}</p>
           <p style="margin: 0 0 10px 0;"><strong>Location:</strong> ${job.address}</p>
           <p style="margin: 0 0 10px 0;"><strong>Verified By:</strong> ${
-            job.installer_id || "Unassigned"
+            formatInstallerName(job.installer_id)
           }</p>
           <p style="margin: 0;"><strong>Status:</strong> <span style="color: #10b981; font-weight: bold;">VERIFIED</span></p>
         </div>

@@ -120,10 +120,11 @@ export function useFieldJobDetail(jobId: string) {
 
     setIsProcessing(true);
     try {
+      const isGallery = pendingCaptureType === "gallery";
       const newPhotos: ProcessedImage[] = [];
       for (let i = 0; i < files.length; i++) {
         haptics.shutter();
-        const processed = await processImage(files[i]);
+        const processed = await processImage(files[i], isGallery);
         newPhotos.push(processed);
       }
 

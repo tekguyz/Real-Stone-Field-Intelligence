@@ -7,6 +7,7 @@ import { DemoBanner } from "../features/demo-switcher/DemoBanner";
 import { IOSInstallBanner } from "../components/IOSInstallBanner";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
+import { ServiceWorkerRegister } from "../shared/lib/hooks/useServiceWorker";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -74,6 +75,7 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased text-foreground selection:bg-rsg-gold/30 overscroll-none`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ServiceWorkerRegister />
           <ReactQueryProvider>
             <div className="h-[100dvh] flex flex-col overflow-hidden overscroll-none">
               <DemoBanner />

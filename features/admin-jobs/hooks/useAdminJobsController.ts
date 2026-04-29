@@ -37,27 +37,33 @@ export function useAdminJobsController() {
   };
 
   const handleVerify = async (jobId: string) => {
+    // 1. Pre-flight check
+    if (!jobId) return;
+
     try {
+      // 2. Execute Status Update mutation
       await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.VERIFIED });
       toast.success(language === "es" ? "Trabajo verificado y cerrado." : "Job verified and closed.");
 
+      // 3. Find job data for persistent notification
       const job = jobs?.find((j) => j.id === jobId);
       if (job) {
         try {
           const { sendJobVerifiedEmail } = await import("../../../app/actions/send-notification");
           await sendJobVerifiedEmail({ ...job, status: JOB_STATUSES.VERIFIED }, "4tekguyz@gmail.com")
-            .catch(err => console.error("Non-blocking email notify error:", err));
+            .catch(err => console.error("Non-blocking notification error:", err));
         } catch (err) {
-          console.error("Failed to trigger email notification", err);
+          console.error("Dynamic import for notifications failed:", err);
         }
       }
 
+      // 4. Close drawer on success
       if (selectedJob && selectedJob.id === jobId) {
         setSelectedJob(null);
       }
     } catch (err) {
-      console.error("Verification failed:", err);
-      toast.error(language === "es" ? "Error al verificar el trabajo." : "Failed to verify job.");
+      console.error("SYSTEM_FAILURE: Verification pipeline crashed:", err);
+      toast.error(language === "es" ? "CRÍTICO: El proceso de verificación falló." : "CRITICAL: Verification process failed.");
     }
   };
 

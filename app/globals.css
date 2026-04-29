@@ -360,7 +360,41 @@
     color: var(--color-foreground);
   }
 
+  /* ── Print Optimizations ─────────────────────── */
+  @media print {
+    .print-no-break {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    
+    body {
+      background: white !important;
+      color: black !important;
+    }
+
+    /* Professional Job Certificate aesthetic */
+    .print-certificate-border {
+      border: 4px solid black !important;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   /* ── Slim custom scrollbars ─────────────────────── */
+  .custom-scrollbar::-webkit-scrollbar        { width: 8px; height: 8px; }
+  .custom-scrollbar::-webkit-scrollbar-track  { background: oklch(var(--rsg-background)); }
+  .custom-scrollbar::-webkit-scrollbar-thumb  {
+    background: oklch(var(--rsg-text) / 0.1);
+    border: 2px solid oklch(var(--rsg-background));
+    border-radius: 0px;
+    transition: background 0.15s ease;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: oklch(var(--rsg-gold));
+  }
+
   ::-webkit-scrollbar        { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track  { background: transparent; }
   ::-webkit-scrollbar-thumb  {

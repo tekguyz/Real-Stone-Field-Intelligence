@@ -195,7 +195,7 @@ export function AdminJobDrawerContent({
         </span>
         <div className="bg-amber-500/5 border border-amber-500/20 p-4">
           <p className="text-sm text-foreground/80 leading-relaxed font-bold">
-            "{job.logistics_notes || t.noLogistics}"
+            &quot;{job.logistics_notes || t.noLogistics}&quot;
           </p>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import EXIF from "exif-js";
+
 export interface ProcessedImage {
   blob: Blob;
   previewUrl: string;
@@ -10,31 +12,38 @@ export interface ProcessedImage {
       | "granted"
       | "timeout_unavailable"
       | "denied"
-      | "unavailable";
+      | "unavailable"
+      | "gallery"
+      | "manual";
   };
 }
 
-export const processImage = async (file: File): Promise<ProcessedImage> => {
-  return new Promise((resolve, reject) => {
-    // 1. Capture metadata timestamp
-    const timestamp = Date.now();
+const convertDMSToDD = (dms: any, ref: any): number | null => {
+  if (!dms || !ref) return null;
+  const degrees = dms[0];
+  const minutes = dms[1];
+  const seconds = dms[2];
+  let dd = degrees + minutes / 60 + seconds / 3600;
+  if (ref === "S" || ref === "W") dd = dd * -1;
+  return dd;
+};
 
-    // 2. Extract Geolocation (timeout after 10 seconds)
+export const processImage = async (
+  file: File,
+  isGallery: boolean = false
+): Promise<ProcessedImage> => {
+  return new Promise((resolve, reject) => {
+    const timestamp = Date.now();
     let lat: number | null = null;
     let lng: number | null = null;
     let accuracy: number | null = null;
-    let location_status:
-      | "granted"
-      | "timeout_unavailable"
-      | "denied"
-      | "unavailable" = "unavailable";
+    let location_status: ProcessedImage["metadata"]["location_status"] = "unavailable";
 
     let isFinalized = false;
     const finalizeProcessing = () => {
       if (isFinalized) return;
       isFinalized = true;
 
-      // 3. Load image to Canvas for downscaling
       const img = new Image();
       const objectUrl = URL.createObjectURL(file);
 
@@ -56,7 +65,6 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        // 4. Output as 0.8 quality JPEG
         canvas.toBlob(
           (blob) => {
             if (!blob) return reject(new Error("Canvas to Blob failed"));
@@ -67,7 +75,7 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
             });
           },
           "image/jpeg",
-          0.8,
+          0.8
         );
       };
 
@@ -75,7 +83,30 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
       img.src = objectUrl;
     };
 
-    if ("geolocation" in navigator) {
+    // New logic for gallery uploads: Try EXIF first
+    if (isGallery) {
+      location_status = "gallery";
+      EXIF.getData(file as any, function (this: any) {
+        const exifLat = EXIF.getTag(this, "GPSLatitude");
+        const exifLatRef = EXIF.getTag(this, "GPSLatitudeRef");
+        const exifLong = EXIF.getTag(this, "GPSLongitude");
+        const exifLongRef = EXIF.getTag(this, "GPSLongitudeRef");
+
+        if (exifLat && exifLong) {
+          lat = convertDMSToDD(exifLat, exifLatRef);
+          lng = convertDMSToDD(exifLong, exifLongRef);
+          accuracy = 50; // Arbitrary accuracy for EXIF
+          location_status = "granted";
+        }
+        finalizeProcessing();
+      });
+
+      // Timeout for EXIF processing
+      setTimeout(() => {
+        if (!isFinalized) finalizeProcessing();
+      }, 2000);
+    } else if ("geolocation" in navigator) {
+      // Direct Camera logic
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           lat = pos.coords.latitude;
@@ -85,22 +116,12 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
           finalizeProcessing();
         },
         (err) => {
-          if (err.code === err.PERMISSION_DENIED) {
-            location_status = "denied";
-          } else {
-            location_status = "timeout_unavailable";
-          }
-          finalizeProcessing(); // Proceed without geolocation
+          location_status = err.code === err.PERMISSION_DENIED ? "denied" : "timeout_unavailable";
+          finalizeProcessing();
         },
-        {
-          timeout: 10000,
-          maximumAge: 10000,
-          enableHighAccuracy: true,
-        },
+        { timeout: 10000, maximumAge: 10000, enableHighAccuracy: true }
       );
 
-      // Safety timeout: If GPS takes > 10s, we proceed with whatever we have (likely null)
-      // but ensure we don't hang the camera
       setTimeout(() => {
         if (!isFinalized) {
           location_status = "timeout_unavailable";
@@ -108,7 +129,6 @@ export const processImage = async (file: File): Promise<ProcessedImage> => {
         }
       }, 10500);
     } else {
-      location_status = "unavailable";
       finalizeProcessing();
     }
   });

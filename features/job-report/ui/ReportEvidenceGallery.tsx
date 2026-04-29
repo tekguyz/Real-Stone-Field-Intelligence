@@ -57,8 +57,11 @@ export function ReportEvidenceGallery({
                       </div>
                       {meta.lat && meta.lng ? (
                         <div className="flex flex-col gap-1">
-                          <span className="text-xs font-mono text-rsg-gold print:text-black font-bold flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
+                          <span className="text-xs font-black uppercase text-rsg-gold print:text-black flex items-center gap-1.5 px-2 py-0.5 bg-foreground/10 print:bg-transparent border border-rsg-gold/30 print:border-black">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {t.status.verified || "Verified Location"}
+                          </span>
+                          <span className="text-[10px] font-mono text-background/80 print:text-black mt-1">
                             {meta.lat.toFixed(6)}, {meta.lng.toFixed(6)}
                           </span>
                           <span className="text-[9px] font-mono text-background/60 print:text-black/60">
@@ -68,18 +71,18 @@ export function ReportEvidenceGallery({
                               : t.admin.unknown}
                           </span>
                         </div>
-                      ) : meta.location_status === "timeout_unavailable" ? (
-                        <div className="flex items-center gap-1 text-rsg-warning print:text-black mt-1">
-                          <MapPin className="w-3 h-3" />
-                          <span className="text-[10px] font-mono font-bold">
-                            GPS LOCK FAILED - OVERRIDE
-                          </span>
-                        </div>
                       ) : (
-                        <div className="flex items-center gap-2 bg-foreground text-background print:bg-white print:text-black print:border-2 print:border-black px-2 py-1 mt-1">
-                          <span className="text-[10px] font-mono font-bold tracking-widest">
-                            {t.admin.gpsMetadataUnavailable}
-                          </span>
+                        <div className="flex flex-col gap-1">
+                           <div className="flex items-center gap-2 bg-foreground/20 text-background print:bg-white print:text-black print:border-2 print:border-black px-2 py-1">
+                            <span className="text-[10px] font-mono font-black tracking-widest uppercase text-background/60 print:text-black">
+                              GPS NOT AVAILABLE
+                            </span>
+                          </div>
+                          {meta.location_status === "gallery" && (
+                             <span className="text-[9px] font-mono text-background/40 uppercase italic mt-1">
+                              MANUAL UPLOAD (NO EXIF)
+                            </span>
+                          )}
                         </div>
                       )}
                     </>
