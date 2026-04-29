@@ -96,7 +96,6 @@ export function AdminJobDrawer({
               language={language}
               installers={installers}
               onUpdateInstaller={onUpdateInstaller}
-              localCaptures={localCaptures}
               allPhotos={allPhotos}
               getProofMetadata={getProofMetadata}
               activeSignature={activeSignature}
