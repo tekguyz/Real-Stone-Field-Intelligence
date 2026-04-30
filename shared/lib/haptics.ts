@@ -11,4 +11,5 @@ export const haptics = {
   click: () => haptics.vibrate(10),
   shutter: () => haptics.vibrate(40),
   success: () => haptics.vibrate([30, 50, 30]),
+  error: () => haptics.vibrate([50, 100, 50, 100]),
 };

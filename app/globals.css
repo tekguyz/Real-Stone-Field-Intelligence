@@ -47,8 +47,8 @@
     --status-review-bg:     oklch(0.91 0.080 292);
     --status-review-text:   oklch(0.27 0.19  292);
 
-    --status-verified-bg:   oklch(0.91 0.075 148);
-    --status-verified-text: oklch(0.26 0.17  148);
+    --status-verified-bg:   oklch(0.91 0.08 160);
+    --status-verified-text: oklch(0.28 0.15 160);
 
     /* ── Signature Pad ────────────────────────────── */
     --sig-bg:  1 0 0;
@@ -141,8 +141,8 @@
     --status-review-bg:     oklch(0.30 0.13  292);
     --status-review-text:   oklch(0.86 0.15  292);
 
-    --status-verified-bg:   oklch(0.30 0.13  148);
-    --status-verified-text: oklch(0.86 0.15  148);
+    --status-verified-bg:   oklch(0.30 0.13 160);
+    --status-verified-text: oklch(0.86 0.15 160);
 
     /* ── Signature Pad — Dark ────────────────────── */
     --sig-bg:  0.20 0.01 75;
