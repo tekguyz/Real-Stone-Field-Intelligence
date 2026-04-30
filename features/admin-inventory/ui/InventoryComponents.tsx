@@ -157,12 +157,12 @@ export function InventoryTable({
                 </td>
                 <td className="px-4 py-2.5">
                   {lot.status === "on-site" ? (
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest bg-status-verified-bg/10 text-status-verified-text border border-status-verified-bg/20 rounded-md">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest bg-[var(--status-verified-bg)]/10 text-[var(--status-verified-text)] border border-[var(--status-verified-bg)]/20 rounded-md">
                       <Building2 className="w-3 h-3" />
                       {t.onSiteWarehouse}
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest bg-status-pending-bg/10 text-status-pending-text border border-status-pending-bg/20 rounded-md">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest bg-[var(--status-pending-bg)]/10 text-[var(--status-pending-text)] border border-[var(--status-pending-bg)]/20 rounded-md">
                       <Truck className="w-3 h-3" />
                       {t.inTransit}
                     </div>
@@ -213,7 +213,7 @@ export function InventoryTable({
                   <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     LOT: {selectedLot.id.toUpperCase()}
                   </span>
-                  <div className={`px-2 py-1 text-[10px] font-semibold uppercase tracking-widest border rounded-md ${selectedLot.status === "on-site" ? "bg-status-verified-bg/10 text-status-verified-text border-status-verified-bg/20" : "bg-status-pending-bg/10 text-status-pending-text border-status-pending-bg/20"}`}>
+                  <div className={`px-2 py-1 text-[10px] font-semibold uppercase tracking-widest border rounded-md ${selectedLot.status === "on-site" ? "bg-[var(--status-verified-bg)]/10 text-[var(--status-verified-text)] border-[var(--status-verified-bg)]/20" : "bg-[var(--status-pending-bg)]/10 text-[var(--status-pending-text)] border-[var(--status-pending-bg)]/20"}`}>
                     {selectedLot.status === "on-site" ? "ON-SITE" : "IN-TRANSIT"}
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export function InventoryMetrics({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="bg-card border-l-4 border-l-stone-400 p-4 border border-border hover:bg-surface/50 transition-colors rounded-md cursor-default">
+      <div className="bg-card border-l-4 border-l-[oklch(var(--rsg-border))] p-4 border border-border hover:bg-surface-2 transition-colors rounded-md cursor-default">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           TOTAL SLABS
         </p>
@@ -295,7 +295,7 @@ export function InventoryMetrics({
         </div>
       </div>
 
-      <div className="bg-card border-l-4 border-status-verified-bg p-4 border border-border hover:bg-surface/50 transition-colors rounded-md cursor-default">
+      <div className="bg-card border-l-4 border-l-[var(--status-verified-bg)] p-4 border border-border hover:bg-surface-2 transition-colors rounded-md cursor-default">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           {t.onSiteWarehouse}
         </p>
@@ -304,7 +304,7 @@ export function InventoryMetrics({
         </div>
       </div>
 
-      <div className="bg-card border-l-4 border-status-pending-bg p-4 border border-border hover:bg-surface/50 transition-colors rounded-md cursor-default">
+      <div className="bg-card border-l-4 border-l-[var(--status-pending-bg)] p-4 border border-border hover:bg-surface-2 transition-colors rounded-md cursor-default">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           {t.inTransit}
         </p>

@@ -53,7 +53,7 @@ export function TeamMemberCard({ member, onSelect }: TeamMemberCardProps) {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">
             {language === "es" ? "Asignación:" : "Assignment:"}
           </p>
-          <div className="text-sm font-mono text-primary">
+          <div className="text-sm font-mono text-rsg-gold font-bold">
             WO# {member.job_id.replace("WO-", "")}
           </div>
         </div>

@@ -1,20 +1,20 @@
 import { JobStatus } from '@/lib/constants/statuses';
 
 const statusStylesSleek: Record<string, string> = {
-  Assigned: 'bg-status-assigned-bg text-status-assigned-text',
-  Pending:  'bg-status-pending-bg text-status-pending-text',
-  Active:   'bg-status-active-bg text-status-active-text',
-  Review:   'bg-status-review-bg text-status-review-text',
-  Verified: 'bg-status-verified-bg text-status-verified-text',
+  Assigned: 'bg-[var(--status-assigned-bg)] text-[var(--status-assigned-text)]',
+  Pending:  'bg-[var(--status-pending-bg)] text-[var(--status-pending-text)]',
+  Active:   'bg-[var(--status-active-bg)] text-[var(--status-active-text)]',
+  Review:   'bg-[var(--status-review-bg)] text-[var(--status-review-text)]',
+  Verified: 'bg-[var(--status-verified-bg)] text-[var(--status-verified-text)]',
   Urgent:   'bg-[var(--status-urgent-bg)] text-[var(--status-urgent-text)]',
 };
 
 const statusStylesRugged: Record<string, string> = {
-  Assigned: 'bg-status-assigned-bg text-status-assigned-text',
-  Pending:  'bg-status-pending-bg text-status-pending-text',
+  Assigned: 'bg-[var(--status-assigned-bg)] text-[var(--status-assigned-text)]',
+  Pending:  'bg-[var(--status-pending-bg)] text-[var(--status-pending-text)]',
   Active:   'bg-rsg-gold text-black border-2 border-foreground',
-  Review:   'bg-status-review-bg text-status-review-text',
-  Verified: 'bg-status-verified-bg text-status-verified-text',
+  Review:   'bg-[var(--status-review-bg)] text-[var(--status-review-text)]',
+  Verified: 'bg-[var(--status-verified-bg)] text-[var(--status-verified-text)]',
   Urgent:   'bg-rsg-gold text-black border-2 border-foreground animate-pulse',
 };
 

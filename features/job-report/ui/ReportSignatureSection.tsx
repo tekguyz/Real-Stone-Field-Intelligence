@@ -18,9 +18,9 @@ export function ReportSignatureSection({
   const t = dict[language].admin;
 
   return (
-    <div className="p-6 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-surface print:bg-white print:break-inside-avoid">
+    <div className="p-6 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-card print:bg-white print:break-inside-avoid">
       <div className="flex flex-col gap-2 w-full max-w-sm">
-        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
+        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black pb-2">
           {language === "es" ? "Autorización del Cliente" : "Client Authorization"}
         </h3>
         {signatureUrl ? (
@@ -34,14 +34,14 @@ export function ReportSignatureSection({
             />
           </div>
         ) : (
-          <div className="border border-border bg-surface px-4 py-3 font-mono text-sm tracking-widest text-muted-foreground print:text-foreground uppercase rounded-md">
+          <div className="border border-border bg-muted/30 px-4 py-3 font-mono text-sm tracking-widest text-muted-foreground print:text-black uppercase rounded-md border-dashed">
             {language === "es" ? "NO SE REQUIERE FIRMA" : "NO SIGNATURE REQUIRED"}
           </div>
         )}
       </div>
 
       <div className="flex flex-col items-end text-right">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-foreground">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-black">
           {language === "es" ? "Token de Autorización Digital" : "Digital Authorization Token"}
         </span>
         <span className="font-mono text-xs text-foreground mt-1 print:text-black break-all max-w-[300px] uppercase">

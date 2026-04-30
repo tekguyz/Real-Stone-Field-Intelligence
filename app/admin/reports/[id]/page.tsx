@@ -147,7 +147,7 @@ export default function MasterJobReport({
         </button>
         <button
           onClick={handlePrint}
-          className="btn-brutal px-6 py-2 flex items-center gap-2 uppercase hover:opacity-90 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] bg-rsg-gold text-rsg-background font-semibold"
+          className="flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 font-semibold tracking-widest uppercase transition-opacity hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 print:hidden h-10"
         >
           <Printer className="w-4 h-4" />
           {t.printReport}

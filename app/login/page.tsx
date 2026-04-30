@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useUserStore, Role } from "../../entities/user/store";
 import { dict } from "../../entities/i18n/dict";
 import { useRouter } from "next/navigation";
-import { Mountain, Delete, Lock, ShieldCheck } from "lucide-react";
+import { Mountain, Delete, Fingerprint, Activity } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { haptics } from "../../shared/lib/haptics";
 
@@ -16,19 +16,22 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [mounted, setMounted] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
-  const handleAuth = (role: Role) => {
+  const handleAuth = async (role: Role) => {
+    setIsProcessing(true);
+    await new Promise(r => setTimeout(r, 600));
     setRole(role);
     const target = role === "admin" ? "/command-center" : "/field";
     router.push(target);
   };
 
   const handlePinInput = (num: string) => {
+    if (isProcessing) return;
     haptics.click();
     if (pin.length < 4) {
       setIsError(false);
@@ -36,13 +39,12 @@ export default function LoginPage() {
       setPin(newPin);
 
       if (newPin.length === 4) {
-        if (newPin === "1111") {
-          handleAuth("admin");
-        } else if (newPin === "2222") {
-          handleAuth("installer_juan");
-        } else if (newPin === "3333") {
-          handleAuth("installer_carlos");
-        } else {
+        // Logic remains identical to your existing auth
+        if (newPin === "1111") handleAuth("admin");
+        else if (newPin === "2222") handleAuth("installer_juan");
+        else if (newPin === "3333") handleAuth("installer_carlos");
+        else {
+          haptics.error();
           setIsError(true);
           setTimeout(() => {
             setPin("");
@@ -54,110 +56,136 @@ export default function LoginPage() {
   };
 
   const handleDelete = () => {
+    if (isProcessing) return;
     setPin(pin.slice(0, -1));
   };
 
-  if (!mounted) return <div className="min-h-screen bg-rsg-background" />;
+  if (!mounted) return null;
 
   return (
-    <div className="h-screen max-h-screen bg-rsg-background flex items-center justify-center p-4 selection:bg-rsg-gold selection:text-rsg-text overflow-hidden">
-      {/* Main Container: Responsive padding-top (pt-16) to clear 
-          the demo banner on mobile devices. 
-      */}
-      <div className="w-full max-w-[380px] flex flex-col gap-4 sm:gap-8 pt-16 sm:pt-0">
-        {/* Terminal Header - Compact on Mobile */}
-        <div className="flex flex-col items-center gap-2 sm:gap-4">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-rsg-text flex items-center justify-center border-2 sm:border-4 border-rsg-border shadow-[3px_3px_0px_0px_var(--color-rsg-gold)]">
-            <Mountain className="w-8 h-8 sm:w-10 sm:h-10 text-rsg-gold" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-[0.3em] leading-none text-rsg-text">
-              Real Stone
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6 selection:bg-rsg-gold selection:text-black">
+      {/* Structural Backdrop */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+      </div>
+
+      <div className="w-full max-w-[380px] flex flex-col gap-8 relative z-10">
+        
+        {/* Branding Header */}
+        <div className="flex flex-col items-center gap-4">
+          <motion.div 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="w-16 h-16 bg-background border border-border flex items-center justify-center shadow-sm"
+          >
+            <Mountain className="w-10 h-10 text-primary" />
+          </motion.div>
+          
+          <div className="text-center space-y-1">
+            <h1 className="text-xl font-black uppercase tracking-[0.3em] leading-tight">
+              RS&G <span className="text-primary">OPERATING SYSTEM</span>
             </h1>
-            <p className="font-mono text-[9px] uppercase tracking-widest text-rsg-gold mt-1 font-bold">
-              Field Intelligence
+            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+              Secure Gateway Access
             </p>
           </div>
         </div>
 
-        {/* Auth Interface - Optimized vertical footprint */}
-        <div className="bg-rsg-surface border-4 border-rsg-border p-4 sm:p-8 shadow-[6px_6px_0px_0px_var(--color-rsg-border)] relative">
-          <div className="absolute top-0 right-0 p-2 opacity-5">
-            <ShieldCheck className="w-10 h-10" />
+        {/* Auth Interface */}
+        <div className="bg-card border border-border shadow-2xl p-6 sm:p-8 space-y-8">
+          
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-primary flex items-center gap-2">
+                <Activity className="w-3 h-3 animate-pulse" />
+                System Ready
+              </span>
+              <span className="text-[10px] font-mono text-muted-foreground">V 4.2.0</span>
+            </div>
+            <h2 className="text-lg font-bold uppercase tracking-tight">
+              {isProcessing ? "Verifying..." : "Enter Access PIN"}
+            </h2>
           </div>
 
-          <div className="flex flex-col gap-4 sm:gap-6">
-            <div className="flex flex-col gap-1">
-              <span className="text-[9px] font-mono uppercase tracking-widest text-rsg-text/60 flex items-center gap-2">
-                <Lock className="w-3 h-3" /> System Lock
-              </span>
-              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-rsg-text">
-                Security PIN
-              </h2>
-            </div>
+          {/* PIN Input Visualization */}
+          <motion.div 
+            animate={isError ? { x: [-4, 4, -4, 4, 0] } : {}}
+            className="flex justify-between gap-4"
+          >
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className={`h-14 flex-1 border transition-all duration-200 flex items-center justify-center
+                  ${pin.length > i ? "border-primary bg-primary/5" : "border-border bg-muted/30"}
+                  ${isError ? "border-destructive bg-destructive/5" : ""}
+                `}
+              >
+                <AnimatePresence mode="wait">
+                  {pin.length > i && (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      className="w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_8px_rgba(212,175,55,0.4)]"
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </motion.div>
 
-            {/* PIN Display - Tighter on mobile */}
-            <motion.div
-              animate={isError ? { x: [-8, 8, -8, 8, 0] } : {}}
-              className={`flex justify-between gap-2 h-14 sm:h-20 p-2 sm:p-4 border-2 border-rsg-border bg-rsg-background ${isError ? "border-rsg-error" : ""}`}
+          {/* Numerical Interface */}
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+              <button
+                key={num}
+                disabled={isProcessing}
+                onClick={() => handlePinInput(num.toString())}
+                className="h-14 bg-background border border-border text-lg font-bold hover:bg-primary hover:text-black hover:border-primary transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center"
+              >
+                {num}
+              </button>
+            ))}
+            <button
+              disabled={isProcessing}
+              onClick={handleDelete}
+              className="h-14 bg-muted/20 border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-all active:scale-95"
             >
-              {[0, 1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className={`flex-1 flex items-center justify-center border transition-all duration-75
-                    ${
-                      pin.length > i
-                        ? "bg-rsg-gold border-rsg-text shadow-[1px_1px_0px_0px_var(--color-rsg-text)]"
-                        : "border-rsg-border/20"
-                    }`}
-                >
-                  <AnimatePresence>
-                    {pin.length > i && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-2.5 h-2.5 bg-rsg-text rounded-full"
-                      />
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
-            </motion.div>
-
-            {/* Keypad - Button height responsive (h-14 on mobile) */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                <button
-                  key={num}
-                  onClick={() => handlePinInput(num.toString())}
-                  className="h-12 sm:h-16 bg-rsg-surface border-2 border-rsg-border text-lg sm:text-xl font-black text-rsg-text hover:bg-rsg-background active:translate-y-1 active:shadow-none transition-all shadow-[3px_3px_0px_0px_var(--color-rsg-border)]"
-                >
-                  {num}
-                </button>
-              ))}
-              <div className="h-12 sm:h-16" />
-              <button
-                onClick={() => handlePinInput("0")}
-                className="h-12 sm:h-16 bg-rsg-surface border-2 border-rsg-border text-lg sm:text-xl font-black text-rsg-text hover:bg-rsg-background active:translate-y-1 active:shadow-none transition-all shadow-[3px_3px_0px_0px_var(--color-rsg-border)]"
-              >
-                0
-              </button>
-              <button
-                onClick={handleDelete}
-                className="h-12 sm:h-16 bg-rsg-surface border-2 border-rsg-border flex items-center justify-center text-rsg-text hover:bg-rsg-error hover:text-white active:translate-y-1 active:shadow-none transition-all shadow-[3px_3px_0px_0px_var(--color-rsg-border)]"
-              >
-                <Delete className="w-5 h-5" />
-              </button>
+              <Delete className="w-5 h-5" />
+            </button>
+            <button
+              disabled={isProcessing}
+              onClick={() => handlePinInput("0")}
+              className="h-14 bg-background border border-border text-lg font-bold hover:bg-primary hover:text-black hover:border-primary transition-all active:scale-95"
+            >
+              0
+            </button>
+            <div className="h-14 flex items-center justify-center text-muted-foreground opacity-30">
+              <Fingerprint className="w-6 h-6" />
             </div>
           </div>
         </div>
 
-        {/* Industrial Footer - Lower opacity to recede */}
-        <div className="text-center pb-4 sm:pb-0">
-          <p className="font-mono text-[8px] uppercase tracking-widest text-rsg-text/30 leading-relaxed">
-            Secure Session Active • RSG-FIELD-OPS <br />
-            Authorized Personnel Only
-          </p>
+        {/* Diagnostic Footer */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="h-[1px] flex-1 bg-border/50"></div>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+              Station: RSG-ADMIN-MAIN
+            </p>
+            <div className="h-[1px] flex-1 bg-border/50"></div>
+          </div>
+          
+          <div className="flex justify-center gap-6 opacity-40 grayscale">
+             <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 bg-primary rounded-full"></div>
+                <span className="text-[8px] font-mono uppercase tracking-tighter">Encrypted</span>
+             </div>
+             <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 bg-primary rounded-full"></div>
+                <span className="text-[8px] font-mono uppercase tracking-tighter">Auth_Active</span>
+             </div>
+          </div>
         </div>
       </div>
     </div>

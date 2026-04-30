@@ -32,20 +32,20 @@ export function ReportHeader({ job, headerWoId }: ReportHeaderProps) {
   const t = dict[language];
 
   return (
-    <div className="border-b border-border print:border-black p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden bg-surface print:bg-white">
+    <div className="border-b border-border print:border-black p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden bg-card print:bg-white">
       <div className="flex flex-col z-10">
         <h1 className="text-3xl font-bold tracking-tight text-foreground print:text-black break-words leading-none uppercase">
           {job.client_name}
         </h1>
-        <div className="mt-2 font-mono text-muted-foreground print:text-foreground text-sm tracking-widest uppercase">
+        <div className="mt-2 font-mono text-muted-foreground print:text-foreground text-sm tracking-widest uppercase mb-1">
           {headerWoId}
         </div>
       </div>
 
       <div className="z-10 flex flex-col items-start md:items-end text-left md:text-right">
-        <div className="flex items-center gap-2 bg-status-verified-bg/10 text-status-verified-text print:bg-transparent print:text-black px-3 py-1.5 border border-status-verified-bg/20 print:border-black rounded-md">
-          <CheckCircle2 className="w-4 h-4 text-status-verified-text print:text-black" />
-          <span className="font-semibold uppercase tracking-widest text-xs">
+        <div className="flex items-center gap-2 bg-[var(--status-verified-bg)] text-[var(--status-verified-text)] print:bg-transparent print:text-black px-3 py-1.5 border border-[var(--status-verified-text)]/20 print:border-black rounded-md shadow-sm">
+          <CheckCircle2 className="w-4 h-4 text-[var(--status-verified-text)] print:text-black" />
+          <span className="font-black uppercase tracking-widest text-[10px]">
             {t.status.verified}
           </span>
         </div>

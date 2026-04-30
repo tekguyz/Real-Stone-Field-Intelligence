@@ -16,30 +16,31 @@ export function AdvancedSettings() {
   const { demoMode, handleDemoModeChange, cacheSize, handleClearCache } = useSettings();
 
   return (
-    <section className="py-8 space-y-6">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 font-black">ADVANCED</h2>
+    <section className="border border-border rounded-md shadow-sm bg-card p-4 space-y-4">
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground font-black border-b border-border pb-2">ADVANCED</h2>
       
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between py-2.5 border-b border-border">
           <div className="space-y-0.5">
             <Label className="text-sm font-bold uppercase tracking-tight">Demo Mode</Label>
-            <p className="text-xs text-muted-foreground">Show demo banner</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-semibold">Enable Global UI Banner overlays</p>
           </div>
-          <Switch checked={demoMode} onCheckedChange={handleDemoModeChange} className="focus-visible:ring-2 focus-visible:ring-rsg-gold" />
+          <Switch checked={demoMode} onCheckedChange={handleDemoModeChange} className="focus-visible:ring-2 focus-visible:ring-rsg-gold data-[state=checked]:bg-rsg-gold" />
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between py-2.5 border-b border-border">
           <div className="space-y-0.5">
             <Label className="text-sm font-bold uppercase tracking-tight">Offline Storage</Label>
             <p className="text-[10px] text-muted-foreground uppercase font-mono tracking-tighter">Estimated cache size: {cacheSize}</p>
           </div>
         </div>
 
-        <div>
+        <div className="py-2.5 flex items-center justify-between">
+          <Label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">System Maintenance</Label>
           <Dialog>
             <DialogTrigger render={
-              <Button variant="outline" size="sm" className="text-[10px] font-black uppercase tracking-widest border-rsg-error/20 text-rsg-error hover:bg-rsg-error hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-rsg-error">
-                Clear Offline Cache
+              <Button variant="outline" size="sm" className="text-[10px] font-black uppercase tracking-widest border-rsg-error/20 text-rsg-error hover:bg-rsg-error hover:text-white transition-colors h-8">
+                Clear Cache
               </Button>
             } />
             <DialogContent className="max-w-[400px]">

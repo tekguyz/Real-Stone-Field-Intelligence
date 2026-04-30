@@ -26,7 +26,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-0 divide-y divide-border border-t border-b border-border">
+      <div className="flex flex-col gap-6">
         <AccountSettings />
         <PreferenceSettings />
         <AccessibilitySettings />
@@ -35,7 +35,7 @@ export default function SettingsPage() {
         <DangerZone />
 
         {/* Global Save */}
-        <div className="flex justify-between items-center bg-card border border-border p-6 mt-4">
+        <div className="flex justify-between items-center bg-card border border-border p-6 mt-4 rounded-md shadow-sm">
           <button
             onClick={() => setShowReportForm(!showReportForm)}
             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold"

@@ -34,8 +34,8 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b border-border print:border-black divide-border print:divide-black">
       {/* Column 1: Logistics */}
-      <div className="p-6 flex flex-col gap-4 bg-surface print:bg-white">
-        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
+      <div className="p-6 flex flex-col gap-4 bg-card print:bg-white">
+        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black pb-2">
           {t.logistics}
         </h3>
         <div className="flex flex-col gap-4">
@@ -69,8 +69,8 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
       </div>
 
       {/* Column 2: Location */}
-      <div className="p-6 flex flex-col gap-4 bg-surface print:bg-white">
-        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
+      <div className="p-6 flex flex-col gap-4 bg-card print:bg-white">
+        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black pb-2">
           {t.location}
         </h3>
         <div className="flex flex-col gap-4">
@@ -102,8 +102,8 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
       </div>
 
       {/* Column 3: Scope */}
-      <div className="p-6 flex flex-col gap-4 bg-surface print:bg-white">
-        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black/20 pb-2">
+      <div className="p-6 flex flex-col gap-4 bg-card print:bg-white">
+        <h3 className="font-semibold uppercase tracking-widest text-xs border-b border-border print:border-black pb-2">
           {t.jobScope}
         </h3>
         <div className="flex flex-col gap-4">
@@ -122,7 +122,7 @@ export function ReportStatsGrid({ job, avgAccuracy }: ReportStatsGridProps) {
                 job.stoneapp_parts.map((part: any, i: number) => (
                   <span
                     key={i}
-                    className="text-xs font-mono bg-border/20 print:bg-black/5 px-2 py-1 rounded"
+                    className="text-xs font-mono bg-muted/30 print:bg-black/5 px-2 py-1 rounded-sm border border-border print:border-black/10"
                   >
                     {part.qty}x {part.material}
                   </span>

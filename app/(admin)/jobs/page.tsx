@@ -47,27 +47,27 @@ export default function JobsPage() {
   } = useAdminJobsController();
 
   return (
-    <div className="flex flex-col gap-8 pb-10">
+    <div className="flex flex-col gap-4 pb-10">
       {/* Header */}
-      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-6 mb-2">
+      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-3 mb-0">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
             {t.workOrderManagement}
           </h1>
-          <div className="flex bg-muted/50 p-1 border border-border mt-4 w-fit rounded-md">
+          <div className="flex bg-muted/50 p-0.5 border border-border mt-3 w-fit rounded-md overflow-hidden h-8">
             <button
               onClick={() => setViewMode("active")}
-              className={`text-xs font-semibold uppercase tracking-widest px-6 py-1.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold rounded-md ${
+              className={`text-xs font-semibold uppercase tracking-widest px-3 transition-all outline-none rounded-sm ${
                 viewMode === "active" 
-                  ? "bg-foreground text-background shadow-sm" 
+                  ? "bg-rsg-gold text-black shadow-sm" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Active Jobs
+              Active
             </button>
             <button
               onClick={() => setViewMode("archived")}
-              className={`text-xs font-semibold uppercase tracking-widest px-6 py-1.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold rounded-md ${
+              className={`text-xs font-semibold uppercase tracking-widest px-3 transition-all outline-none rounded-sm ${
                 viewMode === "archived" 
                   ? "bg-rsg-gold text-black shadow-sm" 
                   : "text-muted-foreground hover:text-foreground"
@@ -87,9 +87,9 @@ export default function JobsPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left Column (75%) */}
-        <div className="lg:col-span-3 flex flex-col gap-4">
+      <div className="flex flex-col lg:flex-row gap-4 items-start">
+        {/* Left Column */}
+        <div className="flex-1 flex flex-col gap-4 w-full">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground/50" />
             <input
@@ -97,7 +97,7 @@ export default function JobsPage() {
               placeholder={t.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-primary transition-colors h-12"
+              className="w-full pl-9 pr-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-rsg-gold transition-colors h-11"
             />
           </div>
 
@@ -114,8 +114,8 @@ export default function JobsPage() {
           </div>
         </div>
 
-        {/* Right Column - Filters (25%) */}
-        <div className="lg:col-span-1">
+        {/* Right Column - Filters */}
+        <div className="w-full lg:w-72">
           <AdminJobsFilters
             isLoading={isLoading}
             preset={preset}

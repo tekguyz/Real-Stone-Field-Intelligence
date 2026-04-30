@@ -31,14 +31,14 @@ export default function CommandCenterPage() {
   } = useCommandCenterController();
 
   return (
-    <div className="flex flex-col gap-8 pb-10">
+    <div className="flex flex-col gap-4 pb-10">
       {/* Header */}
-      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-6 mb-2">
+      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-3 mb-0">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
             {t.commandCenter}
           </h1>
-          <p className="text-muted-foreground mt-2 font-mono text-xs leading-none uppercase tracking-widest">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mt-2 leading-none">
             {t.livePipeline}
           </p>
         </div>
@@ -51,16 +51,16 @@ export default function CommandCenterPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left Column: Live Pipeline (75%) */}
-        <div className="lg:col-span-3 flex flex-col gap-4">
-          <div className="flex items-center justify-between mb-2">
+      <div className="flex flex-col lg:flex-row gap-4 items-start">
+        {/* Left Column: Live Pipeline */}
+        <div className="flex-1 flex flex-col gap-4 w-full">
+          <div className="flex items-center justify-between">
             <h2 className="text-xl font-medium tracking-tight flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
               {t.livePipeline}
             </h2>
             <span className="text-xs font-mono text-foreground/40 text-nowrap">
-              {currentJobs.length} {t.totalRecords}
+              {currentJobs.length} RECORDS
             </span>
           </div>
 
@@ -74,8 +74,8 @@ export default function CommandCenterPage() {
           />
         </div>
 
-        {/* Right Column: Metrics & Alerts (25%) */}
-        <div className="lg:col-span-1 flex flex-col gap-8">
+        {/* Right Column: Metrics & Alerts */}
+        <div className="w-full lg:w-72 flex flex-col gap-4">
           <CommandCenterMetrics 
             stats={stats} 
             verifiedCount={currentJobs.filter((j) => j.status === JOB_STATUSES.VERIFIED).length} 

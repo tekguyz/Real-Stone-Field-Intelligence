@@ -107,9 +107,9 @@ export function AdminSidebar() {
       {/* Profile Footer */}
       <Link
         href="/settings"
-        className="p-4 border-t border-sidebar-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-sidebar-accent transition-colors shrink-0 mb-4 rounded-md mx-2"
+        className="py-3 px-4 border-t border-sidebar-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-sidebar-accent transition-colors shrink-0 mb-4 rounded-md mx-2"
       >
-        <div className="w-8 h-8 rounded-md border border-sidebar-primary/20 bg-sidebar-primary/10 flex items-center justify-center text-sidebar-primary font-bold text-xs uppercase shrink-0">
+        <div className="w-8 h-8 rounded-md border border-border bg-sidebar-primary/10 flex items-center justify-center text-sidebar-primary font-mono font-bold text-sm uppercase shrink-0">
           AD
         </div>
         <AnimatePresence mode="wait">
@@ -123,7 +123,7 @@ export function AdminSidebar() {
               <span className="text-sm font-medium leading-none truncate">
                 {dict[language].demo.admin}
               </span>
-              <span className="text-[10px] text-foreground/60 mt-1 font-mono truncate uppercase">
+              <span className="text-xs text-muted-foreground mt-1 font-mono truncate uppercase">
                 RSG-OS
               </span>
             </motion.div>

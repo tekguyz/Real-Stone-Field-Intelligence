@@ -7,8 +7,8 @@ export const TeamStatusBadge = ({ status }: { status: TeamStatus }) => {
   const t = dict[language].admin;
 
   const config = {
-    [TEAM_STATUSES.ACTIVE]: "bg-status-verified-bg/10 text-status-verified-text border-status-verified-bg/20",
-    [TEAM_STATUSES.ON_SITE]: "bg-status-active-bg/10 text-status-active-text border-status-active-bg/20",
+    [TEAM_STATUSES.ACTIVE]: "bg-[var(--status-verified-bg)]/10 text-[var(--status-verified-text)] border-[var(--status-verified-bg)]/20",
+    [TEAM_STATUSES.ON_SITE]: "bg-[var(--status-active-bg)]/10 text-[var(--status-active-text)] border-[var(--status-active-bg)]/20",
     [TEAM_STATUSES.OFFLINE]: "bg-muted text-muted-foreground border-border",
   };
 
