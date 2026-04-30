@@ -103,6 +103,8 @@ export default function FieldJobDetail({
         ) : (
           <div className="mt-2">
             <DocumentationCapture
+              cameraStatus={cameraStatus}
+              locationStatus={locationStatus}
               permissionStatus={cameraStatus === "granted" || locationStatus === "granted" ? "granted" : "pending"}
               checkPermissions={checkPermissions}
               handleCaptureImage={handleCaptureImage}

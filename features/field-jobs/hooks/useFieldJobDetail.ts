@@ -256,9 +256,13 @@ export function useFieldJobDetail(jobId: string) {
   const checkPermissions = async (type: "camera" | "gallery") => {
     if (isVerified) return false;
 
+    // If both are already granted, update state and bypass primer
+    if (cameraStatus === "granted" && locationStatus === "granted") {
+      return true;
+    }
+
     await checkStatus();
 
-    // If both are already granted, update state and bypass primer
     if (cameraStatus === "granted" && locationStatus === "granted") {
       return true;
     }

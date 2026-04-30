@@ -192,6 +192,8 @@ const formatTime = (ts: number) => {
 };
 
 export function DocumentationCapture({
+  cameraStatus,
+  locationStatus,
   permissionStatus,
   checkPermissions,
   handleCaptureImage,
@@ -271,9 +273,15 @@ export function DocumentationCapture({
         ) : (
           <div className="flex gap-3">
             <button
-              onClick={async () => {
-                const granted = await checkPermissions("camera");
-                if (granted) document.getElementById("camera-input")?.click();
+              onClick={() => {
+                // Sychronous check to maintain user gesture
+                if (cameraStatus === "granted" && locationStatus === "granted") {
+                  document.getElementById("camera-input")?.click();
+                } else {
+                  checkPermissions("camera").then((granted: boolean) => {
+                    if (granted) document.getElementById("camera-input")?.click();
+                  });
+                }
               }}
               className="rugged-button-boss flex-1 h-20 bg-rsg-gold text-black flex flex-col items-center justify-center text-[10px] font-black uppercase tracking-widest border-2 border-foreground"
             >
@@ -290,9 +298,15 @@ export function DocumentationCapture({
             />
 
             <button
-              onClick={async () => {
-                const granted = await checkPermissions("gallery");
-                if (granted) document.getElementById("gallery-input")?.click();
+              onClick={() => {
+                // GALLERY doesn't strictly need CAMERA/LOCATION for the picker itself but we check anyway as per our flow
+                if (cameraStatus === "granted" && locationStatus === "granted") {
+                  document.getElementById("gallery-input")?.click();
+                } else {
+                  checkPermissions("gallery").then((granted: boolean) => {
+                    if (granted) document.getElementById("gallery-input")?.click();
+                  });
+                }
               }}
               className="rugged-button-boss flex-1 h-20 bg-rsg-gold text-black flex flex-col items-center justify-center text-[10px] font-black uppercase tracking-widest border-2 border-foreground"
             >
