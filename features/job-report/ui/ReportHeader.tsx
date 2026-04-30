@@ -4,6 +4,7 @@ import { Job } from "../../../entities/job/types";
 import { CheckCircle2 } from "lucide-react";
 import { useUserStore } from "../../../entities/user/store";
 import { dict } from "../../../entities/i18n/dict";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
 
 const formatHumanDateTime = (dateStr: string | number, language: string) => {
   if (!dateStr) return "N/A";
@@ -43,11 +44,8 @@ export function ReportHeader({ job, headerWoId }: ReportHeaderProps) {
       </div>
 
       <div className="z-10 flex flex-col items-start md:items-end text-left md:text-right">
-        <div className="flex items-center gap-2 bg-[var(--status-verified-bg)] text-[var(--status-verified-text)] print:bg-transparent print:text-black px-3 py-1.5 border border-[var(--status-verified-text)]/20 print:border-black rounded-md shadow-sm">
-          <CheckCircle2 className="w-4 h-4 text-[var(--status-verified-text)] print:text-black" />
-          <span className="font-black uppercase tracking-widest text-[10px]">
-            {t.status.verified}
-          </span>
+        <div className="flex items-center gap-2">
+          <StatusBadge status="Verified" className="px-3 py-1.5" />
         </div>
         <span className="text-xs font-medium mt-2 text-muted-foreground print:text-foreground uppercase tracking-widest">
           {job.updated_at ? formatHumanDateTime(job.updated_at, language) : "N/A"}

@@ -15,10 +15,11 @@ export default function Icon() {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#000000',
-          color: '#ffffff',
+          color: '#d4af37',
           fontSize: 16,
           fontWeight: 900,
           fontFamily: 'sans-serif',
+          border: '2px solid #d4af37'
         }}
       >
         RS

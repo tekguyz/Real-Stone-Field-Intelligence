@@ -37,6 +37,31 @@ export function useFieldJobDetail(jobId: string) {
   const isVerified = job?.status === JOB_STATUSES.VERIFIED;
 
   const isFormValid = processedPhotos.length > 0;
+  const isAlreadyActive = job?.status === JOB_STATUSES.ACTIVE;
+
+  const handleStartJob = async () => {
+    if (!job || isAlreadyActive || isVerified) return;
+    setIsSubmitting(true);
+    try {
+      const { jobService } = await import("../../../entities/job/api");
+      await jobService.updateJobStatus(job.id, JOB_STATUSES.ACTIVE, isDevMode);
+      toast.success(language === "es" ? "Trabajo iniciado" : "Job started successfully.");
+      haptics.success();
+      
+      queryClient.setQueryData(["jobs", isDevMode], (old: any) => {
+        if (!old) return old;
+        return old.map((j: any) =>
+          j.id === job.id ? { ...j, status: JOB_STATUSES.ACTIVE } : j,
+        );
+      });
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to start job");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Data Loss Prevention (Native beforeunload)
   useEffect(() => {
@@ -274,5 +299,8 @@ export function useFieldJobDetail(jobId: string) {
     locationStatus,
     checkPermissions,
     handleContinueCapture,
+    handleStartJob,
+    isAlreadyActive,
+    isVerified,
   };
 }

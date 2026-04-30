@@ -20,18 +20,18 @@ export default function TeamPage() {
   return (
     <div className="flex flex-col gap-4 pb-10">
       {/* Header */}
-      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-3 mb-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface -mx-8 -mt-8 px-8 py-4 mb-6 border-b border-border shadow-sm">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
+          <h1 className="text-2xl font-black tracking-tighter text-foreground uppercase leading-none">
             {t.installationTeam}
           </h1>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mt-2 leading-none">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1 leading-none">
             {language === "es" ? "PERSONAL Y CONTROL DE ACCESO" : "PERSONNEL & ACCESS CONTROL"}
           </p>
         </div>
         <button
           onClick={() => setIsInviteOpen(true)}
-          className="flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 font-semibold tracking-widest uppercase transition-opacity hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 h-10"
+          className="mt-4 sm:mt-0 flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 text-xs font-black tracking-widest uppercase transition-all hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 h-10 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           {t.inviteMember}

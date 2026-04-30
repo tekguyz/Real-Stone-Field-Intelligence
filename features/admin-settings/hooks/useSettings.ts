@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useUserStore } from "../../../entities/user/store";
 import { useTheme } from "next-themes";
@@ -5,6 +6,7 @@ import { toast } from "sonner";
 import { dict } from "../../../entities/i18n/dict";
 
 export function useSettings() {
+  const router = useRouter();
   const { language, setLanguage, setManualThemeOverride } = useUserStore();
   const { theme, setTheme } = useTheme();
   const t = dict[language].admin;
@@ -73,8 +75,13 @@ export function useSettings() {
 
   const handleSave = () => {
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
     toast.success(t.preferencesSaved || "Preferences saved");
+    
+    // Auto-exit settings after save
+    setTimeout(() => {
+      setSaved(false);
+      router.push("/command-center");
+    }, 1200);
   };
 
   return {

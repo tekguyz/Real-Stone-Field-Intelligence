@@ -458,11 +458,13 @@ export function JobActionFooter({
   isFormValid,
   isSubmitting,
   handleSubmitReview,
+  handleStartJob,
   processedPhotosLength,
   language,
 }: any) {
   const isSubmitted =
     jobStatus === JOB_STATUSES.REVIEW || jobStatus === JOB_STATUSES.VERIFIED;
+  const isNotStarted = jobStatus === JOB_STATUSES.ASSIGNED || jobStatus === JOB_STATUSES.PENDING;
 
   return (
     <section className="pt-4 border-t border-border">
@@ -476,6 +478,19 @@ export function JobActionFooter({
             Job documentation secured.
             <br />
             Site verification in progress.
+          </p>
+        </div>
+      ) : isNotStarted ? (
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={handleStartJob}
+            disabled={isSubmitting}
+            className="w-full h-16 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg border-2 border-foreground shadow-[var(--rugged-shadow-md)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
+          >
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (language === "es" ? "INICIAR TRABAJO" : "START JOB")}
+          </button>
+          <p className="text-[10px] text-center font-bold text-muted-foreground uppercase tracking-widest">
+            {language === "es" ? "Debes iniciar el trabajo antes de capturar fotos" : "You must start the job before capturing proof"}
           </p>
         </div>
       ) : (

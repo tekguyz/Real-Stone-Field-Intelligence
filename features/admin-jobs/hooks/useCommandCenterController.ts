@@ -45,6 +45,14 @@ export function useCommandCenterController() {
       setSelectedJob({ ...selectedJob, installer_id: value });
     }
   };
+    
+  const handleArchive = async (jobId: string) => {
+    try {
+      await updateStatus.mutateAsync({ jobId, status: JOB_STATUSES.ARCHIVED });
+    } catch (err) {
+      console.error("Archive failed:", err);
+    }
+  };
 
   const stats = useMemo(
     () => ({
@@ -78,6 +86,7 @@ export function useCommandCenterController() {
     error,
     handleVerify,
     handleUpdateInstaller,
+    handleArchive,
     isVerifying: updateStatus.isPending,
     stats,
     installers,

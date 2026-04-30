@@ -157,12 +157,12 @@ export function InventoryTable({
                 </td>
                 <td className="px-4 py-2.5">
                   {lot.status === "on-site" ? (
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest bg-[var(--status-verified-bg)]/10 text-[var(--status-verified-text)] border border-[var(--status-verified-bg)]/20 rounded-md">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-black uppercase tracking-widest bg-[var(--status-verified-bg)] text-[var(--status-verified-text)] rounded-sm">
                       <Building2 className="w-3 h-3" />
                       {t.onSiteWarehouse}
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest bg-[var(--status-pending-bg)]/10 text-[var(--status-pending-text)] border border-[var(--status-pending-bg)]/20 rounded-md">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-black uppercase tracking-widest bg-[var(--status-pending-bg)] text-[var(--status-pending-text)] rounded-sm">
                       <Truck className="w-3 h-3" />
                       {t.inTransit}
                     </div>
@@ -213,7 +213,7 @@ export function InventoryTable({
                   <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     LOT: {selectedLot.id.toUpperCase()}
                   </span>
-                  <div className={`px-2 py-1 text-[10px] font-semibold uppercase tracking-widest border rounded-md ${selectedLot.status === "on-site" ? "bg-[var(--status-verified-bg)]/10 text-[var(--status-verified-text)] border-[var(--status-verified-bg)]/20" : "bg-[var(--status-pending-bg)]/10 text-[var(--status-pending-text)] border-[var(--status-pending-bg)]/20"}`}>
+                  <div className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm ${selectedLot.status === "on-site" ? "bg-[var(--status-verified-bg)] text-[var(--status-verified-text)]" : "bg-[var(--status-pending-bg)] text-[var(--status-pending-text)]"}`}>
                     {selectedLot.status === "on-site" ? "ON-SITE" : "IN-TRANSIT"}
                   </div>
                 </div>
@@ -285,30 +285,30 @@ export function InventoryMetrics({
   const t = dict[language].admin;
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="bg-card border-l-4 border-l-[oklch(var(--rsg-border))] p-4 border border-border hover:bg-surface-2 transition-colors rounded-md cursor-default">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+    <div className="grid grid-cols-1 gap-3">
+      <div className="bg-card border-l-4 border-l-rsg-gold p-4 border border-border hover:bg-surface-2 transition-colors rounded-lg cursor-default shadow-sm text-foreground">
+        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           TOTAL SLABS
         </p>
-        <div className="text-3xl font-bold tracking-tighter text-foreground mt-1">
+        <div className="text-3xl font-black tracking-tighter mt-1 underline decoration-primary decoration-1 underline-offset-4">
           {stats.total}
         </div>
       </div>
 
-      <div className="bg-card border-l-4 border-l-[var(--status-verified-bg)] p-4 border border-border hover:bg-surface-2 transition-colors rounded-md cursor-default">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+      <div className="bg-card border-l-4 border-l-[var(--status-verified-text)] p-4 border border-border hover:bg-surface-2 transition-colors rounded-lg cursor-default shadow-sm">
+        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           {t.onSiteWarehouse}
         </p>
-        <div className="text-3xl font-bold tracking-tighter text-foreground mt-1">
+        <div className="text-3xl font-black tracking-tighter text-foreground mt-1">
           {stats.onSite}
         </div>
       </div>
 
-      <div className="bg-card border-l-4 border-l-[var(--status-pending-bg)] p-4 border border-border hover:bg-surface-2 transition-colors rounded-md cursor-default">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+      <div className="bg-card border-l-4 border-l-[var(--status-urgent-text)] p-4 border border-border hover:bg-surface-2 transition-colors rounded-lg cursor-default shadow-sm">
+        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           {t.inTransit}
         </p>
-        <div className="text-3xl font-bold tracking-tighter text-foreground mt-1">
+        <div className="text-3xl font-black tracking-tighter text-foreground mt-1">
           {stats.inTransit}
         </div>
       </div>

@@ -48,18 +48,18 @@ export default function JobsPage() {
 
   return (
     <div className="flex flex-col gap-4 pb-10">
-      {/* Header */}
-      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-3 mb-0">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
-            {t.workOrderManagement}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface -mx-8 -mt-8 px-8 py-4 mb-4 border-b border-border shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <h1 className="text-2xl font-black tracking-tighter text-foreground uppercase leading-none">
+            {language === 'es' ? 'ÓRDENES DE TRABAJO' : 'WORK ORDERS'}
           </h1>
-          <div className="flex bg-muted/50 p-0.5 border border-border mt-3 w-fit rounded-md overflow-hidden h-8">
+          
+          <div className="flex bg-muted/30 p-1 border border-border rounded-lg h-9">
             <button
               onClick={() => setViewMode("active")}
-              className={`text-xs font-semibold uppercase tracking-widest px-3 transition-all outline-none rounded-sm ${
+              className={`text-[10px] font-black uppercase tracking-widest px-4 transition-all outline-none rounded-md cursor-pointer ${
                 viewMode === "active" 
-                  ? "bg-rsg-gold text-black shadow-sm" 
+                  ? "bg-rsg-gold text-black shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -67,9 +67,9 @@ export default function JobsPage() {
             </button>
             <button
               onClick={() => setViewMode("archived")}
-              className={`text-xs font-semibold uppercase tracking-widest px-3 transition-all outline-none rounded-sm ${
+              className={`text-[10px] font-black uppercase tracking-widest px-4 transition-all outline-none rounded-md cursor-pointer ${
                 viewMode === "archived" 
-                  ? "bg-rsg-gold text-black shadow-sm" 
+                  ? "bg-rsg-gold text-black shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -80,7 +80,7 @@ export default function JobsPage() {
 
         <button
           onClick={() => setIsImportOpen(true)}
-          className="flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 font-semibold tracking-widest uppercase transition-opacity hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 print:hidden h-10"
+          className="mt-4 sm:mt-0 flex items-center gap-2 bg-rsg-gold text-black px-4 py-2 text-xs font-black tracking-widest uppercase transition-all hover:opacity-90 active:scale-[0.98] rounded-md shadow-sm border-0 print:hidden h-10 cursor-pointer"
         >
           <Database className="w-4 h-4" />
           {t.importData}

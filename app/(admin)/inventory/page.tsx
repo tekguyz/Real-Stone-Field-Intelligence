@@ -19,13 +19,13 @@ export default function InventoryPage() {
   return (
     <div className="flex flex-col gap-4 pb-10">
       {/* Header */}
-      <div className="flex justify-between items-start bg-surface -mx-8 -mt-8 px-8 py-3 mb-0">
+      <div className="flex justify-between items-center bg-surface -mx-8 -mt-8 px-8 py-4 mb-6 border-b border-border shadow-sm">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground uppercase leading-none">
+          <h1 className="text-2xl font-black tracking-tighter text-foreground uppercase leading-none">
             {t.slabInventory}
           </h1>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mt-2 leading-none">
-            MASTER MATERIAL TRACKING LOG
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1 leading-none">
+            {language === "es" ? "STOCK DE LOTES Y ASIGNACIÓN DE MATERIAL" : "MASTER MATERIAL TRACKING LOG"}
           </p>
         </div>
       </div>

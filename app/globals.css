@@ -25,7 +25,7 @@
     --rsg-surface-2:   0.955 0.007 75;
     --rsg-text:        0.13 0.012 75;
     --rsg-border:      0.88 0.014 75;
-    --rsg-error:       0.52 0.19 27;
+    --rsg-error:       0.60 0.22 20;
 
     /* ── Status Colors — Light Mode ─────────────────
        Hue map: Assigned 265 · Pending 46 · Active 238
@@ -41,8 +41,11 @@
     --status-active-bg:     oklch(0.91 0.08 215);
     --status-active-text:   oklch(0.35 0.08 215);
 
-    --status-urgent-bg:     oklch(0.93 0.12 46);
-    --status-urgent-text:   oklch(0.38 0.19 44);
+    --status-urgent-bg:     oklch(0.92 0.15 40);
+    --status-urgent-text:   oklch(0.40 0.20 40);
+
+    --status-archived-bg:   oklch(0.94 0.010 75);
+    --status-archived-text: oklch(0.45 0.01 75);
 
     --status-review-bg:     oklch(0.91 0.080 292);
     --status-review-text:   oklch(0.27 0.19  292);
@@ -99,11 +102,11 @@
     --sidebar-ring:               oklch(var(--rsg-gold));
 
     /* ── Chart Colors (gold-family scale) ─────────── */
-    --chart-1: oklch(77.5% 0.145 78);
-    --chart-2: oklch(0.65 0.14 72);
-    --chart-3: oklch(0.55 0.11 72);
-    --chart-4: oklch(0.44 0.08 72);
-    --chart-5: oklch(0.33 0.05 72);
+    --chart-1: oklch(77.5% 0.145 78); /* Brand Gold */
+    --chart-2: oklch(0.65 0.12 215);  /* Industrial Teal */
+    --chart-3: oklch(0.40 0.08 215);  /* Dark Teal */
+    --chart-4: oklch(0.65 0.05 75);   /* Neutral Gray */
+    --chart-5: oklch(0.35 0.05 75);   /* Dark Neutral */
   }
 
 
@@ -120,7 +123,7 @@
     --rsg-surface-2:   0.23 0.010 75;
     --rsg-text:        0.97 0.005 75;
     --rsg-border:      0.28 0.012 75;
-    --rsg-error:       0.65 0.21 27;
+    --rsg-error:       0.65 0.22 20;
 
     /* ── Status Colors — Dark Mode ──────────────────
        Deep tinted bg (L 0.30-0.33, visibly above surface 0.18)
@@ -135,8 +138,11 @@
     --status-active-bg:     oklch(0.30 0.10 215);
     --status-active-text:   oklch(0.86 0.12 215);
 
-    --status-urgent-bg:     oklch(0.33 0.15 46);
-    --status-urgent-text:   oklch(0.88 0.17 50);
+    --status-urgent-bg:     oklch(0.35 0.15 40);
+    --status-urgent-text:   oklch(0.85 0.18 40);
+    
+    --status-archived-bg:   oklch(0.25 0.01 75);
+    --status-archived-text: oklch(0.70 0.01 75);
 
     --status-review-bg:     oklch(0.30 0.13  292);
     --status-review-text:   oklch(0.86 0.15  292);
@@ -190,11 +196,11 @@
     --sidebar-ring:               oklch(var(--rsg-gold));
 
     /* ── Chart Colors ─────────────────────────────── */
-    --chart-1: oklch(77.5% 0.145 78);
-    --chart-2: oklch(0.63 0.15 72);
-    --chart-3: oklch(0.53 0.12 72);
-    --chart-4: oklch(0.43 0.09 72);
-    --chart-5: oklch(0.33 0.06 72);
+    --chart-1: oklch(77.5% 0.145 78); /* Brand Gold */
+    --chart-2: oklch(0.75 0.12 215);  /* Bright Teal */
+    --chart-3: oklch(0.50 0.10 215);  /* Mid Teal */
+    --chart-4: oklch(0.70 0.05 75);   /* Neutral Light */
+    --chart-5: oklch(0.45 0.05 75);   /* Neutral Mid */
   }
 
   /* ── Shared base resets (shadcn pattern) ──────── */
@@ -388,15 +394,6 @@
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.02em;
-  }
-
-  a {
-    color: var(--color-rsg-gold);
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 
   /* Gold double-ring focus — brand-consistent keyboard nav */

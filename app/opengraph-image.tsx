@@ -28,15 +28,15 @@ export default function Image() {
             width: '300px',
             height: '300px',
             backgroundColor: '#000000',
-            border: '10px solid #cda03a',
+            border: '10px solid #d4af37',
             marginBottom: '40px',
           }}
         >
-          <span style={{ color: '#cda03a', fontSize: '180px', fontWeight: 900, fontFamily: 'monospace' }}>RS</span>
+          <span style={{ color: '#d4af37', fontSize: '180px', fontWeight: 900, fontFamily: 'monospace' }}>RS</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h1 style={{ color: '#ffffff', fontSize: '72px', margin: 0, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Real Stone</h1>
-          <p style={{ color: '#cda03a', fontSize: '32px', margin: '10px 0 0 0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4em' }}>Field Intelligence</p>
+          <p style={{ color: '#d4af37', fontSize: '32px', margin: '10px 0 0 0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4em' }}>Field Intelligence</p>
         </div>
       </div>
     ),

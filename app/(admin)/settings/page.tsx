@@ -32,7 +32,6 @@ export default function SettingsPage() {
         <AccessibilitySettings />
         <NotificationSettings />
         <AdvancedSettings />
-        <DangerZone />
 
         {/* Global Save */}
         <div className="flex justify-between items-center bg-card border border-border p-6 mt-4 rounded-md shadow-sm">
@@ -45,9 +44,13 @@ export default function SettingsPage() {
               {showReportForm ? "Hide Support" : "Report Issue"}
             </span>
           </button>
-          <Button onClick={handleSave} className="px-8 py-6 text-sm font-black uppercase tracking-widest outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold">
+          <Button onClick={handleSave} className="px-8 py-6 text-sm font-black uppercase tracking-widest outline-none focus-visible:ring-2 focus-visible:ring-rsg-gold rounded-md">
             {t.saveChanges}
           </Button>
+        </div>
+
+        <div className="pt-4">
+          <DangerZone />
         </div>
 
         {showReportForm && (

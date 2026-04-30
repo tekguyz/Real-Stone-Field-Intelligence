@@ -19,7 +19,8 @@ export default function LoginPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   const handleAuth = async (role: Role) => {

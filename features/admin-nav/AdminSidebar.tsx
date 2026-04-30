@@ -51,7 +51,7 @@ export function AdminSidebar() {
         </AnimatePresence>
       </div>
 
-      {/* Nav Section - Overflow handled here to protect toggle button visibility */}
+      {/* Nav Section */}
       <nav className="flex-1 px-4 py-2 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
         {navItems.map((item) => {
           const isActive =
@@ -81,7 +81,6 @@ export function AdminSidebar() {
                 )}
               </AnimatePresence>
 
-              {/* Tooltip for collapsed state */}
               {!isSidebarOpen && (
                 <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-[10px] font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap rounded-sm shadow-md">
                   {item.name}
@@ -94,8 +93,9 @@ export function AdminSidebar() {
 
       {/* Industrial Sleek Toggle Button */}
       <button
+        type="button"
         onClick={toggleSidebar}
-        className="absolute -right-3 top-20 w-6 h-6 bg-sidebar border border-sidebar-border rounded-md flex items-center justify-center text-sidebar-foreground/50 hover:text-sidebar-primary hover:border-sidebar-primary transition-all z-[70] shadow-sm active:translate-x-[1px] active:translate-y-[1px]"
+        className="absolute -right-3 top-20 w-6 h-6 bg-sidebar border border-sidebar-border rounded-md flex items-center justify-center text-sidebar-foreground/50 hover:text-sidebar-primary hover:border-sidebar-primary transition-all z-[70] shadow-sm active:translate-x-[1px] active:translate-y-[1px] cursor-pointer"
       >
         {isSidebarOpen ? (
           <ChevronLeft className="w-4 h-4" />
@@ -104,14 +104,16 @@ export function AdminSidebar() {
         )}
       </button>
 
-      {/* Profile Footer */}
+      {/* Profile Footer - Industrial ID Badge Refactor */}
       <Link
         href="/settings"
         className="py-3 px-4 border-t border-sidebar-border overflow-visible whitespace-nowrap relative flex items-center gap-3 cursor-pointer hover:bg-sidebar-accent transition-colors shrink-0 mb-4 rounded-md mx-2"
       >
-        <div className="w-8 h-8 rounded-md border border-border bg-sidebar-primary/10 flex items-center justify-center text-sidebar-primary font-mono font-bold text-sm uppercase shrink-0">
+        {/* AVATAR: High-contrast metallic gold badge */}
+        <div className="w-9 h-9 rounded-md border-2 border-primary bg-primary/10 flex items-center justify-center text-foreground font-mono font-black text-xs uppercase shrink-0 shadow-sm">
           AD
         </div>
+
         <AnimatePresence mode="wait">
           {isSidebarOpen && (
             <motion.div
@@ -120,11 +122,11 @@ export function AdminSidebar() {
               exit={{ opacity: 0, x: -10 }}
               className="flex flex-col overflow-hidden"
             >
-              <span className="text-sm font-medium leading-none truncate">
+              <span className="text-sm font-bold leading-none truncate text-foreground">
                 {dict[language].demo.admin}
               </span>
-              <span className="text-xs text-muted-foreground mt-1 font-mono truncate uppercase">
-                RSG-OS
+              <span className="text-[10px] text-primary mt-1 font-black truncate uppercase tracking-tighter">
+                Administrator
               </span>
             </motion.div>
           )}

@@ -82,24 +82,24 @@ export function CommandCenterTable({
   };
 
   return (
-    <div className="bg-card border border-border min-h-[400px]">
+    <div className="bg-card border border-border flex flex-col h-full min-h-0">
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-foreground/50 gap-4">
+        <div className="flex flex-col items-center justify-center flex-1 min-h-[400px] text-foreground/50 gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-rsg-gold" />
           <span className="text-sm font-mono tracking-widest uppercase">
             {t.syncingPipeline}
           </span>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-red-500 gap-4">
+        <div className="flex flex-col items-center justify-center flex-1 min-h-[400px] text-red-500 gap-4">
           <AlertTriangle className="w-8 h-8" />
           <span className="text-sm">{t.databaseSyncError}</span>
         </div>
       ) : (
-        <div className="relative">
+        <div className="relative flex-1 min-h-0 flex flex-col">
           {/* Mobile Horizontal Scroll Hint */}
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden z-10" />
-      <div className="overflow-auto max-h-[600px]">
+      <div className="overflow-auto flex-1 min-h-0 custom-scrollbar">
         <table className="w-full text-left text-sm whitespace-nowrap relative border-separate border-spacing-0">
           <thead className="bg-surface sticky top-0 z-20 shadow-sm border-b border-border text-[10px]">
             <tr>

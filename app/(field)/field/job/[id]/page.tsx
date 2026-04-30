@@ -49,6 +49,9 @@ export default function FieldJobDetail({
     locationStatus,
     checkPermissions,
     handleContinueCapture,
+    handleStartJob,
+    isAlreadyActive,
+    isVerified,
   } = useFieldJobDetail(id);
 
   if (isJobsLoading) return <FieldJobDetailLoading />;
@@ -57,7 +60,6 @@ export default function FieldJobDetail({
   const handleBackNavigation = (e: React.MouseEvent) => {
     e.preventDefault();
     const hasUnsavedChanges = processedPhotos.length > 0 || signatureData !== null;
-    const isVerified = job.status === JOB_STATUSES.VERIFIED;
     if (!isVerified && !isSubmitting && hasUnsavedChanges) {
       if (!window.confirm(language === "es" ? "Los cambios no guardados se perderán. ¿Salir de todos modos?" : "Unsaved changes will be lost. Exit anyway?")) {
         return;
@@ -84,6 +86,16 @@ export default function FieldJobDetail({
           <JobBlockArrival scheduledDate={job.scheduled_arrival || job.scheduled_date} language={language} />
         </div>
 
+        {!isAlreadyActive && !isVerified && job.status !== JOB_STATUSES.REVIEW && (
+          <button
+            onClick={handleStartJob}
+            disabled={isSubmitting}
+            className="w-full h-14 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50"
+          >
+            {isSubmitting ? "..." : (language === "es" ? "INICIAR TRABAJO" : "START JOB")}
+          </button>
+        )}
+
         {job.photos && job.photos.length > 0 && <CapturedProofGrid photos={job.photos} language={language} />}
 
         {job.status === JOB_STATUSES.VERIFIED || job.status === JOB_STATUSES.REVIEW ? (
@@ -106,6 +118,7 @@ export default function FieldJobDetail({
               isFormValid={isFormValid}
               isSubmitting={isSubmitting}
               handleSubmitReview={handleSubmitReview}
+              handleStartJob={handleStartJob}
               processedPhotosLength={processedPhotos.length}
               language={language}
             />
