@@ -1,6 +1,6 @@
 {
   "name": "Real Stone | Field Ops",
   "description": "Industrial Field Intelligence & Project Tracking.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera", "geolocation"],
   "majorCapabilities": []
 }

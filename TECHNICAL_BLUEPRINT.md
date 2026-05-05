@@ -7,8 +7,8 @@ This application is a specialized field management solution designed for trackin
 - **Framework**: Next.js 15+ (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS (v4) with custom CSS Variable Design Tokens
-- **Database**: Google Firestore (NoSQL, Serverless)
-- **Auth**: Firebase Authentication (Google OAuth)
+- **Database**: Supabase (PostgreSQL + Real-time)
+- **Auth**: Supabase Auth (Google OAuth)
 - **State Management**: Zustand
 - **Data Fetching/Caching**: TanStack Query (React Query)
 - **Icons**: Lucide React
@@ -25,9 +25,8 @@ The codebase is structured using a feature-based architecture to ensure scalabil
 - `/lib`: Shared utilities, constants, and global hooks
 
 ### Data Layer
-- Firebase is the source of truth.
-- Security is enforced via hardened `firestore.rules`.
-- API logic is colocated within `/entities/<entity>/api`.
+- **Data Layer**: Supabase is the source of truth. Offline resilience managed via Dexie.js for sync queuing.
+- API logic is colocated within `/entities/<entity>/api.ts`.
 - Client-side data management is handled by TanStack Query for caching and synchronization.
 
 ### Styling System

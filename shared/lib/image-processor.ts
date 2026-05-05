@@ -116,18 +116,25 @@ export const processImage = async (
           finalizeProcessing();
         },
         (err) => {
+          // If we have a permission denied, we mark it as such. 
+          // Otherwise, we might have a timeout or other error.
           location_status = err.code === err.PERMISSION_DENIED ? "denied" : "timeout_unavailable";
           finalizeProcessing();
         },
-        { timeout: 10000, maximumAge: 10000, enableHighAccuracy: true }
+        { 
+          timeout: 25000, // Increased to 25s for field reliability
+          maximumAge: 30000, // 30s cache is acceptable
+          enableHighAccuracy: true 
+        }
       );
 
+      // Fallback timer slightly longer than the geolocation timeout
       setTimeout(() => {
         if (!isFinalized) {
           location_status = "timeout_unavailable";
           finalizeProcessing();
         }
-      }, 10500);
+      }, 26000);
     } else {
       finalizeProcessing();
     }

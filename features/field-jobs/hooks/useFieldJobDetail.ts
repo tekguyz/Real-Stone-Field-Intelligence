@@ -274,15 +274,29 @@ export function useFieldJobDetail(jobId: string) {
   };
 
   const handleContinueCapture = async () => {
-    const success = await requestPermissions();
-    // Assuming we want to proceed and try capture anyway (fallback to unavailable, or standard fail flow)
-    // The requirement says "If GPS fails to lock, store the image with location_status: 'timeout_unavailable'".
-    // And if "Access Blocked" they can't continue, which is handled in Primer.
-    // If we reach here and it was success or partially success, close primer and open picker
-    setShowPrimer(false);
-    const inputId =
-      pendingCaptureType === "camera" ? "camera-input" : "gallery-input";
-    document.getElementById(inputId)?.click();
+    // Show a loading toast because requesting permissions can take time on some devices
+    const loadingToast = toast.loading(language === "es" ? "Solicitando permisos..." : "Requesting permissions...");
+    
+    try {
+      const success = await requestPermissions();
+      setShowPrimer(false);
+      toast.dismiss(loadingToast);
+
+      if (success) {
+        // Use a short timeout to ensure the input click is registered after the state update
+        setTimeout(() => {
+          const inputId = pendingCaptureType === "camera" ? "camera-input" : "gallery-input";
+          const el = document.getElementById(inputId) as HTMLInputElement;
+          if (el) el.click();
+        }, 100);
+      } else {
+        toast.error(language === "es" ? "Permisos necesarios para continuar" : "Permissions required to continue.");
+      }
+    } catch (err) {
+      console.error(err);
+      setShowPrimer(false);
+      toast.dismiss(loadingToast);
+    }
   };
 
   return {

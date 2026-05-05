@@ -79,8 +79,9 @@ export function usePermissions() {
       await new Promise((resolve, reject) => {
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
-            maximumAge: Infinity,
-            timeout: 10000,
+            maximumAge: 0,
+            timeout: 25000,
+            enableHighAccuracy: true,
           });
         } else {
           reject(new Error("Geolocation not supported"));

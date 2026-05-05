@@ -272,55 +272,61 @@ export function DocumentationCapture({
           </motion.div>
         ) : (
           <div className="flex gap-3">
-            <button
-              onClick={() => {
-                // Sychronous check to maintain user gesture
-                if (cameraStatus === "granted" && locationStatus === "granted") {
-                  document.getElementById("camera-input")?.click();
-                } else {
-                  checkPermissions("camera").then((granted: boolean) => {
-                    if (granted) document.getElementById("camera-input")?.click();
-                  });
-                }
-              }}
-              className="rugged-button-boss flex-1 h-20 bg-rsg-gold text-black flex flex-col items-center justify-center text-[10px] font-black uppercase tracking-widest border-2 border-foreground"
-            >
-              <Camera className="w-6 h-6 mb-1" />
-              Capture
-            </button>
-            <input
-              id="camera-input"
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleCaptureImage}
-            />
+            <div className="flex-1">
+              {cameraStatus === "granted" && locationStatus === "granted" ? (
+                <label
+                  htmlFor="camera-input"
+                  className="rugged-button-boss flex h-24 bg-rsg-gold text-black flex-col items-center justify-center text-[11px] font-black uppercase tracking-widest border-2 border-foreground cursor-pointer active:scale-95 transition-transform"
+                >
+                  <Camera className="w-6 h-6 mb-1" />
+                  Capture
+                </label>
+              ) : (
+                <button
+                  onClick={() => checkPermissions("camera")}
+                  className="rugged-button-boss w-full h-24 bg-rsg-gold text-black flex flex-col items-center justify-center text-[11px] font-black uppercase tracking-widest border-2 border-foreground active:scale-95 transition-transform"
+                >
+                  <Camera className="w-6 h-6 mb-1" />
+                  Capture
+                </button>
+              )}
+              <input
+                id="camera-input"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleCaptureImage}
+              />
+            </div>
 
-            <button
-              onClick={() => {
-                // GALLERY doesn't strictly need CAMERA/LOCATION for the picker itself but we check anyway as per our flow
-                if (cameraStatus === "granted" && locationStatus === "granted") {
-                  document.getElementById("gallery-input")?.click();
-                } else {
-                  checkPermissions("gallery").then((granted: boolean) => {
-                    if (granted) document.getElementById("gallery-input")?.click();
-                  });
-                }
-              }}
-              className="rugged-button-boss flex-1 h-20 bg-rsg-gold text-black flex flex-col items-center justify-center text-[10px] font-black uppercase tracking-widest border-2 border-foreground"
-            >
-              <ImagePlus className="w-6 h-6 mb-1" />
-              Gallery
-            </button>
-            <input
-              id="gallery-input"
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={handleCaptureImage}
-            />
+            <div className="flex-1">
+              {cameraStatus === "granted" && locationStatus === "granted" ? (
+                <label
+                  htmlFor="gallery-input"
+                  className="rugged-button-boss flex h-24 bg-rsg-gold text-black flex-col items-center justify-center text-[11px] font-black uppercase tracking-widest border-2 border-foreground cursor-pointer active:scale-95 transition-transform"
+                >
+                  <ImagePlus className="w-6 h-6 mb-1" />
+                  Gallery
+                </label>
+              ) : (
+                <button
+                  onClick={() => checkPermissions("gallery")}
+                  className="rugged-button-boss w-full h-24 bg-rsg-gold text-black flex flex-col items-center justify-center text-[11px] font-black uppercase tracking-widest border-2 border-foreground active:scale-95 transition-transform"
+                >
+                  <ImagePlus className="w-6 h-6 mb-1" />
+                  Gallery
+                </button>
+              )}
+              <input
+                id="gallery-input"
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleCaptureImage}
+              />
+            </div>
           </div>
         )}
 
