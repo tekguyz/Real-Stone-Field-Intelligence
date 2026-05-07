@@ -102,6 +102,8 @@ export const jobService = {
       community_name: row.community_name,
       installer_id: row.installer_id,
       logistics_notes: row.logistics_notes,
+      lat: row.lat,
+      lng: row.lng,
       created_at: row.created_at,
       updated_at: row.updated_at,
     }));

@@ -24,11 +24,11 @@ export default function FieldProfilePage() {
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in slide-in-from-bottom-4 duration-500">
-      {/* Neo-Brutalist Strict Header - Exactly h-16 */}
-      <div className="sticky top-0 z-50 h-16 px-4 bg-background flex justify-between items-center shrink-0 w-full">
+      {/* Neo-Brutalist Strict Header - Exactly h-12 */}
+      <div className="sticky top-0 z-50 h-12 px-4 bg-background flex justify-between items-center shrink-0 w-full border-b border-border">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-rsg-gold text-black flex items-center justify-center border-2 border-foreground shadow-[var(--rugged-shadow-sm)] shrink-0">
-            <span className="font-black text-sm uppercase tracking-widest">
+          <div className="w-8 h-8 bg-rsg-gold text-black flex items-center justify-center border border-foreground shadow-[var(--rugged-shadow-sm)] shrink-0">
+            <span className="font-black text-[12px] uppercase tracking-widest">
               {initials}
             </span>
           </div>
@@ -37,7 +37,7 @@ export default function FieldProfilePage() {
             {t.profile}
           </h1>
         </div>
-        <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest border-2 border-primary/20">
+        <span className="px-2 py-0.5 bg-foreground text-background text-[8px] font-black uppercase tracking-widest border border-foreground">
           {language === "es" ? "Principal" : "Lead"}
         </span>
       </div>

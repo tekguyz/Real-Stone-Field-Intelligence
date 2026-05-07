@@ -44,12 +44,9 @@ export function SignaturePad({
           ctx.lineJoin = "round";
           ctx.lineWidth = 3;
 
-          // Theme-aware pen color using the computed token or fallback
-          const computedPen = getComputedStyle(document.documentElement)
-            .getPropertyValue("--color-sig-pen")
-            .trim();
+          // Theme-aware pen color: Use RSG Gold if in dark mode, or deep zinc in light mode.
           const isDark = document.documentElement.classList.contains("dark");
-          ctx.strokeStyle = computedPen || (isDark ? "#eab308" : "#000000");
+          ctx.strokeStyle = isDark ? "#eab308" : "#18181b"; 
         }
       };
 
@@ -130,9 +127,9 @@ export function SignaturePad({
       <button
         type="button"
         onClick={() => setIsActive(true)}
-        className="w-full h-12 bg-surface hover:bg-surface/80 border border-border/50 hover:border-primary/30 flex items-center justify-center transition-colors rounded-sm"
+        className="w-full h-12 bg-secondary/50 border border-border flex items-center justify-center transition-colors rounded-none group"
       >
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
           {hasSignature
             ? language === "en"
               ? "Signature Secured (Edit)"
@@ -165,39 +162,36 @@ export function SignaturePad({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex flex-col bg-background/90 backdrop-blur-sm p-4 md:p-12 items-center justify-center"
+            className="fixed inset-0 z-[100] flex flex-col bg-background/95 md:bg-background/90 backdrop-blur-md p-4 md:p-12 items-center justify-center"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-2xl h-[60vh] bg-[var(--color-sig-bg)] border border-border/50 shadow-2xl flex flex-col overflow-hidden rounded-md"
+              className="relative w-full max-w-2xl h-[60vh] bg-background border border-border shadow-2xl flex flex-col overflow-hidden rounded-none"
             >
-              <div className="absolute top-4 left-4 pointer-events-none">
-                <span
-                  className="text-xs font-black uppercase tracking-[0.2em] opacity-30"
-                  style={{ color: "var(--color-sig-pen)" }}
-                >
+              <div className="flex flex-col sm:flex-row justify-between items-center p-4 border-b border-border/50 gap-4 z-10 bg-secondary/20">
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground shrink-0 text-center sm:text-left">
                   {language === "en"
                     ? "Client Authorization"
                     : "Autorización del Cliente"}
                 </span>
-              </div>
 
-              <div className="absolute top-3 right-3 flex gap-2 z-10">
-                <button
-                  onClick={clearSignature}
-                  className="px-4 py-2 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground/80 transition-colors rounded-sm"
-                >
-                  {language === "en" ? "Clear" : "Borrar"}
-                </button>
-                <button
-                  onClick={handleDone}
-                  className="px-4 py-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-sm"
-                >
-                  {language === "en" ? "Done" : "Listo"}
-                </button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={clearSignature}
+                    className="flex-1 sm:flex-none px-4 py-3 sm:py-2 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground/80 transition-colors rounded-none"
+                  >
+                    {language === "en" ? "Clear" : "Borrar"}
+                  </button>
+                  <button
+                    onClick={handleDone}
+                    className="flex-1 sm:flex-none px-4 py-3 sm:py-2 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest rounded-none"
+                  >
+                    {language === "en" ? "Done" : "Listo"}
+                  </button>
+                </div>
               </div>
 
               <div className="flex-1 w-full h-full relative cursor-crosshair">

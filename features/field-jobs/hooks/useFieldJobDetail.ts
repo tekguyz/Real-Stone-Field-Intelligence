@@ -12,6 +12,7 @@ import { JOB_STATUSES } from "../../../lib/constants/statuses";
 import { toast } from "sonner";
 
 import { haptics } from "../../../shared/lib/haptics";
+import { fieldStorage } from "../../../shared/lib/storage";
 
 export function useFieldJobDetail(jobId: string) {
   const router = useRouter();
@@ -24,11 +25,6 @@ export function useFieldJobDetail(jobId: string) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [showPrimer, setShowPrimer] = useState(false);
-  const [pendingCaptureType, setPendingCaptureType] = useState<
-    "camera" | "gallery" | null
-  >(null);
 
   const { cameraStatus, locationStatus, requestPermissions, checkStatus } =
     usePermissions();
@@ -125,6 +121,7 @@ export function useFieldJobDetail(jobId: string) {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
 
       if (isDevMode && job) {
+        await fieldStorage.removeItem(`field_captures_${job.id}`);
         sessionStorage.removeItem(`field_captures_${job.id}`);
         // Dispatch event to clear for Drawer
         window.dispatchEvent(new Event("field_capture_update"));
@@ -138,18 +135,26 @@ export function useFieldJobDetail(jobId: string) {
     }
   };
 
-  const handleCaptureImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCaptureImage = async (e: React.ChangeEvent<HTMLInputElement> | { target: { files: File[] } }) => {
     if (isVerified) return;
-    const files = e.target.files;
+    const files = "files" in e.target ? e.target.files : null;
     if (!files || files.length === 0) return;
 
     setIsProcessing(true);
     try {
-      const isGallery = pendingCaptureType === "gallery";
+      const isGallery = e.target && "id" in e.target && e.target.id === "gallery-input";
       const newPhotos: ProcessedImage[] = [];
       for (let i = 0; i < files.length; i++) {
         haptics.shutter();
         const processed = await processImage(files[i], isGallery);
+        
+        // Silent Fallback to Job Coordinates if no GPS lock
+        if (!processed.metadata.lat && job?.lat && job?.lng) {
+          processed.metadata.lat = job.lat;
+          processed.metadata.lng = job.lng;
+          processed.metadata.location_status = "manual"; 
+        }
+        
         newPhotos.push(processed);
       }
 
@@ -159,12 +164,10 @@ export function useFieldJobDetail(jobId: string) {
 
       setProcessedPhotos((prev) => [...newPhotos, ...prev]);
 
-      // DevMode Persistence: Save to sessionStorage
+      // DevMode Persistence: Save to IndexedDB
       if (isDevMode && job) {
-        const fieldCaptures = JSON.parse(
-          sessionStorage.getItem(`field_captures_${job.id}`) ||
-            '{"photos": [], "proofs": [], "signature": null}',
-        );
+        const fieldCaptures = (await fieldStorage.getItem(`field_captures_${job.id}`)) || 
+          JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "proofs": [], "signature": null}');
 
         const photoPromises = newPhotos.map((p) => {
           return new Promise<{ base64: string; metadata: any }>((resolve) => {
@@ -186,7 +189,7 @@ export function useFieldJobDetail(jobId: string) {
 
         const newProofs = base64Photos.map((p) => ({
           url: p.base64,
-          timestamp: p.metadata.timestamp,
+          gps_time: p.metadata.gps_time,
           lat: p.metadata.lat,
           lng: p.metadata.lng,
           accuracy: p.metadata.accuracy,
@@ -195,10 +198,7 @@ export function useFieldJobDetail(jobId: string) {
 
         fieldCaptures.proofs = [...newProofs, ...(fieldCaptures.proofs || [])];
 
-        sessionStorage.setItem(
-          `field_captures_${job.id}`,
-          JSON.stringify(fieldCaptures),
-        );
+        await fieldStorage.setItem(`field_captures_${job.id}`, fieldCaptures);
 
         // Trigger a custom event to notify other components (like AdminJobDrawer in the same tab)
         window.dispatchEvent(new Event("field_capture_update"));
@@ -207,97 +207,46 @@ export function useFieldJobDetail(jobId: string) {
       console.error(err);
     } finally {
       setIsProcessing(false);
-      e.target.value = "";
+      if ("value" in e.target) e.target.value = "";
     }
   };
 
-  const removePhoto = (index: number) => {
+  const removePhoto = async (index: number) => {
     if (isVerified) return;
     setProcessedPhotos((prev) => {
-      const photoToRemove = prev[index];
       const updated = [...prev];
       URL.revokeObjectURL(updated[index].previewUrl);
       updated.splice(index, 1);
-
-      // Update sessionStorage in DevMode
-      if (isDevMode && job) {
-        const fieldCaptures = JSON.parse(
-          sessionStorage.getItem(`field_captures_${job.id}`) ||
-            '{"photos": [], "signature": null}',
-        );
-        fieldCaptures.photos.splice(index, 1);
-        sessionStorage.setItem(
-          `field_captures_${job.id}`,
-          JSON.stringify(fieldCaptures),
-        );
-        window.dispatchEvent(new Event("field_capture_update"));
-      }
-
       return updated;
     });
+
+    // Update persistence in DevMode
+    if (isDevMode && job) {
+      const fieldCaptures = (await fieldStorage.getItem(`field_captures_${job.id}`)) || 
+        JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "signature": null}');
+      
+      fieldCaptures.photos.splice(index, 1);
+      if (fieldCaptures.proofs) fieldCaptures.proofs.splice(index, 1);
+      
+      await fieldStorage.setItem(`field_captures_${job.id}`, fieldCaptures);
+      window.dispatchEvent(new Event("field_capture_update"));
+    }
   };
 
   // Signature persistence
   useEffect(() => {
     if (isDevMode && job && signatureData) {
-      const fieldCaptures = JSON.parse(
-        sessionStorage.getItem(`field_captures_${job.id}`) ||
-          '{"photos": [], "signature": null}',
-      );
-      fieldCaptures.signature = signatureData;
-      sessionStorage.setItem(
-        `field_captures_${job.id}`,
-        JSON.stringify(fieldCaptures),
-      );
-      window.dispatchEvent(new Event("field_capture_update"));
+      const syncSignature = async () => {
+        const fieldCaptures = (await fieldStorage.getItem(`field_captures_${job.id}`)) || 
+          JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "signature": null}');
+        
+        fieldCaptures.signature = signatureData;
+        await fieldStorage.setItem(`field_captures_${job.id}`, fieldCaptures);
+        window.dispatchEvent(new Event("field_capture_update"));
+      };
+      syncSignature();
     }
   }, [signatureData, isDevMode, job]);
-
-  const checkPermissions = async (type: "camera" | "gallery") => {
-    if (isVerified) return false;
-
-    // If both are already granted, update state and bypass primer
-    if (cameraStatus === "granted" && locationStatus === "granted") {
-      return true;
-    }
-
-    await checkStatus();
-
-    if (cameraStatus === "granted" && locationStatus === "granted") {
-      return true;
-    }
-
-    // If not granted, show primer
-    setPendingCaptureType(type);
-    setShowPrimer(true);
-    return false;
-  };
-
-  const handleContinueCapture = async () => {
-    // Show a loading toast because requesting permissions can take time on some devices
-    const loadingToast = toast.loading(language === "es" ? "Solicitando permisos..." : "Requesting permissions...");
-    
-    try {
-      const success = await requestPermissions();
-      setShowPrimer(false);
-      toast.dismiss(loadingToast);
-
-      if (success) {
-        // Use a short timeout to ensure the input click is registered after the state update
-        setTimeout(() => {
-          const inputId = pendingCaptureType === "camera" ? "camera-input" : "gallery-input";
-          const el = document.getElementById(inputId) as HTMLInputElement;
-          if (el) el.click();
-        }, 100);
-      } else {
-        toast.error(language === "es" ? "Permisos necesarios para continuar" : "Permissions required to continue.");
-      }
-    } catch (err) {
-      console.error(err);
-      setShowPrimer(false);
-      toast.dismiss(loadingToast);
-    }
-  };
 
   return {
     job,
@@ -311,12 +260,9 @@ export function useFieldJobDetail(jobId: string) {
     isProcessing,
     signatureData,
     setSignatureData,
-    showPrimer,
-    setShowPrimer,
     cameraStatus,
     locationStatus,
-    checkPermissions,
-    handleContinueCapture,
+    requestPermissions,
     handleStartJob,
     isAlreadyActive,
     isVerified,

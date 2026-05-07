@@ -13,15 +13,15 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
         <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
           {t.languageSelection}
         </h3>
-        <div className="rugged-card flex p-1 gap-1">
+        <div className="flex p-1 gap-1 border-2 border-border dark:border dark:border-primary/60 dark:shadow-none rounded-none">
           {(["en", "es"] as const).map((lang) => (
             <button
               key={lang}
               onClick={() => handleLanguageToggle(lang)}
-              className={`flex-1 h-12 flex items-center justify-center font-black text-[10px] uppercase tracking-widest transition-all border-2 ${
+              className={`flex-1 h-12 flex items-center justify-center font-black text-[10px] uppercase tracking-widest transition-all rounded-none ${
                 language === lang
-                  ? "bg-rsg-gold text-black border-foreground"
-                  : "border-transparent text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
+                  ? "bg-rsg-gold text-black border-2 border-foreground"
+                  : "border-0 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
               }`}
             >
               {lang === "en" ? "English" : "Español"}
@@ -34,7 +34,7 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
         <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
            {language === "es" ? "Tema de Pantalla" : "Display Theme"}
         </h3>
-        <div className="rugged-card flex p-1 gap-1">
+        <div className="flex p-1 gap-1 border-2 border-border dark:border dark:border-primary/60 dark:shadow-none rounded-none">
           {[
             { id: "light", icon: Sun, label: language === "es" ? "Luz" : "Light" },
             { id: "dark", icon: Moon, label: language === "es" ? "Oscuro" : "Dark" },
@@ -43,10 +43,10 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
             <button
               key={item.id}
               onClick={() => handleThemeChange(item.id)}
-              className={`flex-1 h-12 flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest transition-all border-2 ${
+              className={`flex-1 h-12 flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest transition-all rounded-none ${
                 theme === item.id
-                  ? "bg-rsg-gold text-black border-foreground"
-                  : "border-transparent text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
+                  ? "bg-rsg-gold text-black border-2 border-foreground"
+                  : "border-0 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
               }`}
             >
               <item.icon className="w-3.5 h-3.5" />
@@ -60,9 +60,9 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
         <h3 className="text-[10px] font-mono text-foreground/40 uppercase tracking-[0.2em] mb-2">
           {language === "es" ? "Notificaciones" : "Notifications"}
         </h3>
-        <div className="rugged-card p-3 flex flex-col gap-4">
+        <div className="p-3 flex flex-col gap-4 border-2 border-border dark:border dark:border-primary/60 dark:shadow-none rounded-none">
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 flex items-center justify-center border-2 ${isSubscribed ? "bg-rsg-gold text-black border-foreground" : "bg-foreground/5 text-foreground/40 border-transparent"}`}>
+            <div className={`w-10 h-10 flex items-center justify-center border-2 border-foreground rounded-none ${isSubscribed ? "bg-rsg-gold text-black" : "bg-foreground/5 text-foreground/40 border-transparent"}`}>
               {isSubscribed ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
             </div>
             <div className="flex flex-col">
@@ -82,7 +82,7 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
           <button
             onClick={() => isSubscribed ? unsubscribeUser() : subscribeUser()}
             disabled={!isSupported || loading}
-            className={`h-12 px-4 flex items-center justify-center font-black text-[11px] uppercase tracking-widest transition-colors ${
+            className={`rugged-button-boss h-12 px-4 flex items-center justify-center font-black text-[11px] uppercase tracking-widest transition-colors rounded-none ${
               isSubscribed 
                 ? "bg-foreground/10 text-foreground hover:bg-foreground/20" 
                 : "bg-foreground text-background hover:opacity-90"

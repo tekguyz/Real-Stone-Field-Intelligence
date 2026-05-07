@@ -1,4 +1,5 @@
 import Dexie, { Table } from "dexie";
+import { fieldStorage } from "../lib/storage";
 
 export interface SyncQueueItem {
   id?: number;
@@ -23,12 +24,13 @@ export class SyncDatabase extends Dexie {
 export const db = new SyncDatabase();
 
 // Routine to purge photo blobs from local storage once a sync to Supabase is successful.
-export const purgePhotoBlobs = (jobId?: string) => {
+export const purgePhotoBlobs = async (jobId?: string) => {
   if (typeof window === "undefined") return;
 
   if (jobId) {
     sessionStorage.removeItem(`field_captures_${jobId}`);
     localStorage.removeItem(`field_captures_${jobId}`);
+    await fieldStorage.removeItem(`field_captures_${jobId}`);
   } else {
     // Purge all field captures if no specific jobId is provided
     Object.keys(sessionStorage).forEach((key) => {
@@ -41,5 +43,6 @@ export const purgePhotoBlobs = (jobId?: string) => {
         localStorage.removeItem(key);
       }
     });
+    await fieldStorage.purgeAll();
   }
 };

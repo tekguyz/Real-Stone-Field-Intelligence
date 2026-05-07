@@ -32,6 +32,8 @@ export const mockJobs: Job[] = [
     job_type: "install",
     installer_id: "installer_juan",
     logistics_notes: "Gate Code: 1234. Use Service Elevator.",
+    lat: 26.3486,
+    lng: -80.0812,
     photos: [
       "https://picsum.photos/seed/job1/800/600",
       "https://picsum.photos/seed/job1-2/800/600",
@@ -65,6 +67,8 @@ export const mockJobs: Job[] = [
     job_type: "install",
     installer_id: "installer_juan",
     logistics_notes: "Watch for newly planted sod. Park on driveway only.",
+    lat: 26.9342,
+    lng: -80.0942,
     scheduled_date: "2026-04-24T13:00:00Z",
     scheduled_arrival: "2026-04-24T13:00:00Z",
     created_at: "2026-04-01T00:00:00Z",

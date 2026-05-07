@@ -3,18 +3,23 @@
 import { use } from "react";
 import { useUserStore } from "../../../../../entities/user/store";
 import { dict } from "../../../../../entities/i18n/dict";
-import { PermissionPrimer } from "../../../../../features/field-jobs/ui/PermissionPrimer";
 import { useRouter } from "next/navigation";
 import { useFieldJobDetail } from "../../../../../features/field-jobs/hooks/useFieldJobDetail";
 import { StatusBadge } from "../../../../../components/ui/StatusBadge";
 import {
   JobBlockScope,
+} from "../../../../../features/field-jobs/ui/JobScopeDetailed";
+import {
   JobBlockSite,
   JobBlockArrival,
+} from "../../../../../features/field-jobs/ui/JobHeaderMeta";
+import {
   DocumentationCapture,
-  JobActionFooter,
   CapturedProofGrid,
-} from "../../../../../features/field-jobs/ui/JobDetailComponents";
+} from "../../../../../features/field-jobs/ui/JobPhotoCapture";
+import {
+  JobActionFooter,
+} from "../../../../../features/field-jobs/ui/JobActionFooter";
 import { FieldJobDetailLoading } from "../../../../../features/field-jobs/ui/FieldJobDetailLoading";
 import { FieldJobDetailError } from "../../../../../features/field-jobs/ui/FieldJobDetailError";
 import { FieldJobDetailVerified } from "../../../../../features/field-jobs/ui/FieldJobDetailVerified";
@@ -43,12 +48,9 @@ export default function FieldJobDetail({
     isProcessing,
     signatureData,
     setSignatureData,
-    showPrimer,
-    setShowPrimer,
     cameraStatus,
     locationStatus,
-    checkPermissions,
-    handleContinueCapture,
+    requestPermissions,
     handleStartJob,
     isAlreadyActive,
     isVerified,
@@ -59,28 +61,21 @@ export default function FieldJobDetail({
 
   const handleBackNavigation = (e: React.MouseEvent) => {
     e.preventDefault();
-    const hasUnsavedChanges = processedPhotos.length > 0 || signatureData !== null;
-    if (!isVerified && !isSubmitting && hasUnsavedChanges) {
-      if (!window.confirm(language === "es" ? "Los cambios no guardados se perderán. ¿Salir de todos modos?" : "Unsaved changes will be lost. Exit anyway?")) {
-        return;
-      }
-    }
-    router.push("/field");
+    router.back();
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-background pb-12">
-      <FieldJobDetailHeader language={language} handleBackNavigation={handleBackNavigation} />
+    <div className="flex flex-col min-h-full bg-background pb-4">
+      <FieldJobDetailHeader language={language} handleBackNavigation={handleBackNavigation} status={job.status} />
 
       <div className="p-3 flex flex-col gap-3">
-        <section className="flex justify-between items-start">
+        <section className="flex flex-col items-start gap-1 pb-1">
           <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-tight pr-4">
             {job.client_name}
           </h1>
-          <StatusBadge status={job.status} variant="rugged" />
         </section>
 
-        <div className="flex flex-col gap-4 bg-card border-2 border-foreground p-3 shadow-[var(--rugged-shadow-sm)]">
+        <div className="flex flex-col gap-4 bg-card border-2 border-border dark:border dark:border-primary/60 p-3 dark:shadow-none rounded-none">
           <JobBlockScope job={job} language={language} />
           <JobBlockSite job={job} language={language} />
           <JobBlockArrival scheduledDate={job.scheduled_arrival || job.scheduled_date} language={language} />
@@ -90,7 +85,7 @@ export default function FieldJobDetail({
           <button
             onClick={handleStartJob}
             disabled={isSubmitting}
-            className="w-full h-14 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50"
+            className="rugged-button-boss w-full h-14 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg transition-transform active:scale-95 disabled:opacity-50 rounded-none"
           >
             {isSubmitting ? "..." : (language === "es" ? "INICIAR TRABAJO" : "START JOB")}
           </button>
@@ -105,12 +100,12 @@ export default function FieldJobDetail({
             <DocumentationCapture
               cameraStatus={cameraStatus}
               locationStatus={locationStatus}
-              permissionStatus={cameraStatus === "granted" || locationStatus === "granted" ? "granted" : "pending"}
-              checkPermissions={checkPermissions}
+              requestPermissions={requestPermissions}
               handleCaptureImage={handleCaptureImage}
               isProcessing={isProcessing}
               processedPhotos={processedPhotos}
               removePhoto={removePhoto}
+              signatureData={signatureData}
               setSignatureData={setSignatureData}
               language={language}
             />
@@ -128,14 +123,6 @@ export default function FieldJobDetail({
         )}
       </div>
 
-      <PermissionPrimer
-        isOpen={showPrimer}
-        onClose={() => setShowPrimer(false)}
-        onContinue={handleContinueCapture}
-        language={language}
-        cameraStatus={cameraStatus}
-        locationStatus={locationStatus}
-      />
     </div>
   );
 }

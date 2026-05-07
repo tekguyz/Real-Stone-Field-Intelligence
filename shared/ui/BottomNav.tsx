@@ -50,13 +50,13 @@ export function BottomNav() {
   if (isKeyboardVisible) return null;
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background px-4 pb-safe z-50 print:hidden pointer-events-auto">
-      <div className="flex justify-around items-center h-16">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background px-4 pb-safe z-50 print:hidden pointer-events-auto border-t border-border">
+      <div className="flex justify-around items-center h-14">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:translate-y-[1px] rounded-none ${
+            className={`relative flex flex-col items-center justify-center gap-0.5 w-full h-full transition-all active:translate-y-[1px] rounded-none ${
               item.isActive
                 ? "bg-foreground/10 text-foreground"
                 : "text-foreground/40 hover:text-foreground/60"

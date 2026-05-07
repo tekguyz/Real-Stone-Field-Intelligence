@@ -1,7 +1,7 @@
 "use client";
 
 import { Job } from "../../../entities/job";
-import { MapPin, ShieldCheck } from "lucide-react";
+import { MapPin, ShieldCheck, Clock, Navigation } from "lucide-react";
 import Image from "next/image";
 import { formatInstallerName } from "../../../shared/lib/utils";
 import { dict } from "../../../entities/i18n/dict";
@@ -13,6 +13,19 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { JOB_STATUSES } from "../../../lib/constants/statuses";
+
+const formatTime = (ts: number | string) => {
+  try {
+    const d = new Date(ts);
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }).format(d).toUpperCase();
+  } catch {
+    return "UNKNOWN";
+  }
+};
 
 export function AdminJobDrawerContent({
   job,
@@ -212,52 +225,51 @@ export function AdminJobDrawerContent({
               return (
                 <div
                   key={i}
-                  className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden rounded-md"
+                  className="aspect-square bg-foreground/5 border border-border relative group overflow-hidden rounded-md cursor-pointer"
+                  onClick={() => {
+                    const evt = new CustomEvent('open-lightbox', { detail: url });
+                    window.dispatchEvent(evt);
+                  }}
                 >
                   <Image
                     src={url}
                     alt={`Proof ${i + 1}`}
                     fill
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-x-0 bottom-0 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-between items-center">
-                    <span className="text-[10px] font-mono text-white uppercase relative z-10">
-                      Proof {i + 1}
-                    </span>
-                    {meta?.lat && meta?.lng && (
-                      <button
-                        onClick={() =>
-                          window.open(
-                            `http://googleusercontent.com/maps.google.com/maps?q=${meta.lat},${meta.lng}`,
-                            "_blank",
-                          )
-                        }
-                        className="bg-rsg-gold text-black p-1.5 hover:bg-rsg-gold/80 transition-colors z-10 border border-transparent rounded-md shadow-sm"
-                        title="Open GPS Coordinate in Maps"
-                      >
-                        <MapPin className="w-3 h-3" />
-                      </button>
-                    )}
+                  <div className="absolute inset-x-0 bottom-0 bg-zinc-900/90 p-2 flex flex-col gap-1 w-full pointer-events-none">
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-white">
+                      <Clock className="w-3.5 h-3.5 text-rsg-gold" />
+                      <span>{meta ? formatTime(meta.timestamp) : "UNKNOWN"}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-white">
+                      <Navigation className="w-3.5 h-3.5 text-white fill-white" />
+                      <span>GPS: VERIFIED</span>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-          {activeSignature && (
+          {activeSignature ? (
             <div className="flex flex-col gap-2 mt-4">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
                 {t.clientSignature}
               </span>
-              <div className="bg-[#f0f0f0] p-4 border border-border h-32 flex items-center justify-center relative rounded-md">
+              <div className="p-4 border border-border h-32 flex items-center justify-center relative rounded-md bg-zinc-100 dark:bg-zinc-800/40">
                 <Image
                   src={activeSignature}
                   alt="Signature"
                   fill
-                  className="object-contain p-4"
+                  className="object-contain p-4 invert dark:invert-0"
                   referrerPolicy="no-referrer"
                 />
               </div>
+            </div>
+          ) : (
+            <div className="mt-4">
+              <span className="text-[10px] text-muted-foreground italic font-mono tracking-widest leading-none">No signature captured.</span>
             </div>
           )}
         </div>

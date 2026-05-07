@@ -87,11 +87,11 @@ export default function FieldPage() {
 
   return (
     <div className="flex flex-col min-h-full bg-background animate-in fade-in duration-500">
-      {/* Neo-Brutalist Strict Header - Exactly h-16 */}
-      <div className="sticky top-0 z-50 h-16 px-4 bg-background flex justify-between items-center shrink-0 w-full">
-        <div className="flex items-center gap-2 max-w-[40%]">
-          <div className="w-10 h-10 bg-rsg-gold text-black flex items-center justify-center border-2 border-foreground shadow-[var(--rugged-shadow-sm)] shrink-0">
-            <span className="font-black text-sm uppercase tracking-widest">
+      {/* Neo-Brutalist Strict Header - Exactly h-12 */}
+      <div className="sticky top-0 z-50 h-12 px-4 bg-background flex justify-between items-center shrink-0 w-full border-b border-border">
+        <div className="flex items-center gap-2 max-w-[50%]">
+          <div className="w-8 h-8 bg-rsg-gold text-black flex items-center justify-center border border-foreground shadow-[var(--rugged-shadow-sm)] shrink-0">
+            <span className="font-black text-[12px] uppercase tracking-widest">
               {formatInstallerName(activeRole).slice(0, 2)}
             </span>
           </div>
@@ -99,20 +99,12 @@ export default function FieldPage() {
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-rsg-gold truncate hidden sm:inline-block">
               {formatInstallerName(activeRole)}
             </span>
-            <span className="font-mono text-[10px] uppercase font-bold text-foreground/50 hidden sm:inline-block">
-              {activeCount} {language === "es" ? "ACTIVOS" : "ACTIVE"}
-            </span>
           </div>
         </div>
-        <div className="flex items-center gap-3 max-w-[60%] justify-end overflow-hidden">
-          <div className="flex flex-col text-right truncate">
-            <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase truncate">
-              {t.todaysWork}
-            </h1>
-            <span className="text-[9px] font-mono uppercase text-foreground/50 tracking-widest sm:hidden">
-              {activeCount} {language === "es" ? "ACTIVOS" : "ACTIVE"}
-            </span>
-          </div>
+        <div className="flex items-center gap-3 max-w-[50%] justify-end overflow-hidden h-full">
+          <h1 className="text-[12px] font-black tracking-widest text-foreground uppercase truncate">
+            {t.todaysWork}
+          </h1>
         </div>
       </div>
 

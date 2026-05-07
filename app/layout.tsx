@@ -8,6 +8,7 @@ import { IOSInstallBanner } from "../components/IOSInstallBanner";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import { ServiceWorkerRegister } from "../shared/lib/hooks/useServiceWorker";
+import { GlobalLightbox } from "../components/GlobalLightbox";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -84,6 +85,7 @@ export default function RootLayout({
               </div>
             </div>
             <IOSInstallBanner />
+            <GlobalLightbox />
             <Toaster position="top-right" expand={true} richColors theme="system" />
           </ReactQueryProvider>
         </ThemeProvider>

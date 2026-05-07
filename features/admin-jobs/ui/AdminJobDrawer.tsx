@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { AdminJobDrawerHeader } from "./AdminJobDrawerHeader";
 import { AdminJobDrawerContent } from "./AdminJobDrawerContent";
 import { AdminJobDrawerFooter } from "./AdminJobDrawerFooter";
+import { fieldStorage } from "../../../shared/lib/storage";
 
 export function AdminJobDrawer({
   selectedJob,
@@ -33,15 +34,18 @@ export function AdminJobDrawer({
   useEffect(() => {
     if (!selectedJob) return;
 
-    const loadCaptures = () => {
+    const loadCaptures = async () => {
       if (isDevMode) {
-        const stored = sessionStorage.getItem(
-          `field_captures_${selectedJob.id}`,
-        );
-        if (stored) {
-          setLocalCaptures(JSON.parse(stored));
+        const idbStored = await fieldStorage.getItem(`field_captures_${selectedJob.id}`);
+        if (idbStored) {
+          setLocalCaptures(idbStored);
         } else {
-          setLocalCaptures({ photos: [], proofs: [], signature: null });
+          const stored = sessionStorage.getItem(`field_captures_${selectedJob.id}`);
+          if (stored) {
+            setLocalCaptures(JSON.parse(stored));
+          } else {
+            setLocalCaptures({ photos: [], proofs: [], signature: null });
+          }
         }
       }
     };

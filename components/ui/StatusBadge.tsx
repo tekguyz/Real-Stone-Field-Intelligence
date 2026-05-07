@@ -16,7 +16,7 @@ const statusStylesRugged: Record<string, string> = {
   Active:   'bg-[var(--status-active-bg)] text-[var(--status-active-text)] border-2 border-current',
   Review:   'bg-[var(--status-review-bg)] text-[var(--status-review-text)] border-2 border-current',
   Verified: 'bg-[var(--status-verified-bg)] text-[var(--status-verified-text)] border-2 border-current',
-  Urgent:   'bg-[var(--status-urgent-bg)] text-black border-2 border-black animate-pulse font-black',
+  Urgent:   'bg-[var(--status-urgent-bg)] text-[var(--status-urgent-text)] border-2 border-current animate-pulse font-black',
   Archived: 'bg-[var(--status-archived-bg)] text-[var(--status-archived-text)] border-2 border-current grayscale',
 };
 

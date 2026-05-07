@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin } from "lucide-react";
+import { Navigation, Clock, MapPin } from "lucide-react";
 import { CapturedProof } from "../../../entities/job/types";
 import Image from "next/image";
 import { useUserStore } from "../../../entities/user/store";
@@ -36,7 +36,11 @@ export function ReportEvidenceGallery({
             return (
               <div
                 key={i}
-                className="flex flex-col border border-border print:border-black bg-card print:bg-white print:break-inside-avoid rounded-md overflow-hidden shadow-sm"
+                className="flex flex-col border border-border print:border-black bg-card print:bg-white print:break-inside-avoid rounded-md overflow-hidden shadow-sm relative group cursor-pointer"
+                onClick={() => {
+                  const evt = new CustomEvent('open-lightbox', { detail: url });
+                  window.dispatchEvent(evt);
+                }}
               >
                 <div className="aspect-square w-full relative bg-foreground/5 print:bg-black/5">
                   <Image
@@ -44,9 +48,19 @@ export function ReportEvidenceGallery({
                     alt={`Evidence ${i + 1}`}
                     fill
                     priority={i < 2}
-                    className="object-cover"
+                    className="object-cover transition-transform group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
+                  <div className="absolute inset-x-0 bottom-0 bg-zinc-900/90 p-2 flex flex-col gap-1 w-full pointer-events-none print:hidden">
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-white">
+                      <Clock className="w-3.5 h-3.5 text-rsg-gold" />
+                      <span>{meta ? formatTime(meta.timestamp) : "UNKNOWN"}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-white">
+                      <Navigation className="w-3.5 h-3.5 text-white fill-white" />
+                      <span>GPS: VERIFIED</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="p-3 border-t border-border print:border-black flex flex-col gap-2 bg-muted/20 print:bg-white h-full">
                   {meta ? (

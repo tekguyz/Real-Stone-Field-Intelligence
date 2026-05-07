@@ -24,18 +24,20 @@ export function ReportSignatureSection({
           {language === "es" ? "Autorización del Cliente" : "Client Authorization"}
         </h3>
         {signatureUrl ? (
-          <div className="w-full h-32 border border-border print:border-black bg-white flex items-center justify-center p-2 relative rounded-md">
+          <div className="w-full h-32 border border-border print:border-black bg-zinc-100 dark:bg-zinc-800/40 flex items-center justify-center p-2 relative rounded-md">
             <Image
               src={signatureUrl}
               alt="Signature"
               fill
-              className="object-contain p-2"
+              className="object-contain p-2 invert dark:invert-0"
               referrerPolicy="no-referrer"
             />
           </div>
         ) : (
-          <div className="border border-border bg-muted/30 px-4 py-3 font-mono text-sm tracking-widest text-muted-foreground print:text-black uppercase rounded-md border-dashed">
-            {language === "es" ? "NO SE REQUIERE FIRMA" : "NO SIGNATURE REQUIRED"}
+          <div className="py-4">
+             <p className="text-[10px] italic text-muted-foreground font-mono tracking-widest uppercase">
+               No signature captured.
+             </p>
           </div>
         )}
       </div>

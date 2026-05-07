@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 export function FieldJobDetailError({ language, t }: { language: string, t: any }) {
   return (
     <div className="flex flex-col min-h-screen bg-background field-rugged">
-      <div className="h-16 px-4 bg-background sticky top-0 z-20 flex items-center">
+      <div className="h-12 px-4 bg-background sticky top-0 z-20 flex items-center border-b border-border">
         <Link href="/field" className="rugged-button-sm p-1.5 bg-surface text-foreground flex items-center justify-center">
           <ArrowLeft className="w-4 h-4" strokeWidth={3} />
         </Link>

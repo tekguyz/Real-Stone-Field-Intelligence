@@ -13,6 +13,8 @@ import { ReportSignatureSection } from "../../../../features/job-report/ui/Repor
 import { useUserStore } from "../../../../entities/user/store";
 import { dict } from "../../../../entities/i18n/dict";
 import { JOB_STATUSES } from "../../../../lib/constants/statuses";
+import { useState } from "react";
+import { fieldStorage } from "../../../../shared/lib/storage";
 
 const formatTime = (dateStr: string | number, language: string) => {
   return new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
@@ -31,8 +33,11 @@ export default function MasterJobReport({
   const router = useRouter();
   const { data: jobs, isLoading } = useJobs();
   const { language } = useUserStore();
-  const t = dict[language].admin;
+  
+  const [fieldCaptures, setFieldCaptures] = useState<any>({ photos: [], proofs: [], signature: null });
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  const t = dict[language].admin;
   const job = jobs?.find((j: Job) => j.id === id || j.legacy_id === id);
 
   useEffect(() => {
@@ -40,6 +45,22 @@ export default function MasterJobReport({
       ? `Report - ${job.client_name} - ${job.wo_number || job.legacy_id}`
       : t.workOrderNotFound;
   }, [job, t.workOrderNotFound]);
+
+  useEffect(() => {
+    if (!job) return;
+    const loadCaptures = async () => {
+      const idbStored = await fieldStorage.getItem(`field_captures_${job.id}`);
+      if (idbStored) {
+        setFieldCaptures(idbStored);
+      } else {
+        const stored = sessionStorage.getItem(`field_captures_${job.id}`);
+        if (stored) {
+          setFieldCaptures(JSON.parse(stored));
+        }
+      }
+    };
+    loadCaptures();
+  }, [job]);
 
   if (isLoading) {
     return (
@@ -78,12 +99,6 @@ export default function MasterJobReport({
   const devOverrides = JSON.parse(devOverridesRaw || "{}");
   const jobOverrides = devOverrides[job.id] || {};
   let signatureUrl = job.signature_url || jobOverrides.signature_url;
-
-  const fieldCapturesRaw =
-    typeof window !== "undefined"
-      ? sessionStorage.getItem(`field_captures_${job.id}`)
-      : "{}";
-  const fieldCaptures = JSON.parse(fieldCapturesRaw || "{}");
 
   if (!signatureUrl && fieldCaptures.signature) {
     signatureUrl = fieldCaptures.signature;

@@ -6,7 +6,7 @@ export interface ProcessedImage {
   metadata: {
     lat: number | null;
     lng: number | null;
-    timestamp: number;
+    gps_time: number;
     accuracy: number | null;
     location_status:
       | "granted"
@@ -52,10 +52,15 @@ export const processImage = async (
         const canvas = document.createElement("canvas");
         let { width, height } = img;
 
-        const MAX_WIDTH = 1900;
-        if (width > MAX_WIDTH) {
-          height = Math.round((height * MAX_WIDTH) / width);
-          width = MAX_WIDTH;
+        const MAX_SIZE = 1900;
+        if (width > MAX_SIZE || height > MAX_SIZE) {
+          if (width > height) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          } else {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
         }
 
         canvas.width = width;
@@ -71,11 +76,11 @@ export const processImage = async (
             resolve({
               blob,
               previewUrl: URL.createObjectURL(blob),
-              metadata: { lat, lng, timestamp, accuracy, location_status },
+              metadata: { lat, lng, gps_time: timestamp, accuracy, location_status },
             });
           },
           "image/jpeg",
-          0.8
+          0.7 // Further reduced quality to hit ~500KB target at 1900px
         );
       };
 
@@ -122,19 +127,19 @@ export const processImage = async (
           finalizeProcessing();
         },
         { 
-          timeout: 25000, // Increased to 25s for field reliability
-          maximumAge: 30000, // 30s cache is acceptable
+          timeout: 5000, // Reduced to 5s for JIT speed
+          maximumAge: 60000, // 60s cache is acceptable
           enableHighAccuracy: true 
         }
       );
 
-      // Fallback timer slightly longer than the geolocation timeout
+      // Fallback timer
       setTimeout(() => {
         if (!isFinalized) {
           location_status = "timeout_unavailable";
           finalizeProcessing();
         }
-      }, 26000);
+      }, 5500);
     } else {
       finalizeProcessing();
     }

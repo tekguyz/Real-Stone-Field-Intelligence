@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useUserStore, Role } from "../../entities/user/store";
-import { dict } from "../../entities/i18n/dict";
 import { useRouter } from "next/navigation";
-import { Mountain, Delete, CheckCircle2, Camera, CalendarDays } from "lucide-react";
+import { Mountain, Delete, Camera, CheckCircle2, CalendarDays } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { haptics } from "../../shared/lib/haptics";
 
 export default function LoginPage() {
-  const { language, setRole } = useUserStore();
-  const t = dict[language].login;
+  const { setRole } = useUserStore();
   const router = useRouter();
 
   const [pin, setPin] = useState("");
@@ -63,158 +61,145 @@ export default function LoginPage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-start p-6 selection:bg-rsg-gold selection:text-black relative">
+    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-0 lg:p-6 selection:bg-rsg-gold selection:text-black">
       
-      {/* Structural Backdrop */}
-      <div className="fixed inset-0 opacity-[0.03] pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(#808080_1px,transparent_1px)] bg-[size:32px_32px]"></div>
-      </div>
+      {/* THE PREMIUM CONTAINER */}
+      <div className="w-full h-[100dvh] lg:h-auto lg:min-h-[640px] lg:max-w-5xl flex flex-col lg:flex-row bg-background lg:rounded-[2.5rem] lg:shadow-2xl lg:border lg:border-border overflow-hidden relative">
 
-      <div className="w-full max-w-4xl flex flex-col lg:flex-row-reverse items-center lg:items-start justify-center gap-12 lg:gap-24 relative z-10 py-8 lg:py-20">
-        
-        {/* Right Side (Top on Mobile): Login Card */}
-        <div className="w-full max-w-[360px] shrink-0">
-          <div className="bg-card border border-border shadow-2xl p-8 space-y-10 rounded-2xl relative">
+        {/* =========================================
+            LEFT SIDE: DESKTOP BRANDING
+        ========================================= */}
+        <div className="hidden lg:flex w-1/2 bg-zinc-950 text-white flex-col justify-between p-12 relative overflow-hidden">
+          {/* Subtle RSG Gold ambient glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full translate-x-1/3 -translate-y-1/3" />
+          
+          <div className="relative z-10">
+            <div className="w-14 h-14 bg-primary text-black flex items-center justify-center rounded-2xl shadow-lg mb-8">
+              <Mountain className="w-8 h-8" />
+            </div>
+            <h1 className="text-5xl font-black tracking-tighter leading-tight uppercase mb-2">
+              Real<span className="text-primary italic">Stone</span>
+            </h1>
+            <p className="text-sm font-bold uppercase tracking-[0.3em] text-zinc-400">
+              Field Operations
+            </p>
+          </div>
+
+          <div className="space-y-8 relative z-10 mb-8">
+            <div className="flex items-center gap-4">
+              <Camera className="w-6 h-6 text-primary" />
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider">Good photos matter</h3>
+                <p className="text-xs text-zinc-400">Snap clear pictures of your work</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <CheckCircle2 className="w-6 h-6 text-primary" />
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider">No more phone calls</h3>
+                <p className="text-xs text-zinc-400">The office is updated the second you finish</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <CalendarDays className="w-6 h-6 text-primary" />
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider">Your daily plan</h3>
+                <p className="text-xs text-zinc-400">See your routes and site notes at a glance</p>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.2em] relative z-10">
+            Engineered by Tekguyz
+          </p>
+        </div>
+
+        {/* =========================================
+            TOP SIDE: MOBILE BRANDING
+        ========================================= */}
+        <div className="lg:hidden w-full pt-safe px-6 mt-8 flex flex-col items-center">
+          {/* MOBILE LOGO: bg-primary and text-black for consistent gold fill */}
+          <div className="w-14 h-14 bg-primary text-black flex items-center justify-center rounded-2xl shadow-md mb-4">
+            <Mountain className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-black tracking-tighter uppercase leading-none">
+            Real<span className="text-primary italic">Stone</span>
+          </h1>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mt-1">
+            Field Ops
+          </p>
+        </div>
+
+        {/* =========================================
+            RIGHT/BOTTOM SIDE: LOGIN INTERACTION
+        ========================================= */}
+        <div className="flex-1 flex flex-col items-center px-6 pb-safe lg:p-12 relative w-full">
+          
+          <div className="flex-1 flex flex-col justify-center w-full max-w-[320px]">
             
-            <div className="space-y-1">
-              <h2 className="text-2xl font-bold tracking-tight">
-                {isProcessing ? "One moment..." : "Welcome back!"}
+            <div className="text-center mb-10">
+              <h2 className="text-2xl font-black tracking-tight mb-2">
+                {isProcessing ? "Verifying..." : "Welcome Back"}
               </h2>
-              <p className="text-sm text-muted-foreground font-medium">
-                Enter your 4-digit PIN to start
+              <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                Enter your 4-digit PIN
               </p>
             </div>
 
-            {/* PIN Visualization */}
+            {/* ELEGANT PIN DOTS */}
             <motion.div 
-              animate={isError ? { x: [-4, 4, -4, 4, 0] } : {}}
-              className="flex justify-between gap-4"
+              animate={isError ? { x: [-5, 5, -5, 5, 0] } : {}}
+              className="flex justify-center gap-5 mb-12"
             >
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className={`h-16 flex-1 border-2 transition-all duration-200 flex items-center justify-center rounded-xl
-                    ${pin.length > i ? "border-primary bg-primary/5" : "border-border bg-muted/20"}
-                    ${isError ? "border-destructive bg-destructive/10" : ""}
+                  className={`w-4 h-4 rounded-full transition-all duration-300
+                    ${pin.length > i ? "bg-primary scale-125 shadow-[0_0_12px_rgba(var(--color-rsg-gold),0.6)]" : "bg-muted-foreground/20"}
+                    ${isError ? "bg-destructive shadow-none scale-100" : ""}
                   `}
-                >
-                  <AnimatePresence mode="wait">
-                    {pin.length > i && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="w-3 h-3 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--color-rsg-gold),0.4)]"
-                      />
-                    )}
-                  </AnimatePresence>
-                </div>
+                />
               ))}
             </motion.div>
 
-            {/* Keypad */}
-            <div className="grid grid-cols-3 gap-4">
+            {/* CLEAN KEYPAD */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
                   key={num}
                   disabled={isProcessing}
                   onClick={() => handlePinInput(num.toString())}
-                  className="h-16 bg-background border border-border text-xl font-bold rounded-xl hover:bg-primary hover:text-black hover:border-primary transition-all active:scale-90 disabled:opacity-50 cursor-pointer"
+                  className="h-16 rounded-2xl bg-surface border border-border text-2xl font-black hover:bg-primary hover:text-black hover:border-primary transition-all active:scale-95 flex items-center justify-center shadow-sm"
                 >
                   {num}
                 </button>
               ))}
-              <button
-                disabled={isProcessing}
-                onClick={handleDelete}
-                className="h-16 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all active:scale-90 cursor-pointer"
-              >
-                <Delete className="w-6 h-6" />
-              </button>
+              <div />
               <button
                 disabled={isProcessing}
                 onClick={() => handlePinInput("0")}
-                className="h-16 bg-background border border-border text-xl font-bold rounded-xl hover:bg-primary hover:text-black hover:border-primary transition-all active:scale-90 cursor-pointer"
+                className="h-16 rounded-2xl bg-surface border border-border text-2xl font-black hover:bg-primary hover:text-black hover:border-primary transition-all active:scale-95 flex items-center justify-center shadow-sm"
               >
                 0
+              </button>
+              <button
+                disabled={isProcessing}
+                onClick={handleDelete}
+                className="h-16 rounded-2xl flex items-center justify-center text-muted-foreground hover:text-destructive transition-all active:scale-90"
+              >
+                <Delete className="w-7 h-7" />
               </button>
             </div>
           </div>
 
-          {/* Mobile-Only Branding Placeholder */}
-          <div className="mt-8 lg:hidden text-center">
-             <p className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-[0.4em] font-black">
-                Scroll for more info
-             </p>
+          {/* MOBILE FOOTER */}
+          <div className="lg:hidden text-center mt-4 mb-2">
+             <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-[0.2em] font-bold">
+               Engineered by Tekguyz
+             </span>
           </div>
+
         </div>
-
-        {/* Left Side (Bottom on Mobile): Human-Centric Intro */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-10 max-w-md">
-          <div className="space-y-3">
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="w-16 h-16 bg-card border border-border flex items-center justify-center shadow-sm mb-6 rounded-xl mx-auto lg:mx-0"
-            >
-              <Mountain className="w-10 h-10 text-primary" />
-            </motion.div>
-            
-            <h1 className="text-5xl font-black tracking-tighter leading-none">
-              <span className="text-foreground">REAL</span>
-              <span className="text-primary italic ml-1">STONE</span>
-            </h1>
-            <p className="text-lg font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Field Ops
-            </p>
-          </div>
-
-          {/* Benefits Section */}
-          <div className="space-y-8 pt-4">
-            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 text-center sm:text-left">
-              <div className="shrink-0 w-12 h-12 bg-primary flex items-center justify-center rounded-lg shadow-lg">
-                <Camera className="w-6 h-6 text-black" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wide">Good photos matter</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Instantly save clear photos and job details so your reports are always perfect.</p>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 text-center sm:text-left">
-              <div className="shrink-0 w-12 h-12 bg-primary flex items-center justify-center rounded-lg shadow-lg">
-                <CheckCircle2 className="w-6 h-6 text-black" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wide">Automatic Sync</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Your updates go straight to the office. No more phone calls to confirm work.</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 text-center sm:text-left">
-              <div className="shrink-0 w-12 h-12 bg-primary flex items-center justify-center rounded-lg shadow-lg">
-                <CalendarDays className="w-6 h-6 text-black" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wide">Daily Schedule</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">See exactly what’s on your plate for the day, all in one easy-to-use spot.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Branding */}
-          <div className="pt-12 w-full text-center lg:text-left">
-            <a 
-              href="https://tekguyz.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-[0.4em] hover:text-primary transition-colors font-black"
-            >
-              Engineered by Tekguyz
-            </a>
-          </div>
-        </div>
-
       </div>
     </div>
   );
