@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { haptics } from "../../../shared/lib/haptics";
 import { fieldStorage } from "../../../shared/lib/storage";
 
+import { useFieldJobPersistence } from "./useFieldJobPersistence";
+
 export function useFieldJobDetail(jobId: string) {
   const router = useRouter();
   const { isDevMode, language } = useUserStore();
@@ -34,6 +36,9 @@ export function useFieldJobDetail(jobId: string) {
 
   const isFormValid = processedPhotos.length > 0;
   const isAlreadyActive = job?.status === JOB_STATUSES.ACTIVE;
+
+  // Persistence Hook
+  useFieldJobPersistence(job, isDevMode, processedPhotos, signatureData);
 
   const handleStartJob = async () => {
     if (!job || isAlreadyActive || isVerified) return;
@@ -163,46 +168,6 @@ export function useFieldJobDetail(jobId: string) {
       }
 
       setProcessedPhotos((prev) => [...newPhotos, ...prev]);
-
-      // DevMode Persistence: Save to IndexedDB
-      if (isDevMode && job) {
-        const fieldCaptures = (await fieldStorage.getItem(`field_captures_${job.id}`)) || 
-          JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "proofs": [], "signature": null}');
-
-        const photoPromises = newPhotos.map((p) => {
-          return new Promise<{ base64: string; metadata: any }>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () =>
-              resolve({
-                base64: reader.result as string,
-                metadata: p.metadata,
-              });
-            reader.readAsDataURL(p.blob);
-          });
-        });
-
-        const base64Photos = await Promise.all(photoPromises);
-        fieldCaptures.photos = [
-          ...base64Photos.map((p) => p.base64),
-          ...(fieldCaptures.photos || []),
-        ];
-
-        const newProofs = base64Photos.map((p) => ({
-          url: p.base64,
-          gps_time: p.metadata.gps_time,
-          lat: p.metadata.lat,
-          lng: p.metadata.lng,
-          accuracy: p.metadata.accuracy,
-          location_status: p.metadata.location_status,
-        }));
-
-        fieldCaptures.proofs = [...newProofs, ...(fieldCaptures.proofs || [])];
-
-        await fieldStorage.setItem(`field_captures_${job.id}`, fieldCaptures);
-
-        // Trigger a custom event to notify other components (like AdminJobDrawer in the same tab)
-        window.dispatchEvent(new Event("field_capture_update"));
-      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -232,21 +197,6 @@ export function useFieldJobDetail(jobId: string) {
       window.dispatchEvent(new Event("field_capture_update"));
     }
   };
-
-  // Signature persistence
-  useEffect(() => {
-    if (isDevMode && job && signatureData) {
-      const syncSignature = async () => {
-        const fieldCaptures = (await fieldStorage.getItem(`field_captures_${job.id}`)) || 
-          JSON.parse(sessionStorage.getItem(`field_captures_${job.id}`) || '{"photos": [], "signature": null}');
-        
-        fieldCaptures.signature = signatureData;
-        await fieldStorage.setItem(`field_captures_${job.id}`, fieldCaptures);
-        window.dispatchEvent(new Event("field_capture_update"));
-      };
-      syncSignature();
-    }
-  }, [signatureData, isDevMode, job]);
 
   return {
     job,

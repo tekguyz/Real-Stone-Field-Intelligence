@@ -26,8 +26,8 @@ export function StatusBadge({ status, className = '', variant = 'sleek' }: { sta
   const styleRaw = variant === 'sleek' ? statusStylesSleek[normalizedStatus] || statusStylesSleek['Pending'] : statusStylesRugged[normalizedStatus] || statusStylesRugged['Pending'];
   
   const baseClasses = variant === 'sleek' 
-    ? 'inline-flex items-center px-2 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border shadow-sm'
-    : 'inline-flex items-center px-2 py-1 rounded-none text-[10px] font-black uppercase tracking-widest border-2';
+    ? 'inline-flex items-center px-2.5 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest border-2 shadow-sm'
+    : 'inline-flex items-center px-2.5 py-1.5 rounded-none text-[10px] font-black uppercase tracking-widest border-2';
 
   return (
     <span className={`${baseClasses} ${styleRaw} ${className}`}>

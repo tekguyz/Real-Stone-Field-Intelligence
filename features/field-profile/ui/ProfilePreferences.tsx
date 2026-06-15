@@ -82,9 +82,9 @@ export function ProfilePreferences({ language, theme, handleLanguageToggle, hand
           <button
             onClick={() => isSubscribed ? unsubscribeUser() : subscribeUser()}
             disabled={!isSupported || loading}
-            className={`rugged-button-boss h-12 px-4 flex items-center justify-center font-black text-[11px] uppercase tracking-widest transition-colors rounded-none ${
+            className={`rugged-button-sm h-11 px-6 flex items-center justify-center font-black text-[11px] uppercase tracking-widest transition-colors rounded-none ${
               isSubscribed 
-                ? "bg-foreground/10 text-foreground hover:bg-foreground/20" 
+                ? "bg-foreground/10 text-foreground hover:bg-foreground/20 shadow-none border-foreground/30" 
                 : "bg-foreground text-background hover:opacity-90"
             } disabled:opacity-30 disabled:grayscale`}
           >

@@ -1,0 +1,189 @@
+import { Job } from "../../../entities/job";
+import { dict } from "../../../entities/i18n/dict";
+import { 
+  MapPin, 
+  MoreVertical, 
+  Eye, 
+  Edit2, 
+  Archive 
+} from "lucide-react";
+import { summarizeJobScope, formatInstallerName } from "../../../shared/lib/utils";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { JOB_STATUSES } from "@/lib/constants/statuses";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
+import { toast } from "sonner";
+
+interface AdminJobsTableRowProps {
+  job: Job;
+  language: "en" | "es";
+  activeRole: string | null;
+  installers: string[];
+  onJobSelect: (job: Job) => void;
+  onUpdateInstaller: (jobId: string, installerId: string | null) => void;
+  onArchiveJob?: (jobId: string) => void;
+  t: any;
+}
+
+export function AdminJobsTableRow({
+  job,
+  language,
+  activeRole,
+  installers,
+  onJobSelect,
+  onUpdateInstaller,
+  onArchiveJob,
+  t,
+}: AdminJobsTableRowProps) {
+  const isAssignmentLocked =
+    job.status === JOB_STATUSES.ACTIVE ||
+    job.status === JOB_STATUSES.REVIEW ||
+    job.status === JOB_STATUSES.VERIFIED;
+
+  const handleArchive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onArchiveJob) {
+      onArchiveJob(job.id);
+      toast.success(`${language === "es" ? "Orden archivada" : "Job archived"}: ${job.legacy_id}`, {
+        action: {
+          label: language === "es" ? "Deshacer" : "Undo",
+          onClick: () => toast.info("Undo not implemented in demo")
+        }
+      });
+    }
+  };
+
+  return (
+    <tr
+      tabIndex={0}
+      className="hover:bg-rsg-surface-2 transition-colors group cursor-pointer outline-none focus:bg-rsg-surface-2 border-b border-border"
+      onClick={() => onJobSelect(job)}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onJobSelect(job)}
+    >
+      <td className="px-4 py-2.5 font-mono text-sm text-foreground">
+        {job.legacy_id}
+      </td>
+      <td className="px-4 py-2.5">
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-foreground">
+            {job.client_name}
+          </span>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground uppercase mt-0.5">
+            <MapPin className="w-3 h-3 shrink-0" />
+            <span className="truncate max-w-[150px]">
+              {job.community_name || (job.address && job.address.split(",")[0])}
+            </span>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-2.5">
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-foreground">
+            {summarizeJobScope(job.stoneapp_parts)}
+          </span>
+          <span className="text-xs text-muted-foreground uppercase truncate max-w-[120px]">
+            {job.job_type}
+          </span>
+        </div>
+      </td>
+      <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
+        <div className="relative">
+          <Select
+            disabled={isAssignmentLocked}
+            value={job.installer_id || "unassigned"}
+            onValueChange={(val) => onUpdateInstaller(job.id, val)}
+          >
+            <SelectTrigger className={`h-8 border-transparent hover:border-border bg-transparent rounded-md px-2 text-xs font-semibold tracking-tight w-32 ${isAssignmentLocked ? "opacity-40" : ""}`}>
+              <SelectValue>
+                {formatInstallerName(job.installer_id)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unassigned" className="text-xs uppercase font-semibold">{t.unassigned}</SelectItem>
+              {installers.map((inst) => (
+                <SelectItem 
+                  key={inst} 
+                  value={inst} 
+                  className="text-xs uppercase font-semibold"
+                >
+                  {formatInstallerName(inst)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </td>
+      <td className="px-4 py-2.5">
+        <StatusBadge status={job.status} />
+      </td>
+      <td className="px-4 py-2.5">
+        {job.scheduled_arrival || job.scheduled_date ? (
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-foreground">
+              {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                month: "short",
+                day: "numeric",
+              }).format(
+                new Date(
+                  job.scheduled_arrival || job.scheduled_date || "",
+                ),
+              )}
+            </span>
+            <span className="font-mono text-sm text-muted-foreground">
+              {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              }).format(
+                new Date(
+                  job.scheduled_arrival || job.scheduled_date || "",
+                ),
+              )}
+            </span>
+          </div>
+        ) : (
+          <span className="text-xs text-muted-foreground italic uppercase">
+            TBD
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-2 hover:bg-foreground/5 rounded-md transition-colors inline-flex items-center justify-center outline-none focus:bg-foreground/10">
+            <MoreVertical className="w-4 h-4 text-muted-foreground" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onClick={() => onJobSelect(job)} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
+              <Eye className="w-3.5 h-3.5" />
+              {language === "es" ? "Ver Detalles" : "View Details"}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => toast.info("Coming soon")} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
+              <Edit2 className="w-3.5 h-3.5" />
+              {language === "es" ? "Editar Orden" : "Edit Job"}
+            </DropdownMenuItem>
+            {activeRole === "admin" && (
+              <DropdownMenuItem 
+                onClick={handleArchive}
+                className="text-xs font-semibold uppercase tracking-widest gap-2 text-rsg-error focus:text-rsg-error focus:bg-rsg-error/10 py-2"
+              >
+                <Archive className="w-3.5 h-3.5" />
+                {language === "es" ? "Archivar Orden" : "Archive Job"}
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </td>
+    </tr>
+  );
+}

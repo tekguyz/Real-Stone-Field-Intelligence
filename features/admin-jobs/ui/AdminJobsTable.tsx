@@ -1,23 +1,25 @@
 import { Job } from "../../../entities/job";
 import { dict } from "../../../entities/i18n/dict";
 import {
-  MapPin,
   Loader2,
   AlertTriangle,
   ArrowUpDown,
-  MoreVertical,
+  FilterX,
+  ClipboardList,
+  MapPin,
   Eye,
   Edit2,
   Archive,
-  FilterX,
-  ClipboardList,
+  MoreVertical,
 } from "lucide-react";
-import { summarizeJobScope, formatInstallerName } from "../../../shared/lib/utils";
 import { useUserStore } from "../../../entities/user/store";
 import { useSortableTable } from "../../../shared/lib/useSortableTable";
-import { StatusBadge } from "../../../components/ui/StatusBadge";
 import { EmptyState } from "../../../components/ui/EmptyState";
-import { JOB_STATUSES, ARCHIVE_STATUS } from "@/lib/constants/statuses";
+import { AdminJobsTableRow } from "./AdminJobsTableRow";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { summarizeJobScope, formatInstallerName } from "../../../shared/lib/utils";
+import { JOB_STATUSES } from "@/lib/constants/statuses";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
-import { toast } from "sonner";
 
 const SortIcon = ({ 
   columnKey, 
@@ -68,18 +69,6 @@ export function AdminJobsTable({
 
   const { sortedData, sortConfig, handleSort } = useSortableTable(jobs, "adminJobs", { key: "scheduled_arrival", direction: "desc" });
 
-  const handleArchive = (job: Job) => {
-    if (onArchiveJob) {
-      onArchiveJob(job.id);
-      toast.success(`${language === "es" ? "Orden archivada" : "Job archived"}: ${job.legacy_id}`, {
-        action: {
-          label: language === "es" ? "Deshacer" : "Undo",
-          onClick: () => toast.info("Undo not implemented in demo")
-        }
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[500px] text-foreground/50 gap-4">
@@ -102,9 +91,120 @@ export function AdminJobsTable({
 
   return (
     <div className="relative">
-      {/* Mobile Horizontal Scroll Hint */}
+      {/* Mobile Card List View (Visible only on Mobile) */}
+      <div className="block md:hidden overflow-y-auto max-h-[700px] p-3 space-y-3 bg-background/30 custom-scrollbar">
+        {sortedData.map((job) => {
+          const isAssignmentLocked =
+            job.status === JOB_STATUSES.ACTIVE ||
+            job.status === JOB_STATUSES.REVIEW ||
+            job.status === JOB_STATUSES.VERIFIED;
+          return (
+            <div
+              key={job.id}
+              onClick={() => onJobSelect(job)}
+              className="bg-card border border-border p-3 rounded-md shadow-sm active:bg-rsg-surface-2 transition-all flex flex-col gap-2.5 relative group cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs font-black bg-rsg-gold/15 text-rsg-gold px-2 py-0.5 border border-rsg-gold/20 rounded">
+                  {job.legacy_id}
+                </span>
+                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                  <StatusBadge status={job.status} />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-1 px-2 hover:bg-foreground/5 rounded border border-border transition-colors inline-flex items-center justify-center outline-none">
+                      <MoreVertical className="w-3.5 h-3.5 text-muted-foreground" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => onJobSelect(job)} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
+                        <Eye className="w-3.5 h-3.5" />
+                        {language === "es" ? "Ver Detalles" : "View Details"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => toast.info("Coming soon")} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
+                        <Edit2 className="w-3.5 h-3.5" />
+                        {language === "es" ? "Editar Orden" : "Edit Job"}
+                      </DropdownMenuItem>
+                      {activeRole === "admin" && onArchiveJob && (
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            onArchiveJob(job.id);
+                            toast.success(`${language === "es" ? "Orden archivada" : "Job archived"}: ${job.legacy_id}`);
+                          }}
+                          className="text-xs font-semibold uppercase tracking-widest gap-2 text-rsg-error focus:text-rsg-error focus:bg-rsg-error/10 py-2"
+                        >
+                          <Archive className="w-3.5 h-3.5" />
+                          {language === "es" ? "Archivar Orden" : "Archive Job"}
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-foreground leading-snug">{job.client_name}</h4>
+                <p className="text-[10px] text-muted-foreground uppercase flex items-center gap-1 mt-0.5">
+                  <MapPin className="w-3 h-3 text-primary" />
+                  {job.community_name || job.address.split(",")[0]}
+                </p>
+              </div>
+
+              <div className="bg-muted/30 border border-border/40 p-2 text-xs text-foreground/80 leading-normal rounded">
+                <p className="font-semibold text-foreground/90">
+                  {summarizeJobScope(job.stoneapp_parts)}
+                </p>
+                <p className="text-[10px] text-muted-foreground uppercase mt-0.5">
+                  {job.job_type}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between text-[11px] pt-2 border-t border-border/40">
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground font-mono leading-none">
+                    {job.scheduled_arrival || job.scheduled_date ? (
+                      new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+                        month: "short",
+                        day: "numeric",
+                      }).format(new Date(job.scheduled_arrival || job.scheduled_date || ""))
+                    ) : (
+                      "TBD"
+                    )}
+                  </span>
+                </div>
+
+                <div onClick={(e) => e.stopPropagation()} className="relative">
+                  <Select
+                    disabled={isAssignmentLocked}
+                    value={job.installer_id || "unassigned"}
+                    onValueChange={(val) => onUpdateInstaller(job.id, val)}
+                  >
+                    <SelectTrigger className={`h-7 border border-border bg-sidebar rounded px-1.5 text-[10px] font-black uppercase tracking-wider w-28 ${isAssignmentLocked ? "opacity-40" : ""}`}>
+                      <SelectValue>
+                        {formatInstallerName(job.installer_id)}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned" className="text-xs uppercase font-semibold">{t.unassigned}</SelectItem>
+                      {installers.map((inst) => (
+                        <SelectItem 
+                          key={inst} 
+                          value={inst} 
+                          className="text-xs uppercase font-semibold"
+                        >
+                          {formatInstallerName(inst)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View (Hidden on Mobile) */}
       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden z-10" />
-      <div className="overflow-auto max-h-[700px]">
+      <div className="overflow-auto max-h-[700px] hidden md:block">
         <table className="w-full text-left text-sm whitespace-nowrap relative border-separate border-spacing-0">
           <thead className="bg-surface sticky top-0 z-20 shadow-sm border-b border-border text-[10px]">
             <tr>
@@ -168,135 +268,19 @@ export function AdminJobsTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-            {sortedData.map((job) => {
-              const isAssignmentLocked =
-                job.status === JOB_STATUSES.ACTIVE ||
-                job.status === JOB_STATUSES.REVIEW ||
-                job.status === JOB_STATUSES.VERIFIED;
-              return (
-                <tr
-                  key={job.id}
-                  tabIndex={0}
-                  className="hover:bg-rsg-surface-2 transition-colors group cursor-pointer outline-none focus:bg-rsg-surface-2 border-b border-border"
-                  onClick={() => onJobSelect(job)}
-                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onJobSelect(job)}
-                >
-                  <td className="px-4 py-2.5 font-mono text-sm text-foreground">
-                    {job.legacy_id}
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-foreground">
-                        {job.client_name}
-                      </span>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground uppercase mt-0.5">
-                        <MapPin className="w-3 h-3 shrink-0" />
-                        <span className="truncate max-w-[150px]">
-                          {job.community_name || job.address.split(",")[0]}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-foreground">
-                        {summarizeJobScope(job.stoneapp_parts)}
-                      </span>
-                      <span className="text-xs text-muted-foreground uppercase truncate max-w-[120px]">
-                        {job.job_type}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
-                    <div className="relative">
-                      <Select
-                        disabled={isAssignmentLocked}
-                        value={job.installer_id || "unassigned"}
-                        onValueChange={(val) => onUpdateInstaller(job.id, val)}
-                      >
-                        <SelectTrigger className={`h-8 border-transparent hover:border-border bg-transparent rounded-md px-2 text-xs font-semibold tracking-tight w-32 ${isAssignmentLocked ? "opacity-40" : ""}`}>
-                          <SelectValue>
-                            {formatInstallerName(job.installer_id)}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unassigned" className="text-xs uppercase font-semibold">{t.unassigned}</SelectItem>
-                          {installers.map((inst) => (
-                            <SelectItem 
-                              key={inst} 
-                              value={inst} 
-                              className="text-xs uppercase font-semibold"
-                            >
-                              {formatInstallerName(inst)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <StatusBadge status={job.status} />
-                  </td>
-                  <td className="px-4 py-2.5">
-                    {job.scheduled_arrival || job.scheduled_date ? (
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground">
-                          {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                            month: "short",
-                            day: "numeric",
-                          }).format(
-                            new Date(
-                              job.scheduled_arrival || job.scheduled_date || "",
-                            ),
-                          )}
-                        </span>
-                        <span className="font-mono text-sm text-muted-foreground">
-                          {new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
-                            hour: "numeric",
-                            minute: "2-digit",
-                            hour12: true,
-                          }).format(
-                            new Date(
-                              job.scheduled_arrival || job.scheduled_date || "",
-                            ),
-                          )}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-xs text-muted-foreground italic uppercase">
-                        TBD
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="p-2 hover:bg-foreground/5 rounded-md transition-colors inline-flex items-center justify-center outline-none focus:bg-foreground/10">
-                        <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => onJobSelect(job)} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
-                          <Eye className="w-3.5 h-3.5" />
-                          {language === "es" ? "Ver Detalles" : "View Details"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toast.info("Coming soon")} className="text-xs font-semibold uppercase tracking-widest gap-2 py-2">
-                          <Edit2 className="w-3.5 h-3.5" />
-                          {language === "es" ? "Editar Orden" : "Edit Job"}
-                        </DropdownMenuItem>
-                        {activeRole === "admin" && (
-                          <DropdownMenuItem 
-                            onClick={() => handleArchive(job)}
-                            className="text-xs font-semibold uppercase tracking-widest gap-2 text-rsg-error focus:text-rsg-error focus:bg-rsg-error/10 py-2"
-                          >
-                            <Archive className="w-3.5 h-3.5" />
-                            {language === "es" ? "Archivar Orden" : "Archive Job"}
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              );
-            })}
+            {sortedData.map((job) => (
+              <AdminJobsTableRow
+                key={job.id}
+                job={job}
+                language={language}
+                activeRole={activeRole}
+                installers={installers}
+                onJobSelect={onJobSelect}
+                onUpdateInstaller={onUpdateInstaller}
+                onArchiveJob={onArchiveJob}
+                t={t}
+              />
+            ))}
           </tbody>
       </table>
       {jobs.length === 0 ? (

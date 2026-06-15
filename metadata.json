@@ -2,5 +2,5 @@
   "name": "Real Stone | Field Ops",
   "description": "Industrial Field Intelligence & Project Tracking.",
   "requestFramePermissions": ["camera", "geolocation"],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

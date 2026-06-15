@@ -14,6 +14,7 @@ export const dict = {
       bypass: "Bypass Login (Demo)",
     },
     admin: {
+      dashboard: "Dashboard",
       commandCenter: "Command Center",
       openCommandCenter: "Open Command Center",
       jobs: "Jobs",
@@ -214,6 +215,7 @@ export const dict = {
       bypass: "Omitir Inicio (Demo)",
     },
     admin: {
+      dashboard: "Panel de Control",
       commandCenter: "Centro de Comando",
       openCommandCenter: "Abrir Centro de Comando",
       jobs: "Trabajos",

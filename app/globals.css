@@ -20,9 +20,9 @@
 
     /* ── Brand Primitives ─────────────────────────── */
     --rsg-gold:        0.775 0.145 78;
-    --rsg-background:  0.975 0.006 75;
-    --rsg-surface:     1 0 0;
-    --rsg-surface-2:   0.955 0.007 75;
+    --rsg-background:  0.96 0.01 75;
+    --rsg-surface:     0.995 0.005 75;
+    --rsg-surface-2:   0.92 0.015 75;
     --rsg-text:        0.13 0.012 75;
     --rsg-border:      0.88 0.014 75;
     --rsg-error:       0.60 0.22 20;

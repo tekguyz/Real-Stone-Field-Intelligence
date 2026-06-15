@@ -23,10 +23,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rs-field-ops.netlify.app/"),
-  title: "Real Stone | Field Ops",
+  metadataBase: new URL(
+    process.env.NODE_ENV === "production"
+      ? "https://ais-pre-ivrlkw5zrsa5fd4tcu3dg3-229907972848.us-east1.run.app"
+      : "https://ais-dev-ivrlkw5zrsa5fd4tcu3dg3-229907972848.us-east1.run.app"
+  ),
+  title: {
+    default: "Real Stone | Field Ops",
+    template: "%s | Real Stone",
+  },
   description: "Industrial Field Intelligence & Project Tracking.",
   manifest: "/manifest.json",
+  keywords: ["Industrial", "Field Operations", "Stone Installation", "Dispatch", "Verification"],
+  authors: [{ name: "Tekguyz" }],
+  creator: "Tekguyz",
+  publisher: "Real Stone",
   icons: {
     icon: [
       { url: "/favicon-light.svg", media: "(prefers-color-scheme: light)" },
@@ -38,14 +49,13 @@ export const metadata: Metadata = {
     title: "Real Stone | Field Ops",
     description: "Industrial Field Intelligence & Project Tracking.",
     type: "website",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Field Ops System",
-      },
-    ],
+    siteName: "Real Stone Field Ops",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Real Stone | Field Ops",
+    description: "Industrial Field Intelligence & Project Tracking.",
   },
   appleWebApp: {
     capable: true,
@@ -57,7 +67,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
   viewportFit: "cover",
   width: "device-width",

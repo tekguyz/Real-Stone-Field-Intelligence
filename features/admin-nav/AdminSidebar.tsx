@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -17,11 +18,24 @@ import { motion, AnimatePresence } from "motion/react";
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const { language, isSidebarOpen, toggleSidebar } = useUserStore();
+  const { language, isSidebarOpen, toggleSidebar, setSidebarOpen } = useUserStore();
   const t = dict[language].admin;
 
+  useEffect(() => {
+    // If on tablet screen range (e.g. 768px -> 1150px), collapse sidebar by default.
+    const handleViewport = () => {
+      if (typeof window !== "undefined" && window.innerWidth >= 768 && window.innerWidth < 1150) {
+        setSidebarOpen(false);
+      }
+    };
+    handleViewport();
+    window.addEventListener("resize", handleViewport);
+    return () => window.removeEventListener("resize", handleViewport);
+  }, [setSidebarOpen]);
+
   const navItems = [
-    { name: t.commandCenter, href: "/command-center", icon: LayoutDashboard },
+    { name: t.dashboard, href: "/dashboard", icon: LayoutDashboard },
+    { name: t.commandCenter, href: "/command-center", icon: Mountain },
     { name: t.jobs, href: "/jobs", icon: Briefcase },
     { name: t.team, href: "/team", icon: Users },
     { name: t.inventory, href: "/inventory", icon: Package },

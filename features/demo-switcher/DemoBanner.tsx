@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useUserStore, Role } from "../../entities/user/store";
 import { dict } from "../../entities/i18n/dict";
 import { useEffect, useState } from "react";
-import { Languages, UserCircle, Sun, Moon } from "lucide-react";
+import { Globe, UserCircle, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { formatInstallerName } from "../../shared/lib/utils";
 import {
@@ -27,6 +27,7 @@ export function DemoBanner() {
 
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
 
@@ -83,17 +84,17 @@ export function DemoBanner() {
   };
 
   return (
-    <div className="w-full h-10 bg-rsg-gold text-black flex items-center justify-between px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md print:hidden">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 group">
-          <UserCircle className="w-5 h-5 opacity-80" />
+    <div className="w-full h-10 bg-rsg-gold text-black flex items-center justify-between px-3 sm:px-6 z-[100] text-xs uppercase font-black font-mono shrink-0 rounded-none shadow-md print:hidden">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2 group">
+          <UserCircle className="w-4 h-4 sm:w-5 sm:h-5 opacity-80" />
           <Select value={activeRole} onValueChange={(val) => handleRoleChange(val as Role)}>
             {/* FIX: Absolute background transparency in all states to kill the faint rectangle.
                 Removed chevron and all shadows/rings. Added text black, font-black, industrial tracking.
             */}
             <SelectTrigger className="bg-transparent! border-none h-8 text-black font-black uppercase p-0 shadow-none! outline-none! ring-0! focus:ring-0! hover:bg-transparent! data-[state=open]:bg-transparent! [&>svg]:hidden focus-visible:ring-0! tracking-widest appearance-none">
               <SelectValue>
-                {formatInstallerName(activeRole)}
+                {pathname === "/login" ? "ROLE" : formatInstallerName(activeRole)}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -105,21 +106,21 @@ export function DemoBanner() {
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-1.5 sm:gap-6">
         <button
           onClick={toggleLanguage}
-          className="flex items-center gap-2 hover:bg-black/10 px-2 py-1 transition-colors text-black"
+          className="flex items-center gap-1.5 sm:gap-2 hover:bg-black/10 px-1.5 sm:px-2 py-1 transition-colors text-black"
           title={t.language}
         >
-          <Languages className="w-4 h-4" />
-          <span className="uppercase">{language}</span>
+          <Globe className="w-4 h-4" />
+          <span className="uppercase text-[11px] sm:text-xs">{language}</span>
         </button>
 
-        <div className="w-px h-4 bg-black/20" />
+        <div className="w-px h-4 bg-black/20 hidden sm:block" />
 
         <button
           onClick={toggleTheme}
-          className="flex items-center gap-2 hover:bg-black/10 px-2 py-1 transition-colors text-black"
+          className="flex items-center gap-1.5 sm:gap-2 hover:bg-black/10 px-1.5 sm:px-2 py-1 transition-colors text-black"
           title={t.theme}
         >
           {theme === "dark" ? (

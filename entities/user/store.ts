@@ -18,6 +18,7 @@ interface UserState {
   setDevMode: (devMode: boolean) => void;
   setManualThemeOverride: (override: boolean) => void;
   toggleSidebar: () => void;
+  setSidebarOpen: (isOpen: boolean) => void;
   setHasHydrated: (state: boolean) => void;
 }
 
@@ -39,6 +40,7 @@ export const useUserStore = create<UserState>()(
         set({ manualThemeOverride: override }),
       toggleSidebar: () =>
         set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+      setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
       setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {

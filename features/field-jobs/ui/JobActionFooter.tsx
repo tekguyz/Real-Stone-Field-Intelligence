@@ -33,7 +33,7 @@ export function JobActionFooter({
           <button
             onClick={handleStartJob}
             disabled={isSubmitting}
-            className="rugged-button-boss w-full h-16 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg transition-transform active:scale-95 disabled:opacity-50 rounded-none"
+            className="rugged-button-boss w-full h-14 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg transition-transform active:scale-95 disabled:opacity-50 rounded-none"
           >
             {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (language === "es" ? "INICIAR TRABAJO" : "START JOB")}
           </button>
@@ -46,7 +46,7 @@ export function JobActionFooter({
           <button
             onClick={handleSubmitReview}
             disabled={isSubmitting || !isFormValid}
-            className={`rugged-button-boss w-full h-16 font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-transform active:scale-95 rounded-none ${
+            className={`rugged-button-boss w-full h-14 font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-transform active:scale-95 rounded-none ${
               isFormValid
                 ? "bg-rsg-gold text-black"
                 : "bg-surface text-foreground/30 border border-border cursor-not-allowed shadow-none active:scale-100"

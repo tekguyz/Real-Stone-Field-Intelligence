@@ -51,16 +51,16 @@ export function DocumentationCapture({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3 border border-destructive bg-destructive/10 flex flex-col gap-3 rounded-none"
+            className="p-3 border-2 border-rsg-warning bg-rsg-warning/10 flex flex-col gap-3 rounded-none shadow-[var(--rugged-shadow-sm)]"
           >
-            <div className="flex items-center gap-3 text-destructive">
+            <div className="flex items-center gap-3 text-rsg-warning">
               <AlertOctagon className="w-7 h-7" />
-              <span className="text-[11px] font-black uppercase tracking-widest leading-tight">ACCESS BLOCKED</span>
+              <span className="text-[11px] font-black uppercase tracking-widest leading-tight">SYSTEM WARNING: PERMISSIONS REQUIRED</span>
             </div>
-            <p className="text-[10px] leading-relaxed text-foreground/80">Security protocols require GPS and Camera access.</p>
-            <button onClick={() => window.location.reload()} className="rugged-button-boss w-full h-10 bg-destructive text-destructive-foreground font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 rounded-none">
+            <p className="text-[10px] leading-relaxed text-foreground/80 font-bold uppercase">Security protocols require GPS and Camera access for site verification.</p>
+            <button onClick={() => window.location.reload()} className="rugged-button-sm w-full h-11 bg-rsg-warning text-black font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 rounded-none">
               <RefreshCw className="w-3.5 h-3.5" />
-              Reset Connection
+              Grant Access / Reload
             </button>
           </motion.div>
         ) : (

@@ -31,7 +31,7 @@ export function JobBlockScope({
               className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
             >
               {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              View Detailed Scope
+              View Details
             </button>
             
             {isExpanded && (
