@@ -26,6 +26,20 @@ const formatTime = (ts: number) => {
   return `${h12}:${minutes} ${ampm}`;
 };
 
+interface DocumentationCaptureProps {
+  cameraStatus: any;
+  locationStatus: any;
+  handleCaptureImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isProcessing: boolean;
+  processedPhotos: ProcessedImage[];
+  removePhoto: (index: number) => Promise<void>;
+  setSignatureData: (dataUrl: string | null) => void;
+  language: "en" | "es";
+  onImageClick?: (url: string) => void;
+  requestPermissions?: any;
+  signatureData?: any;
+}
+
 export function DocumentationCapture({
   cameraStatus,
   locationStatus,
@@ -36,7 +50,7 @@ export function DocumentationCapture({
   setSignatureData,
   language,
   onImageClick,
-}: any) {
+}: DocumentationCaptureProps) {
   const t = dict[language].field;
   
   return (

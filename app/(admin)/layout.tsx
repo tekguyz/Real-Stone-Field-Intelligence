@@ -31,7 +31,7 @@ export default function AdminLayout({
   const t = dict[language].admin;
 
   const { data: jobs } = useJobs();
-  const activeReports = jobs?.filter(job => job.status === "submitted_for_review" || job.status === "verified" || job.status === "in_progress").slice(0, 3) || [];
+  const activeReports = jobs?.filter(job => job.status === "Review" || job.status === "Verified" || job.status === "Active").slice(0, 3) || [];
 
   const navItems = [
     { name: t.dashboard, href: "/dashboard", icon: LayoutDashboard },

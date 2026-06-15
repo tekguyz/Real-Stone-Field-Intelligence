@@ -3,6 +3,16 @@ import { Loader2, Upload, CheckCircle2 } from "lucide-react";
 
 import { dict } from "../../../entities/i18n/dict";
 
+interface JobActionFooterProps {
+  jobStatus: string;
+  isFormValid: boolean;
+  isSubmitting: boolean;
+  handleSubmitReview: () => void;
+  handleStartJob: () => void;
+  processedPhotosLength: number;
+  language: "en" | "es";
+}
+
 export function JobActionFooter({
   jobStatus,
   isFormValid,
@@ -11,7 +21,7 @@ export function JobActionFooter({
   handleStartJob,
   processedPhotosLength,
   language,
-}: any) {
+}: JobActionFooterProps) {
   const t = dict[language].field;
   const isSubmitted =
     jobStatus === JOB_STATUSES.REVIEW || jobStatus === JOB_STATUSES.VERIFIED;
