@@ -15,6 +15,8 @@ import {
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 
+import { dict } from "../../../entities/i18n/dict";
+
 const formatTime = (ts: number) => {
   const d = new Date(ts);
   const hours = d.getHours();
@@ -35,14 +37,16 @@ export function DocumentationCapture({
   language,
   onImageClick,
 }: any) {
+  const t = dict[language].field;
+  
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-black tracking-tight text-foreground uppercase">
-          {language === "en" ? "Job Documentation" : "Documentación"}
+          {t.jobDocumentation}
         </h2>
         <p className="text-xs text-foreground/40 leading-relaxed max-w-sm">
-          Capture installation photos and an optional client signature.
+          {t.capturePhotosDesc}
         </p>
       </div>
 
@@ -55,12 +59,12 @@ export function DocumentationCapture({
           >
             <div className="flex items-center gap-3 text-rsg-warning">
               <AlertOctagon className="w-7 h-7" />
-              <span className="text-[11px] font-black uppercase tracking-widest leading-tight">SYSTEM WARNING: PERMISSIONS REQUIRED</span>
+              <span className="text-[11px] font-black uppercase tracking-widest leading-tight">{t.systemWarning}</span>
             </div>
-            <p className="text-[10px] leading-relaxed text-foreground/80 font-bold uppercase">Security protocols require GPS and Camera access for site verification.</p>
+            <p className="text-[10px] leading-relaxed text-foreground/80 font-bold uppercase">{t.securityProtocols}</p>
             <button onClick={() => window.location.reload()} className="rugged-button-sm w-full h-11 bg-rsg-warning text-black font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 rounded-none">
               <RefreshCw className="w-3.5 h-3.5" />
-              Grant Access / Reload
+              {t.grantAccess}
             </button>
           </motion.div>
         ) : (
@@ -68,14 +72,14 @@ export function DocumentationCapture({
             <div className="flex-1">
               <button onClick={() => document.getElementById("camera-input")?.click()} className="rugged-button-boss w-full h-12 bg-rsg-gold text-black flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-widest active:scale-95 transition-transform rounded-none">
                 <Camera className="w-5 h-5 transition-transform group-active:scale-95" />
-                Capture
+                {t.captureButton}
               </button>
               <input id="camera-input" type="file" accept="image/*" capture="environment" className="hidden" onChange={handleCaptureImage} />
             </div>
             <div className="flex-1">
               <button onClick={() => document.getElementById("gallery-input")?.click()} className="rugged-button-boss w-full h-12 bg-rsg-gold text-black flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-widest active:scale-95 transition-transform rounded-none">
                 <Upload className="w-5 h-5" />
-                Upload
+                {t.uploadButton}
               </button>
               <input id="gallery-input" type="file" accept="image/*" multiple className="hidden" onChange={handleCaptureImage} />
             </div>
@@ -108,7 +112,7 @@ export function DocumentationCapture({
                   </div>
                   <div className="flex items-center gap-2 text-[10px] font-mono text-white">
                     <GpsIcon className="w-3.5 h-3.5 text-white" />
-                    <span>GPS: VERIFIED</span>
+                    <span>{t.gpsVerified}</span>
                   </div>
                 </div>
                 <button onClick={(e) => { e.stopPropagation(); removePhoto(i); }} className="absolute top-2 right-2 flex items-center justify-center w-6 h-6 bg-red-500/80 text-white hover:bg-red-500 border border-white/10 transition-colors z-10">
@@ -122,7 +126,7 @@ export function DocumentationCapture({
         {processedPhotos.length === 0 && !isProcessing && (
           <div className="py-4 flex flex-col items-center justify-center border border-dashed border-border text-foreground/30 gap-1 bg-foreground/[0.02]">
             <ImageIcon className="w-5 h-5 opacity-50" />
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em]">No Photos Attached</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em]">{t.noPhotosAttached}</p>
           </div>
         )}
       </div>
@@ -136,17 +140,20 @@ export function DocumentationCapture({
 
 export function CapturedProofGrid({
   photos,
+  language,
 }: {
   photos: string[];
   language: "en" | "es";
 }) {
+  const t = dict[language].field;
+
   if (!photos || photos.length === 0) return null;
 
   return (
     <div className="bg-card border border-border dark:border-primary/60 p-4 flex flex-col gap-3 rounded-none">
       <div className="flex items-center gap-2">
         <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Captured Proof</span>
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">{t.capturedProof}</span>
       </div>
       <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
         {photos.map((src, i) => (

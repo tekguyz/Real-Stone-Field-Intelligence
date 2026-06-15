@@ -1,4 +1,8 @@
+"use client";
+
 import { JobStatus } from '@/lib/constants/statuses';
+import { useUserStore } from '@/entities/user/store';
+import { dict, TranslationKey } from '@/entities/i18n/dict';
 
 const statusStylesSleek: Record<string, string> = {
   Assigned: 'bg-[var(--status-assigned-bg)] text-[var(--status-assigned-text)] border-[var(--status-assigned-text)]/10',
@@ -21,6 +25,8 @@ const statusStylesRugged: Record<string, string> = {
 };
 
 export function StatusBadge({ status, className = '', variant = 'sleek' }: { status: string, className?: string, variant?: 'sleek' | 'rugged' }) {
+  const { language } = useUserStore();
+  
   // Normalize casing for lookup
   const normalizedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'Pending';
   const styleRaw = variant === 'sleek' ? statusStylesSleek[normalizedStatus] || statusStylesSleek['Pending'] : statusStylesRugged[normalizedStatus] || statusStylesRugged['Pending'];
@@ -29,9 +35,11 @@ export function StatusBadge({ status, className = '', variant = 'sleek' }: { sta
     ? 'inline-flex items-center px-2.5 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest border-2 shadow-sm'
     : 'inline-flex items-center px-2.5 py-1.5 rounded-none text-[10px] font-black uppercase tracking-widest border-2';
 
+  const tStatus = (dict[language].status as Record<string, string>)[normalizedStatus.toLowerCase()] || normalizedStatus;
+
   return (
     <span className={`${baseClasses} ${styleRaw} ${className}`}>
-      {normalizedStatus}
+      {tStatus}
     </span>
   );
 }

@@ -114,20 +114,20 @@ export default function FieldPage() {
           <div className="flex flex-col items-center justify-center p-20 gap-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-foreground/40 font-bold">
-              {language === "es" ? "SINCRONIZANDO PIPELINE HQ" : "Syncing HQ Pipeline"}
+              {t.syncingHq}
             </span>
           </div>
         ) : error ? (
           <div className="p-5 border-l-4 border-l-red-500 border-y border-r border-border bg-red-500/10 text-red-500 text-[10px] uppercase font-bold tracking-wider text-center">
-            {language === "es" ? "Error al sincronizar órdenes. Por favor revise su conexión." : "Failed to sync work orders. Please check connection."}
+            {t.syncError}
           </div>
         ) : myJobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 px-4 text-center border-2 border-dashed border-foreground/20 bg-foreground/[0.02]">
             <span className="text-foreground font-black uppercase tracking-[0.3em] text-xl">
-              BOARD CLEAR
+              {t.boardClear}
             </span>
             <span className="text-foreground/40 font-bold uppercase tracking-[0.2em] text-[10px] mt-2">
-              STANDBY FOR DISPATCH
+              {t.standbyDispatch}
             </span>
           </div>
         ) : (

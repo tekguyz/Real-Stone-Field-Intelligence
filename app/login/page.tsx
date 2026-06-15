@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useUserStore, Role } from "../../entities/user/store";
+import { dict } from "../../entities/i18n/dict";
 import { useRouter } from "next/navigation";
 import { Mountain, Delete, Camera, CheckCircle2, CalendarDays } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { haptics } from "../../shared/lib/haptics";
 
 export default function LoginPage() {
-  const { setRole } = useUserStore();
+  const { setRole, language } = useUserStore();
   const router = useRouter();
+  const t = dict[language].login;
 
   const [pin, setPin] = useState("");
   const [mounted, setMounted] = useState(false);
@@ -89,28 +91,28 @@ export default function LoginPage() {
             <div className="flex items-center gap-4">
               <Camera className="w-6 h-6 text-primary" />
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider">Good photos matter</h3>
-                <p className="text-xs text-zinc-400">Snap clear pictures of your work</p>
+                <h3 className="text-sm font-bold uppercase tracking-wider">{t.goodPhotos}</h3>
+                <p className="text-xs text-zinc-400">{t.goodPhotosDesc}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <CheckCircle2 className="w-6 h-6 text-primary" />
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider">No more phone calls</h3>
-                <p className="text-xs text-zinc-400">The office is updated the second you finish</p>
+                <h3 className="text-sm font-bold uppercase tracking-wider">{t.noCalls}</h3>
+                <p className="text-xs text-zinc-400">{t.noCallsDesc}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <CalendarDays className="w-6 h-6 text-primary" />
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider">Your daily plan</h3>
-                <p className="text-xs text-zinc-400">See your routes and site notes at a glance</p>
+                <h3 className="text-sm font-bold uppercase tracking-wider">{t.dailyPlan}</h3>
+                <p className="text-xs text-zinc-400">{t.dailyPlanDesc}</p>
               </div>
             </div>
           </div>
           
           <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.2em] relative z-10">
-            Engineered by Tekguyz
+            {t.engineeredBy}
           </p>
         </div>
 
@@ -139,10 +141,10 @@ export default function LoginPage() {
             
             <div className="text-center mb-10">
               <h2 className="text-2xl font-black tracking-tight mb-2">
-                {isProcessing ? "Verifying..." : "Welcome Back"}
+                {isProcessing ? t.verifying : t.welcomeBack}
               </h2>
               <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                Enter your 4-digit PIN
+                {t.enterPin}
               </p>
             </div>
 
@@ -195,7 +197,7 @@ export default function LoginPage() {
           {/* MOBILE FOOTER */}
           <div className="lg:hidden text-center mt-4 mb-2">
              <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-[0.2em] font-bold">
-               Engineered by Tekguyz
+               {t.engineeredBy}
              </span>
           </div>
 

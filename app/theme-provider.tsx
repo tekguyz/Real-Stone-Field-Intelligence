@@ -38,7 +38,9 @@ export function ThemeProvider({
   return (
     <NextThemesProvider {...props}>
       <ThemeColorUpdater />
-      {children}
+      <div className={!mounted ? "transition-none [&_*]:transition-none" : ""}>
+        {children}
+      </div>
     </NextThemesProvider>
   );
 }

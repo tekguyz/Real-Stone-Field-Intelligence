@@ -29,8 +29,10 @@ export function JobCard({ job, language, index }: JobCardProps) {
     return job.address.toUpperCase();
   };
 
+  const t = dict[language].field;
+
   const formatScheduledTime = (isoDate: string | null | undefined) => {
-    if (!isoDate) return "WAITING TO BE ROUTED";
+    if (!isoDate) return t.waitingToBeRouted;
     try {
       const d = new Date(isoDate);
       return new Intl.DateTimeFormat("en-US", {

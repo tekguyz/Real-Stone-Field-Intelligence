@@ -1,6 +1,8 @@
 import { JOB_STATUSES } from "../../../lib/constants/statuses";
 import { Loader2, Upload, CheckCircle2 } from "lucide-react";
 
+import { dict } from "../../../entities/i18n/dict";
+
 export function JobActionFooter({
   jobStatus,
   isFormValid,
@@ -10,6 +12,7 @@ export function JobActionFooter({
   processedPhotosLength,
   language,
 }: any) {
+  const t = dict[language].field;
   const isSubmitted =
     jobStatus === JOB_STATUSES.REVIEW || jobStatus === JOB_STATUSES.VERIFIED;
   const isNotStarted = jobStatus === JOB_STATUSES.ASSIGNED || jobStatus === JOB_STATUSES.PENDING;
@@ -20,12 +23,12 @@ export function JobActionFooter({
         <div className="bg-primary/5 border-2 border-border dark:border dark:border-primary/60 dark:shadow-none p-4 flex flex-col items-center text-center gap-3 rounded-none">
           <CheckCircle2 className="w-10 h-10 text-primary opacity-80" />
           <div className="font-black text-primary uppercase tracking-widest text-sm">
-            Office Verification
+            {t.officeVerification}
           </div>
           <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest max-w-[250px] leading-relaxed">
-            Job documentation secured.
+            {t.jobDocSecured}
             <br />
-            Site verification in progress.
+            {t.siteVerificationProgress}
           </p>
         </div>
       ) : isNotStarted ? (
@@ -35,10 +38,10 @@ export function JobActionFooter({
             disabled={isSubmitting}
             className="rugged-button-boss w-full h-14 bg-rsg-gold text-black font-black uppercase tracking-widest text-lg transition-transform active:scale-95 disabled:opacity-50 rounded-none"
           >
-            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (language === "es" ? "INICIAR TRABAJO" : "START JOB")}
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : t.startJobCap}
           </button>
           <p className="text-[10px] text-center font-bold text-muted-foreground uppercase tracking-widest">
-            {language === "es" ? "Debes iniciar el trabajo antes de capturar fotos" : "You must start the job before capturing proof"}
+            {t.mustStartBeforeProof}
           </p>
         </div>
       ) : (
@@ -57,14 +60,14 @@ export function JobActionFooter({
             ) : (
               <Upload className="w-4 h-4" />
             )}
-            {language === "en" ? "Complete Job" : "Completar Trabajo"}
+            {t.completeJob}
           </button>
 
           {!isFormValid && (
             <div className="flex flex-col items-center gap-1 mt-2">
               {processedPhotosLength === 0 && (
                 <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-                  • Capture at least 1 photo
+                  • {t.captureOnePhoto}
                 </span>
               )}
             </div>
