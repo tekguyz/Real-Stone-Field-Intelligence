@@ -24,9 +24,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NODE_ENV === "production"
-      ? "https://ais-pre-ivrlkw5zrsa5fd4tcu3dg3-229907972848.us-east1.run.app"
-      : "https://ais-dev-ivrlkw5zrsa5fd4tcu3dg3-229907972848.us-east1.run.app"
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.APP_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://rs-field-ops.netlify.app"
+      : "https://rs-field-ops.netlify.app")
   ),
   title: {
     default: "Real Stone | Field Ops",
