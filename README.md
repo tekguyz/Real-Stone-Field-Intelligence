@@ -9,7 +9,7 @@ An industrial-grade, mobile-first job management and verification system designe
 - **Database**: Supabase (PostgreSQL + Real-time)
 - **Auth**: Supabase Auth (Google OAuth)
 - **State Management**: Zustand
-- **Data Fetching/Caching**: TanStack Query (React Query)
+- **Data Fetching/Caching**: TanStack Query/React Query
 - **Icons**: Lucide React
 - **Animation**: motion/react
 
